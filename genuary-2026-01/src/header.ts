@@ -11,5 +11,6 @@ export function aboutThisSourceCode() {
     "This javascript is probably unreadable",
     "It has been transpiled and bundled from typescript source",
     "With no control of module or function order",
+    "Read the source at https://github.com/nbogie/genuary-2026-all/tree/main/genuary-2026-01",
   ].join("\n");
 }
