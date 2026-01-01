@@ -34,6 +34,10 @@ window.draw = function draw() {
   drawTree(gConfig);
 };
 
+window.windowResized = function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+};
+
 window.keyPressed = function keyPressed() {
   if (key === "a") {
     console.log(aboutThisSourceCode());
