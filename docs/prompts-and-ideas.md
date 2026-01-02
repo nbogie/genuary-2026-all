@@ -4,6 +4,7 @@
 -   palettes from rybitten https://openprocessing.org/sketch/2801814 or kgolid
 -   look through sketches i want to learn about / reproduce
 -   grids wherever possible
+-   use opportunities to revisit old sketches i want to finish, or techniques I want to practice?
 
 ### prompts
 
