@@ -1,31 +1,33 @@
--   1: One color, one shape.
--   2: Twelve principles of animation.
--   3: Fibonacci forever. Create a work that uses the Fibonacci sequence in some way.
--   4: Lowres. An image or graphic with low resolution, where details are simplified or pixelated.
--   5: Write "Genuary". Avoid using a font.
--   6: Lights on/off. Make something that changes when you switch on or off the "digital" lights.
--   7: Boolean algebra. Get inspired by Boolean algebra, in any way.
--   8: A City. Create a generative metropolis.
--   9: Crazy automaton. Cellular automata with crazy rules.
--   10: Polar coordinates.
--   11: Quine. A Quine is a form of code poetry, it’s a computer program that outputs exactly its own source code.
--   12: Boxes only.
--   13: Self portrait. For example, get started with a very basic human face, a few circles or oval shapes. How far can you improve this by adding features that actually look like you. Try adding eyes, eyelashes, hair, and make a few parameters or colors variable. Even though you are aiming for a self portrait, it might be fun to render some random variations as well.
--   14: Everything fits perfectly.
--   15: Create an invisible object where only the shadows can be seen.
--   16: Order and disorder.
--   17: Wallpaper group. There are only 17 ways to cover a plane with a repeating pattern, choose your favourite on a linked page.
--   18: Unexpected path. Draw a route that changes direction based on one very simple rule.
--   19: 16x16
--   20: One line. An artwork that is made of a single line only.
--   21: Bauhaus Poster. Create a poster design inspired by the German art school Bauhaus.
--   22: Pen plotter ready.
--   23: Transparency. Explore the concept of transparency.
--   24: Perfectionist’s nightmare.
--   25: Organic Geometry. Forms that look or act organic but are constructed entirely from geometric shapes.
--   26: Recursive Grids. Split the canvas into a grid of some kind and recurse on each cell again and again.
--   27: Lifeform. A shape or structure that behaves as if it’s alive or growing.
--   28: No libraries, no canvas, only HTML elements.
--   29: Genetic evolution and mutation.
--   30: Its not a bug, its a feature.
--   31: GLSL day. Create an artwork using only shaders.
+### Genuary 2026 Prompts (some detail omitted)
+
+-   1: **One color, one shape**.
+-   2: **Twelve principles of animation**.
+-   3: **Fibonacci forever**. Create a work that uses the Fibonacci sequence in some way.
+-   4: **Lowres**. An image or graphic with low resolution, where details are simplified or pixelated.
+-   5: **Write "Genuary"**. Avoid using a font.
+-   6: **Lights on/off**. Make something that changes when you switch on or off the "digital" lights.
+-   7: **Boolean algebra**. Get inspired by Boolean algebra, in any way.
+-   8: **A City**. Create a generative metropolis.
+-   9: **Crazy automaton**. Cellular automata with crazy rules.
+-   10: **Polar coordinates**.
+-   11: **Quine**. A Quine is a form of code poetry, it’s a computer program that outputs exactly its own source code.
+-   12: **Boxes only**.
+-   13: **Self portrait**. For example, get started with a very basic human face, a few circles or oval shapes. How far can you improve this by adding features that actually look like you. Try adding eyes, eyelashes, hair, and make a few parameters or colors variable. Even though you are aiming for a self portrait, it might be fun to render some random variations as well.
+-   14: **Everything fits perfectly**.
+-   15: **Create an invisible object where only the shadows can be seen**.
+-   16: **Order and disorder**.
+-   17: **Wallpaper group**. There are only 17 ways to cover a plane with a repeating pattern, choose your favourite on a linked page.
+-   18: **Unexpected path**. Draw a route that changes direction based on one very simple rule.
+-   19: **16x16**
+-   20: **One line**. An artwork that is made of a single line only.
+-   21: **Bauhaus Poster**. Create a poster design inspired by the German art school Bauhaus.
+-   22: **Pen plotter ready**.
+-   23: **Transparency**. Explore the concept of transparency.
+-   24: **Perfectionist’s nightmare**.
+-   25: **Organic Geometry**. Forms that look or act organic but are constructed entirely from geometric shapes.
+-   26: **Recursive Grids**. Split the canvas into a grid of some kind and recurse on each cell again and again.
+-   27: **Lifeform**. A shape or structure that behaves as if it’s alive or growing.
+-   28: **No libraries, no canvas, only HTML elements**.
+-   29: **Genetic evolution and mutation**.
+-   30: **Its not a bug, its a feature**.
+-   31: **GLSL day**. Create an artwork using only shaders.
