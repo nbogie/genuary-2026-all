@@ -7,21 +7,18 @@ import {
   type Agent,
   type AgentInput,
 } from "./Agent.ts";
-import { createDefaultConfig, registerGlobalConfig, type Config } from "./config.ts";
+import { createDefaultConfig, registerGlobalConfig } from "./config.ts";
+import { registerGlobalState, type GlobalState } from "./globalState.ts";
 
-export interface GlobalState {
-  agents: Agent[];
-  config: Config;
-}
-
+export function getGlobalAnimCounters() {}
 export function setupAnimation(): GlobalState {
   const config = createDefaultConfig();
   registerGlobalConfig(config);
   const agents = createAgents(config.numberOfAgents);
-  const state = { agents, config };
+  const state = { agents, config, countOfAnimations: 0 } satisfies GlobalState;
+  registerGlobalState(state);
   return state;
 }
-
 export function updateAnimation(state: GlobalState) {
   state.agents.forEach(updateAgent);
 }
@@ -29,6 +26,10 @@ export function updateAnimation(state: GlobalState) {
 export function drawAnimation(state: GlobalState) {
   const sortedAgents = sortBy(state.agents, ["zDepth"]).reverse();
   sortedAgents.forEach(drawAgent);
+
+  fill("magenta");
+  textAlign(RIGHT, BOTTOM);
+  text(state.countOfAnimations, width - 50, height - 50);
 }
 
 export function animationHandleMousePressed(state: GlobalState) {

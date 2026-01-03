@@ -3,6 +3,7 @@ import p5 from "p5";
 import { getGlobalConfig } from "./config.ts";
 import { createStateMachine, type StateMachine, type Transition } from "./stateMachine.ts";
 import { collect, randomScreenPos } from "./utils.ts";
+import { getGlobalState } from "./globalState.ts";
 
 export interface Agent {
   pos: p5.Vector;
@@ -139,6 +140,8 @@ export type AgentInput =
 
 export function startAnimateAgentSeek(agent: Agent) {
   const vecToDest = p5.Vector.sub(agent.dest, agent.pos);
+  const gState = getGlobalState();
+  gState.countOfAnimations++;
   //top of pile
   agent.zDepth = 0;
   const timeline = gsap.timeline();
@@ -174,5 +177,10 @@ export function startAnimateAgentSeek(agent: Agent) {
   timeline.to(agent, { squishOrStretch: 1, duration: 0.6 }, "-=0.6");
 
   timeline.to(agent, { opacity: 0.3, duration: 0.5 });
-  timeline.to(agent, { zDepth: floor(random(50, 150)) });
+  timeline.to(agent, {
+    zDepth: floor(random(50, 150)),
+    onComplete: () => {
+      gState.countOfAnimations--;
+    },
+  });
 }

@@ -5,9 +5,9 @@ import {
   setupAnimation,
   drawAnimation,
   updateAnimation,
-  type GlobalState,
   animationHandleMousePressed,
 } from "./animation.ts";
+import type { GlobalState } from "./globalState.ts";
 
 p5.disableFriendlyErrors = true;
 let gState: GlobalState;
