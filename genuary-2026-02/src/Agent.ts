@@ -2,7 +2,7 @@ import { gsap } from "gsap";
 import p5 from "p5";
 import { getGlobalConfig } from "./config.ts";
 import { createStateMachine, type StateMachine, type Transition } from "./stateMachine.ts";
-import { collect, randomScreenPos } from "./utils.ts";
+import { collect, randomScreenPos, snapTo } from "./utils.ts";
 import { getGlobalState } from "./globalState.ts";
 
 export interface Agent {
@@ -83,7 +83,7 @@ function createOneAgent(): Agent {
   const agent: Agent = {
     pos: randomScreenPos(),
     dest: randomScreenPos(),
-    facing: random(TWO_PI),
+    facing: snapTo(random(TWO_PI), PI / 8),
     opacity: 0.3,
     squishOrStretch: 1,
     zDepth: floor(random(50, 150)),
@@ -177,6 +177,22 @@ export function startAnimateAgentSeek(agent: Agent) {
   timeline.to(agent, { squishOrStretch: 1, duration: 0.6 }, "-=0.6");
 
   timeline.to(agent, { opacity: 0.3, duration: 0.5 });
+
+  //align to the nearest 45deg increment (wrt how we end up)
+  timeline.to(agent, {
+    facing: agent.facing, // Placeholder
+    duration: 0.5,
+    //chatgpt did this function to allow me to refer to the value of agent.facing when the fn runs, not when this is scheduled
+    //and i don't understand what invalidate is for, or why we have to go via this.vars
+    onStart: function () {
+      const targetValue = snapTo(agent.facing, PI / 4);
+      // "Update the destination value in the tween's vars"
+      this.vars.facing = targetValue;
+      // "Clear cached start/end values to use the new target"
+      this.invalidate();
+    },
+  });
+
   timeline.to(agent, {
     zDepth: floor(random(50, 150)),
     onComplete: () => {

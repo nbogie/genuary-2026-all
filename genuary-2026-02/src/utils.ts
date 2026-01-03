@@ -10,3 +10,7 @@ export function collect<T>(numElements: number, fn: (ix: number) => T) {
   }
   return arr;
 }
+
+export function snapTo(val: number, increment: number) {
+  return increment * round(val / increment);
+}
