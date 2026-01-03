@@ -1,9 +1,10 @@
-import { gsap } from "gsap";
+//import {gsap} from "gsap" caused bundler to write gsap.gsap.timeline()
+import gsap from "gsap";
 import p5 from "p5";
 import { getGlobalConfig } from "./config.ts";
+import { getGlobalState } from "./globalState.ts";
 import { createStateMachine, type StateMachine, type Transition } from "./stateMachine.ts";
 import { collect, findCanvasEdgeIntersection, randomScreenPos, snapTo } from "./utils.ts";
-import { getGlobalState } from "./globalState.ts";
 
 export interface Agent {
   pos: p5.Vector;
@@ -206,5 +207,8 @@ function extrapolateAgentDestVecToEdge(agent: Agent): p5.Vector {
   const { pos, dest } = agent;
   const vecToDest = p5.Vector.sub(dest, pos);
   const intersectionPos = findCanvasEdgeIntersection(pos, p5.Vector.normalize(vecToDest));
-  return intersectionPos;
+  const vecToNewDest = p5.Vector.sub(intersectionPos, pos);
+  const inset = random(0.05, 0.15) * min(width, height);
+  vecToNewDest.setMag(constrain(vecToNewDest.mag(), 50, vecToNewDest.mag() - inset));
+  return p5.Vector.add(pos, vecToNewDest);
 }
