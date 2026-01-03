@@ -75,7 +75,7 @@ export function updateAgent(agent: Agent): void {
 
       break;
     case "seek":
-      agent.pos.lerp(agent.dest, 0.1);
+      agent.pos.lerp(agent.dest, 0.01);
       turnAgentTowardsDest(agent);
       if (agent.pos.dist(agent.dest) < 20) {
         agent.machine.applyInput({ id: "noteArrival" });
