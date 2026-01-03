@@ -2,10 +2,10 @@ import "p5/global";
 //@ts-ignore
 import p5 from "p5";
 import {
-  setupAnimation,
-  drawAnimation,
-  updateAnimation,
   animationHandleMousePressed,
+  drawAnimation,
+  setupAnimation,
+  updateAnimation,
 } from "./animation.ts";
 import type { GlobalState } from "./globalState.ts";
 
@@ -26,6 +26,10 @@ window.draw = function draw() {
 };
 
 window.mousePressed = function mousePressed() {
+  animationHandleMousePressed(gState);
+};
+
+window.mouseDragged = function mouseDragged() {
   animationHandleMousePressed(gState);
 };
 
