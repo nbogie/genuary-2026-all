@@ -16,10 +16,11 @@ window.setup = function setup() {
   const minDim = Math.min(windowWidth, windowHeight, 800);
   createCanvas(minDim, minDim);
   gState = setupAnimation();
+  setBodyBackgroundAsDarkerThan("#1e1e1e");
 };
 
 window.draw = function draw() {
-  background(30);
+  background("#1e1e1e");
   drawAnimation(gState);
   updateAnimation(gState);
 };
@@ -27,3 +28,8 @@ window.draw = function draw() {
 window.mousePressed = function mousePressed() {
   animationHandleMousePressed(gState);
 };
+
+function setBodyBackgroundAsDarkerThan(baseColour: string) {
+  const lightnessFrac = 0.92;
+  document.body.style.backgroundColor = `oklch(from ${baseColour} calc(l * ${lightnessFrac}) c h)`;
+}

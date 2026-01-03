@@ -26,10 +26,6 @@ export function updateAnimation(state: GlobalState) {
 export function drawAnimation(state: GlobalState) {
   const sortedAgents = sortBy(state.agents, ["zDepth"]).reverse();
   sortedAgents.forEach(drawAgent);
-
-  fill("magenta");
-  textAlign(RIGHT, BOTTOM);
-  text(state.countOfAnimations, width - 50, height - 50);
 }
 
 export function animationHandleMousePressed(state: GlobalState) {
