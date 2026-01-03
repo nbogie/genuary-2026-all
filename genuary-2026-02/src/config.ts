@@ -12,7 +12,7 @@ export function createDefaultConfig(): Config {
     shouldDrawStateName: false,
     shouldDrawZDepth: false,
     shouldDrawDestinations: false,
-    numberOfAgents: 200,
+    numberOfAgents: 120,
   };
 }
 export function getGlobalConfig(): Config {

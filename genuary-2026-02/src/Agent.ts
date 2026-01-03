@@ -89,7 +89,7 @@ function createOneAgent(): Agent {
     zDepth: floor(random(50, 150)),
     machine,
     phase: random(TWO_PI),
-    size: random(30, 50),
+    size: random(60, 100),
   };
 
   return agent;
@@ -112,7 +112,7 @@ export function updateAgent(agent: Agent): void {
       if (random() < 0.02) {
         agent.dest = randomScreenPos();
       }
-      if (random() < 0.0001 && getGlobalState().countOfAnimations === 0) {
+      if (random() < 0.0002 && getGlobalState().countOfAnimations === 0) {
         const result = agent.machine.applyInput({ id: "unleash" });
         if (result.isLegal) {
           startAnimateAgentSeek(agent);
