@@ -112,7 +112,7 @@ export function updateAgent(agent: Agent): void {
       if (random() < 0.02) {
         agent.dest = randomScreenPos();
       }
-      if (random() < 0.0001) {
+      if (random() < 0.0001 && getGlobalState().countOfAnimations === 0) {
         const result = agent.machine.applyInput({ id: "unleash" });
         if (result.isLegal) {
           startAnimateAgentSeek(agent);
