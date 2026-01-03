@@ -1,17 +1,28 @@
 import "p5/global";
 //@ts-ignore
 import p5 from "p5";
-import { randomColour } from "./utils/palette.ts";
+import {
+  setupAnimation,
+  drawAnimation,
+  updateAnimation,
+  type GlobalState,
+  animationHandleMousePressed,
+} from "./animation.ts";
 
 p5.disableFriendlyErrors = true;
+let gState: GlobalState;
 
 window.setup = function setup() {
   createCanvas(windowWidth, windowHeight);
-  background(30);
-  noLoop();
+  gState = setupAnimation();
 };
 
 window.draw = function draw() {
-  fill(randomColour());
-  circle(200, 300, 200);
+  background(30);
+  drawAnimation(gState);
+  updateAnimation(gState);
+};
+
+window.mousePressed = function mousePressed() {
+  animationHandleMousePressed(gState);
 };
