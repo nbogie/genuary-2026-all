@@ -2,10 +2,14 @@
 
 ## day 1
 
+-   name: trees
 -   just taking the ts template out for a drive.
+-   published: https://openprocessing.org/sketch/2837979
 
 ## day 2
 
+-   name: squash-and-stretch-ugly
+-   published: https://openprocessing.org/sketch/2838424
 -   learning: lodash doesn't seem to tree-shake. es-toolkit better replacement with 6 million weekly downloads. (e.g. for minBy)
 -   issue: vite bundling: calls to gsap.to external dep getting bundled as gsap.gsap
 -   reflection: not enough time. this prompt wants a lot of time - 12 principles!

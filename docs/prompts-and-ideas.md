@@ -15,6 +15,8 @@ See https://genuary.art/prompts
     -   recursive tree with single rectangle, uniformly scaled
 -   JAN. 2: Twelve principles of animation.
 -   JAN. 3: Fibonacci forever. Create a work that uses the Fibonacci sequence in some way.
+    -   IDEAS:
+        musical sequence with pitches from fib sequence, wrapped onto a diatonic scale. Just to practice with strudel or similar.
 -   JAN. 4: Lowres. An image or graphic with low resolution, where details are simplified or pixelated.
 -   JAN. 5: Write “Genuary”. Avoid using a font.
     -   IDEAS:
