@@ -1,5 +1,6 @@
 export interface Config {
   shouldDrawStateName: boolean;
+  shouldDrawZDepth: boolean;
   shouldDrawDestinations: boolean;
   numberOfAgents: number;
 }
@@ -9,6 +10,7 @@ let globalConfig: Config | undefined = undefined;
 export function createDefaultConfig(): Config {
   return {
     shouldDrawStateName: false,
+    shouldDrawZDepth: false,
     shouldDrawDestinations: false,
     numberOfAgents: 200,
   };

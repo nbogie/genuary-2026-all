@@ -13,7 +13,8 @@ p5.disableFriendlyErrors = true;
 let gState: GlobalState;
 
 window.setup = function setup() {
-  createCanvas(windowWidth, windowHeight);
+  const minDim = Math.min(windowWidth, windowHeight, 800);
+  createCanvas(minDim, minDim);
   gState = setupAnimation();
 };
 

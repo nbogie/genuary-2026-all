@@ -13,3 +13,15 @@ nav {
   margin: 0.3rem;
   text-align: center;
 }
+
+body {
+  display: flex;
+  justify-content: center; /* Horizontal center */
+  align-items: center; /* Vertical center */
+  min-height: 100vh; /* Ensure body fills the screen */
+  background-color: #555; /* Optional: makes canvas stand out */
+}
+
+canvas {
+  display: block; /* Removes extra whitespace at the bottom */
+}

@@ -1,4 +1,4 @@
-import { minBy } from "es-toolkit/array";
+import { minBy, sortBy } from "es-toolkit/array";
 import {
   createAgents,
   drawAgent,
@@ -27,7 +27,8 @@ export function updateAnimation(state: GlobalState) {
 }
 
 export function drawAnimation(state: GlobalState) {
-  state.agents.forEach(drawAgent);
+  const sortedAgents = sortBy(state.agents, ["zDepth"]).reverse();
+  sortedAgents.forEach(drawAgent);
 }
 
 export function animationHandleMousePressed(state: GlobalState) {
@@ -45,7 +46,11 @@ export function animationHandleMousePressed(state: GlobalState) {
   } else {
     //look for nearest in state acquiringTarget - we'll unleash it
     const nearestAgent = findNearestAgent(
-      state.agents.filter((a) => a.machine.currentState.name === "acquiringTarget"),
+      state.agents.filter(
+        (a) =>
+          a.machine.currentState.name === "acquiringTarget" ||
+          a.machine.currentState.name === "idle"
+      ),
       mousePos()
     );
 

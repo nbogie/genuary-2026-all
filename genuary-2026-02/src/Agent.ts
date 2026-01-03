@@ -11,6 +11,8 @@ export interface Agent {
   squishOrStretch: number;
   facing: number;
   opacity: number;
+  /** lower numbers are nearer the screen */
+  zDepth: number;
   phase: number;
   machine: StateMachine<AgentState, AgentInput>;
   size: number;
@@ -32,9 +34,10 @@ export function drawAgent(agent: Agent) {
   translate(agent.pos);
   rotate(agent.facing);
   rectMode(CENTER);
-  const colour = color("linen");
-  colour.setAlpha(agent.opacity * 255);
-  fill(colour);
+  // const colour = color("linen");
+  // colour.setAlpha(agent.opacity * 255);
+
+  fill(agent.opacity * 255);
 
   const standardAspectRatio = 3;
   const targetArea = agent.size * (agent.size / standardAspectRatio);
@@ -46,11 +49,15 @@ export function drawAgent(agent: Agent) {
 
   rect(0, 0, w, h);
 
-  if (config.shouldDrawStateName) {
+  if (config.shouldDrawStateName || config.shouldDrawZDepth) {
     textAlign(CENTER, CENTER);
-    fill(30);
+    fill(255);
     textSize((16 * agent.size) / 80);
-    text(agent.machine.currentState.name, 0, 0);
+    const msg = [
+      config.shouldDrawStateName ? agent.machine.currentState.name : "",
+      config.shouldDrawZDepth ? agent.zDepth : "",
+    ].join(" ");
+    text(msg, 0, 0);
   }
   pop();
 }
@@ -60,24 +67,25 @@ export function createAgents(numAgents: number) {
 }
 function createOneAgent(): Agent {
   //TODO: these should be readonly
-  const startingState: AgentState = { name: "idle" } as const;
+  const idleState: AgentState = { name: "idle" } as const;
   const seekState: AgentState = { name: "seek" } as const;
   const acquiringTargetState: AgentState = { name: "acquiringTarget" } as const;
 
   const transitions: Transition<AgentState, AgentInput>[] = [
-    { from: startingState, input: { id: "unleash" }, to: seekState },
-    { from: startingState, input: { id: "startReassign" }, to: acquiringTargetState },
-    { from: seekState, input: { id: "noteArrival" }, to: startingState },
+    { from: idleState, input: { id: "unleash" }, to: seekState },
+    { from: idleState, input: { id: "startReassign" }, to: acquiringTargetState },
+    { from: seekState, input: { id: "noteArrival" }, to: idleState },
     { from: acquiringTargetState, input: { id: "unleash" }, to: seekState },
   ];
-  const machine = createStateMachine(startingState, transitions);
+  const machine = createStateMachine(idleState, transitions);
 
   const agent: Agent = {
     pos: randomScreenPos(),
     dest: randomScreenPos(),
     facing: random(TWO_PI),
-    opacity: 0.5,
+    opacity: 0.3,
     squishOrStretch: 1,
+    zDepth: floor(random(50, 150)),
     machine,
     phase: random(TWO_PI),
     size: random(30, 50),
@@ -131,6 +139,8 @@ export type AgentInput =
 
 export function startAnimateAgentSeek(agent: Agent) {
   const vecToDest = p5.Vector.sub(agent.dest, agent.pos);
+  //top of pile
+  agent.zDepth = 0;
   const timeline = gsap.timeline();
   //fade up opacity to be seen (staging)
   timeline.to(agent, { opacity: 1, duration: 0.5 });
@@ -161,5 +171,8 @@ export function startAnimateAgentSeek(agent: Agent) {
   //stretch during first part of fly-forward
   timeline.to(agent, { squishOrStretch: 1.3, duration: 0.125 }, "<");
 
-  timeline.to(agent, { opacity: 0.5, duration: 0.5 });
+  timeline.to(agent, { squishOrStretch: 1, duration: 0.6 }, "-=0.6");
+
+  timeline.to(agent, { opacity: 0.3, duration: 0.5 });
+  timeline.to(agent, { zDepth: floor(random(50, 150)) });
 }
