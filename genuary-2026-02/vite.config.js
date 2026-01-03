@@ -15,7 +15,7 @@ export default defineConfig((_opts) => {
       modulePreload: { polyfill: false },
       //https://rollupjs.org/configuration-options/
       rollupOptions: {
-        external: ["p5", "p5/global"],
+        external: ["p5", "p5/global", "gsap"],
         preserveEntrySignatures: "strict",
         output: {
           format: "umd",

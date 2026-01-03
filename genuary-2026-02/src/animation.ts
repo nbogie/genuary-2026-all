@@ -1,3 +1,4 @@
+import { minBy } from "lodash-es";
 import {
   createAgents,
   drawAgent,
@@ -30,15 +31,37 @@ export function drawAnimation(state: GlobalState) {
 }
 
 export function animationHandleMousePressed(state: GlobalState) {
-  const firstAgentInRange = state.agents.find(
-    (agent: Agent) => agent.pos.dist(createVector(mouseX, mouseY)) < 70
-  );
-  if (firstAgentInRange) {
-    const input: AgentInput = !keyIsDown(SHIFT) ? { id: "unleash" } : { id: "startReassign" };
-    firstAgentInRange.machine.applyInput(input);
-    //TODO: should be done through an enter-state fn
-    if (input.id === "unleash") {
-      startAnimateAgentSeek(firstAgentInRange);
+  const input: AgentInput = !keyIsDown(SHIFT) ? { id: "unleash" } : { id: "startReassign" };
+
+  if (input.id === "startReassign") {
+    //look for nearest in state idle
+    const nearestAgent = findNearestAgent(
+      state.agents.filter((a) => a.machine.currentState.name === "idle"),
+      mousePos()
+    );
+    if (nearestAgent) {
+      nearestAgent.machine.applyInput(input);
+    }
+  } else {
+    //look for nearest in state acquiringTarget - we'll unleash it
+    const nearestAgent = findNearestAgent(
+      state.agents.filter((a) => a.machine.currentState.name === "acquiringTarget"),
+      mousePos()
+    );
+
+    if (nearestAgent) {
+      nearestAgent.machine.applyInput(input);
+      //TODO: should be done through an enter-state fn
+      if (input.id === "unleash") {
+        startAnimateAgentSeek(nearestAgent);
+      }
     }
   }
+}
+
+function findNearestAgent(agentsToSearch: Agent[], targetPos: p5.Vector) {
+  return minBy(agentsToSearch, (a) => a.pos.dist(targetPos));
+}
+function mousePos(): p5.Vector {
+  return createVector(mouseX, mouseY);
 }

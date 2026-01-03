@@ -37,12 +37,13 @@ export default defineConfig((_opts) => {
         // },
 
         //externalize deps that shouldn't be bundled - e.g. p5
-        external: ["p5", "p5/global"],
+        external: ["p5", "p5/global", "gsap"],
         preserveEntrySignatures: "strict",
         output: {
           format: "umd",
           globals: {
             p5: "p5",
+            gsap: "gsap",
           },
 
           //if you don't want a consolidated single file output, enable preserveModules
