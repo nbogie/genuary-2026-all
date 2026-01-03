@@ -2,7 +2,7 @@ import { gsap } from "gsap";
 import p5 from "p5";
 import { getGlobalConfig } from "./config.ts";
 import { createStateMachine, type StateMachine, type Transition } from "./stateMachine.ts";
-import { collect, randomScreenPos, snapTo } from "./utils.ts";
+import { collect, findCanvasEdgeIntersection, randomScreenPos, snapTo } from "./utils.ts";
 import { getGlobalState } from "./globalState.ts";
 
 export interface Agent {
@@ -139,6 +139,8 @@ export type AgentInput =
     };
 
 export function startAnimateAgentSeek(agent: Agent) {
+  const newDest = extrapolateAgentDestVecToEdge(agent);
+  agent.dest = newDest;
   const vecToDest = p5.Vector.sub(agent.dest, agent.pos);
   const gState = getGlobalState();
   gState.countOfAnimations++;
@@ -199,4 +201,10 @@ export function startAnimateAgentSeek(agent: Agent) {
       gState.countOfAnimations--;
     },
   });
+}
+function extrapolateAgentDestVecToEdge(agent: Agent): p5.Vector {
+  const { pos, dest } = agent;
+  const vecToDest = p5.Vector.sub(dest, pos);
+  const intersectionPos = findCanvasEdgeIntersection(pos, p5.Vector.normalize(vecToDest));
+  return intersectionPos;
 }
