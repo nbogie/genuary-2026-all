@@ -1,4 +1,4 @@
-import { minBy } from "lodash-es";
+import { minBy } from "es-toolkit/array";
 import {
   createAgents,
   drawAgent,
