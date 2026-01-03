@@ -24,4 +24,5 @@ body {
 
 canvas {
   display: block; /* Removes extra whitespace at the bottom */
+  outline: 10px dashed rgba(97, 97, 97, 0.338);
 }
