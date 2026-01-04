@@ -1,4 +1,5 @@
 import p5 from "p5";
+import { getPalette, type Palette } from "./utils/palette.ts";
 export interface Player {
   pos: p5.Vector;
   vel: p5.Vector;
@@ -38,15 +39,27 @@ export function updatePlayer(p: Player) {
 }
 
 export function drawPlayer(player: Player) {
+  const palette: Palette = getPalette();
+  const vec2D = xzVectorFrom3D(player.vel);
   push();
   noStroke();
   translate(player.pos);
+  rotateY(-vec2D.heading());
+  push();
   rotateZ(PI / 2);
-  const vec2D = xzVectorFrom3D(player.vel);
-  rotateX(-vec2D.heading());
 
-  fill("orange");
+  fill(palette.boat.wood);
   box(5, 20, 3, 1);
+  // rotateY(PI / 2);
+  pop();
+  translate(0, -10, 0);
+
+  rotateY(PI / 2);
+
+  fill(palette.boat.sail);
+  plane(10, 10);
+  translate(0, 2, 5);
+  plane(7, 7);
   pop();
 }
 function xzVectorFrom3D(vel: p5.Vector) {

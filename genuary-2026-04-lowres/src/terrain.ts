@@ -1,6 +1,7 @@
 import type p5 from "p5";
 import { repeat } from "./utils/functional.ts";
 import type { Player } from "./player.ts";
+import { getPalette } from "./utils/palette.ts";
 
 export function drawTerrainAround(player: Player, terrainConfig: TerrainConfig) {
   repeat(1000, (ix) => drawRandomTerrainBlock(player.pos, ix, terrainConfig));
@@ -57,11 +58,15 @@ export function randomWorldPos() {
 }
 
 function colourForPos(pos: p5.Vector, terrainConfig: TerrainConfig) {
+  const palette = getPalette();
   if (pos.y >= terrainConfig.seaLevel) {
-    return { fillColour: "navy", shouldStroke: false };
+    return { fillColour: palette.terrain.water.medium, shouldStroke: false };
   }
 
-  return { fillColour: pos.y < 10 ? "white" : "green", shouldStroke: true };
+  return {
+    fillColour: pos.y < 10 ? palette.terrain.snow : palette.terrain.grass,
+    shouldStroke: true,
+  };
 }
 
 function snapTo(val: number, inc: number) {
