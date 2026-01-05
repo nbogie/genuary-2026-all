@@ -7,7 +7,7 @@ export interface Player {
 }
 
 export function createPlayer(): Player {
-  const { x, y } = p5.Vector.random2D().mult(0.9);
+  const { x, y } = p5.Vector.fromAngle(0, 0.9);
   const vel = createVector(x, 0, y);
   return { pos: createVector(0, 0, 0), vel };
 }
