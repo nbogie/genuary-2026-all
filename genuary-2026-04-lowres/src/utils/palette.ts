@@ -7,37 +7,39 @@ export type Palette = {
   boat: BoatPalette;
 };
 export type BoatPalette = {
-  wood: "brown";
-  sail: "linen";
+  wood: string;
+  sails: string;
 };
 export type TerrainPalette = {
-  grass: string;
   snow: string;
+  rocks: string;
+  grass: string;
+  beach: string;
   water: {
     deepest: string;
     shallowest: string;
     medium: string;
     tropicalShallows: string;
   };
-  beach: string;
 };
 
 export function getPalette(): Palette {
   const palette: Palette = {
     terrain: {
-      grass: "green",
       snow: "white",
+      rocks: "gray",
+      grass: "#1dc457",
+      beach: "#debf77",
       water: {
-        deepest: "navy",
-        shallowest: "skyblue",
-        medium: "dodgerblue",
+        deepest: "#213e74",
+        medium: "#1d65c4",
+        shallowest: "#439df1",
         tropicalShallows: "turquoise",
       },
-      beach: "yello",
     },
     boat: {
-      wood: "brown",
-      sail: "linen",
+      wood: "#98684a",
+      sails: "#cec4b4",
     },
   };
   return palette;

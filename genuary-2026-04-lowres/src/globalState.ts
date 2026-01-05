@@ -1,17 +1,30 @@
 import { createPlayer, type Player } from "./player.ts";
-import type { TerrainConfig } from "./terrain.ts";
+import { createTerrainConfig, type TerrainConfig } from "./terrain.ts";
 
 export interface GlobalState {
   player: Player;
   terrainConfig: TerrainConfig;
+  config: Config;
 }
 
 export function createGlobalState(): GlobalState {
   return {
     player: createPlayer(),
-    terrainConfig: {
-      seaLevel: 50,
-      noiseScale: 0.01,
+    terrainConfig: createTerrainConfig(),
+    config: {
+      lighting: {
+        blueTopLightEnabled: true,
+        pinkAmbientLightEnabled: false,
+        whiteDirectionalLightEnabled: false,
+      },
     },
   };
 }
+
+export type Config = {
+  lighting: {
+    blueTopLightEnabled: boolean;
+    pinkAmbientLightEnabled: boolean;
+    whiteDirectionalLightEnabled: boolean;
+  };
+};

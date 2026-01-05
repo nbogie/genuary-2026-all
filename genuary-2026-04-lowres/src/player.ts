@@ -56,7 +56,7 @@ export function drawPlayer(player: Player) {
 
   rotateY(PI / 2);
 
-  fill(palette.boat.sail);
+  fill(palette.boat.sails);
   plane(10, 10);
   translate(0, 2, 5);
   plane(7, 7);

@@ -10,14 +10,21 @@ export function drawTerrainAround(player: Player, terrainConfig: TerrainConfig) 
     for (let z = -5000; z <= 5000; z += 1000) {
       push();
       translate(x, 0, z);
-      sphere(20, 2, 2);
+      box(10, 10, 10);
       pop();
     }
   }
 }
+
 export type TerrainConfig = {
   noiseScale: number;
-  seaLevel: number;
+  deepSeaTopLevel: number;
+  mediumSeaTopLevel: number;
+  shallowSeaTopLevel: number;
+  beachTopLevel: number;
+  grassTopLevel: number;
+  rockTopLevel: number;
+  snowTopLevel: number;
 };
 function drawRandomTerrainBlock(
   basePos: p5.Vector,
@@ -31,19 +38,19 @@ function drawRandomTerrainBlock(
 
   const x = snapTo(basePos.x, 10) + snapTo(10 * (gridX - worldWindowWidth / 2), 10);
   const z = snapTo(basePos.z, 10) + snapTo(10 * (gridZ - worldWindowWidth / 2), 10);
-  let y = snapTo(getTerrainHeightAt(x, z, terrainConfig), 10);
 
-  const seaLevel = terrainConfig.seaLevel;
-  if (y > seaLevel) {
-    y = seaLevel;
-  }
+  const seaLevel = terrainConfig.shallowSeaTopLevel;
+  const groundY = snapTo(getTerrainHeightAt(x, z, terrainConfig), 10);
+  const groundOrSeaCapY = groundY > seaLevel ? seaLevel : groundY;
 
-  const pos = createVector(x, y, z);
-  const { fillColour, shouldStroke } = colourForPos(pos, terrainConfig);
+  const posGroundMaybeSubmarine = createVector(x, groundY, z);
+  const posGroundMaybeSeaLevelCapped = createVector(x, groundOrSeaCapY, z);
+  const { fillColour, shouldStroke } = colourForPos(posGroundMaybeSubmarine, terrainConfig);
   fill(fillColour);
-  shouldStroke ? stroke(30) : noStroke();
+  // shouldStroke ? stroke(30) : noStroke();
+  noStroke();
   push();
-  translate(pos);
+  translate(posGroundMaybeSeaLevelCapped);
   box(10, 10, 10);
   pop();
   pop();
@@ -58,16 +65,33 @@ export function randomWorldPos() {
   );
 }
 
-function colourForPos(pos: p5.Vector, terrainConfig: TerrainConfig) {
-  const palette = getPalette();
-  if (pos.y >= terrainConfig.seaLevel) {
-    return { fillColour: palette.terrain.water.medium, shouldStroke: false };
+function colourForPos(
+  pos: p5.Vector,
+  terrainConfig: TerrainConfig
+): { fillColour: string; shouldStroke: boolean } {
+  const pal = getPalette().terrain;
+  if (pos.y >= terrainConfig.deepSeaTopLevel) {
+    return { fillColour: pal.water.deepest, shouldStroke: false };
   }
-
-  return {
-    fillColour: pos.y < 10 ? palette.terrain.snow : palette.terrain.grass,
-    shouldStroke: true,
-  };
+  if (pos.y >= terrainConfig.mediumSeaTopLevel) {
+    return { fillColour: pal.water.medium, shouldStroke: false };
+  }
+  if (pos.y >= terrainConfig.shallowSeaTopLevel) {
+    return { fillColour: pal.water.shallowest, shouldStroke: false };
+  }
+  if (pos.y >= terrainConfig.beachTopLevel) {
+    return { fillColour: pal.beach, shouldStroke: true };
+  }
+  if (pos.y >= terrainConfig.grassTopLevel) {
+    return { fillColour: pal.grass, shouldStroke: true };
+  }
+  if (pos.y >= terrainConfig.rockTopLevel) {
+    return { fillColour: pal.rocks, shouldStroke: true };
+  }
+  if (pos.y >= terrainConfig.snowTopLevel) {
+    return { fillColour: pal.snow, shouldStroke: true };
+  }
+  return { fillColour: "red", shouldStroke: true };
 }
 
 function snapTo(val: number, inc: number) {
@@ -82,4 +106,17 @@ function getTerrainHeightAt(x: number, z: number, terrainConfig: TerrainConfig):
     100,
     true
   );
+}
+
+export function createTerrainConfig(): TerrainConfig {
+  return {
+    noiseScale: 0.01,
+    deepSeaTopLevel: 70,
+    mediumSeaTopLevel: 60,
+    shallowSeaTopLevel: 50,
+    beachTopLevel: 40,
+    grassTopLevel: 10,
+    rockTopLevel: 0,
+    snowTopLevel: -20,
+  };
 }

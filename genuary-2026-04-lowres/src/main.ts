@@ -16,7 +16,10 @@ window.setup = function setup() {
 
 window.draw = function draw() {
   push();
-  lights();
+  // lights();
+
+  addLights();
+
   orbitControl();
   background(30);
   // debugMode();
@@ -30,3 +33,42 @@ window.draw = function draw() {
   pop();
   pop();
 };
+
+window.keyPressed = function keyPressed() {
+  if (key === "b") {
+    toggleConfigBoolean(gState.config.lighting, "blueTopLightEnabled");
+  }
+  if (key === "w") {
+    toggleConfigBoolean(gState.config.lighting, "pinkAmbientLightEnabled");
+  }
+  if (key === "d") {
+    //daytime
+    gState.config.lighting.blueTopLightEnabled = true;
+    gState.config.lighting.pinkAmbientLightEnabled = true;
+    gState.config.lighting.whiteDirectionalLightEnabled = true;
+  }
+  if (key === "n") {
+    gState.config.lighting.blueTopLightEnabled = true;
+    gState.config.lighting.pinkAmbientLightEnabled = false;
+    gState.config.lighting.whiteDirectionalLightEnabled = false;
+  }
+};
+
+function toggleConfigBoolean(config: Record<string, boolean>, key: string) {
+  if (key in config) {
+    config[key] = !config[key];
+  }
+}
+
+function addLights() {
+  if (gState.config.lighting.blueTopLightEnabled) {
+    directionalLight(color("skyblue"), createVector(0, 1, 0.3).normalize());
+    directionalLight(color("skyblue"), createVector(-1, 0.2, -0.3).normalize());
+  }
+  if (gState.config.lighting.pinkAmbientLightEnabled) {
+    ambientLight(100, 20, 20);
+  }
+  if (gState.config.lighting.whiteDirectionalLightEnabled) {
+    directionalLight(color("white"), createVector(1, 0.4, 0.3).normalize());
+  }
+}
