@@ -22,4 +22,6 @@ I never find fib series inspiring. Attempted something with strudel but got stuc
 
 # day 4 - lowres
 
-Started really late. I like the idea of the game, sailing from water patch to water patch. needs more mood - like rising moon, blood moon, eerie ghosts, sunset, storm, and maybe biomes to encourage exploration (desert, open ocean, snow + ice zone). Wasn't sure how to further lowres the environment - voxelising the player ship, perhaps?
+-   summary: Started really late. I like the idea of the game, sailing from water patch to water patch.
+-   todo: needs more mood - like rising moon, blood moon, eerie ghosts, sunset, storm, and maybe biomes to encourage exploration (desert, open ocean, snow + ice zone).
+-   issue: I wasn't sure how to further lowres the environment: voxelising the player ship, perhaps?
