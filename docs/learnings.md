@@ -15,3 +15,11 @@
 -   reflection: not enough time. this prompt wants a lot of time - 12 principles!
 -   reflection: next time find a small ts-friendly state-machine rather than code it
 -   reflection - it's obvious that there was no driving intentionality towards the look and feel of the final sketch (only that I wanted an agent to anticipate its movement, and squash and stretch). Their very random target destination picking gives lacklustre results, for example.
+
+# day 3 - fib
+
+I never find fib series inspiring. Attempted something with strudel but got stuck generating pitch from sequence via external callback (callback was called too often). There's not time for tech-spikes that might block you for days, if you want to successfully do each day time effectively.
+
+# day 4 - lowres
+
+Started really late. I like the idea of the game, sailing from water patch to water patch. needs more mood - like rising moon, blood moon, eerie ghosts, sunset, storm, and maybe biomes to encourage exploration (desert, open ocean, snow + ice zone). Wasn't sure how to further lowres the environment - voxelising the player ship, perhaps?
