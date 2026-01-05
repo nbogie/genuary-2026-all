@@ -29,9 +29,10 @@ function drawRandomTerrainBlock(
   const gridX = ix % worldWindowWidth;
   const gridZ = ix / worldWindowWidth;
 
-  const x = snapTo(basePos.x, 10) + 10 * (gridX - worldWindowWidth / 2);
-  const z = snapTo(basePos.z, 10) + 10 * (gridZ - worldWindowWidth / 2);
-  let y = getTerrainHeightAt(x, z, terrainConfig);
+  const x = snapTo(basePos.x, 10) + snapTo(10 * (gridX - worldWindowWidth / 2), 10);
+  const z = snapTo(basePos.z, 10) + snapTo(10 * (gridZ - worldWindowWidth / 2), 10);
+  let y = snapTo(getTerrainHeightAt(x, z, terrainConfig), 10);
+
   const seaLevel = terrainConfig.seaLevel;
   if (y > seaLevel) {
     y = seaLevel;
