@@ -14,19 +14,17 @@ window.setup = function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
   gState = createGlobalState();
   setupCamera();
-  setInterval(toggleNightDayLightingConfig, 5000);
+  if (random() < 0.5) {
+    toggleNightDayLightingConfig();
+  }
+  setInterval(toggleNightDayLightingConfig, 10_000);
 };
 
 window.draw = function draw() {
   push();
-  // lights();
-
   addLights(gState.config);
-
   orbitControl();
-  background(30);
-  // debugMode();
-
+  background(20);
   push();
 
   translate(p5.Vector.mult(gState.player.pos, -1));
@@ -75,6 +73,10 @@ function toggleConfigBoolean(config: Record<string, boolean>, key: string) {
 function setupCamera() {
   const near = 0.1;
   const far = 3000;
+  const camRadiusHoriz = 120;
+  const camAngle = PI * 0.75;
+  const camPos2D = p5.Vector.fromAngle(camAngle, camRadiusHoriz);
+  camera(camPos2D.x, -camRadiusHoriz / 2, camPos2D.y);
   perspective(2 * atan(height / 2 / 800), width / height, near, far);
 }
 
