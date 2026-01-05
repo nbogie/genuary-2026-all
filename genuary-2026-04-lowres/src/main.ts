@@ -9,7 +9,7 @@ import {
   toggleNightDayLightingConfig,
 } from "./lights.ts";
 import { drawPlayer, updatePlayer } from "./player.ts";
-import { drawTerrainAround } from "./terrain.ts";
+import { createBiomeConfig, drawTerrainAround } from "./terrain.ts";
 import { setCameraPerspective, setupCamera } from "./camera.ts";
 
 p5.disableFriendlyErrors = true;
@@ -64,6 +64,15 @@ window.keyPressed = function keyPressed() {
   }
   if (key === "m") {
     toggleConfigBoolean(gState.terrainConfig, "shouldDrawMilePosts");
+  }
+  if (key === "1") {
+    gState.terrainConfig.biomeConfig = createBiomeConfig("simplest");
+  }
+  if (key === "2") {
+    gState.terrainConfig.biomeConfig = createBiomeConfig("plains");
+  }
+  if (key === "3") {
+    gState.terrainConfig.biomeConfig = createBiomeConfig("weird");
   }
 };
 
