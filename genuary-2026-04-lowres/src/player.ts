@@ -7,9 +7,9 @@ export interface Player {
 }
 
 export function createPlayer(): Player {
-  const { x, y } = p5.Vector.fromAngle(0, 0.9);
+  const { x, y } = p5.Vector.fromAngle(-PI / 2 - PI / 8, 0.9);
   const vel = createVector(x, 0, y);
-  return { pos: createVector(0, 0, 0), vel };
+  return { pos: createVector(0, -20, 0), vel };
 }
 
 export function updatePlayer(p: Player) {

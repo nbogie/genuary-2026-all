@@ -17,3 +17,25 @@ export function addLights(config: Config) {
     ambientLight("#050513");
   }
 }
+
+export function setNighttimeLightingConfig(config: Config) {
+  config.lighting.blueTopLightEnabled = true;
+  config.lighting.eerieAmbientLightEnabled = true;
+  config.lighting.pinkAmbientLightEnabled = false;
+  config.lighting.whiteDirectionalLightEnabled = false;
+}
+
+export function setDaytimeLightingConfig(config: Config) {
+  config.lighting.blueTopLightEnabled = true;
+  config.lighting.eerieAmbientLightEnabled = false;
+  config.lighting.pinkAmbientLightEnabled = true;
+  config.lighting.whiteDirectionalLightEnabled = true;
+}
+
+export function toggleNightDayLightingConfig(config: Config) {
+  if (config.lighting.pinkAmbientLightEnabled) {
+    setNighttimeLightingConfig(config);
+  } else {
+    setDaytimeLightingConfig(config);
+  }
+}

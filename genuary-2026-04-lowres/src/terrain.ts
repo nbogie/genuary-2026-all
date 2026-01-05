@@ -6,14 +6,7 @@ import { getPalette } from "./utils/palette.ts";
 export function drawTerrainAround(player: Player, terrainConfig: TerrainConfig) {
   repeat(1000, (ix) => drawRandomTerrainBlock(player.pos, ix, terrainConfig));
 
-  for (let x = -5000; x <= 5000; x += 1000) {
-    for (let z = -5000; z <= 5000; z += 1000) {
-      push();
-      translate(x, 0, z);
-      box(10, 10, 10);
-      pop();
-    }
-  }
+  drawMilePosts();
 }
 
 export type TerrainConfig = {
@@ -26,6 +19,19 @@ export type TerrainConfig = {
   rockTopLevel: number;
   snowTopLevel: number;
 };
+function drawMilePosts() {
+  for (let x = -5000; x <= 5000; x += 1000) {
+    for (let z = -5000; z <= 5000; z += 1000) {
+      push();
+      noStroke();
+
+      translate(x, 0, z);
+      box(10, 10, 10);
+      pop();
+    }
+  }
+}
+
 function drawRandomTerrainBlock(
   basePos: p5.Vector,
   ix: number,
