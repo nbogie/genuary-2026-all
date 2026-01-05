@@ -1,5 +1,5 @@
 import type p5 from "p5";
-import { repeat } from "./utils/functional.ts";
+import { repeat, snapTo } from "./utils/functional.ts";
 import type { Player } from "./player.ts";
 import { getPalette } from "./utils/palette.ts";
 
@@ -47,7 +47,7 @@ function drawRandomTerrainBlock(
   const posGroundMaybeSeaLevelCapped = createVector(x, groundOrSeaCapY, z);
   const { fillColour, shouldStroke } = colourForPos(posGroundMaybeSubmarine, terrainConfig);
   fill(fillColour);
-  // shouldStroke ? stroke(30) : noStroke();
+  shouldStroke ? stroke(30) : noStroke();
   noStroke();
   push();
   translate(posGroundMaybeSeaLevelCapped);
@@ -94,9 +94,6 @@ function colourForPos(
   return { fillColour: "red", shouldStroke: true };
 }
 
-function snapTo(val: number, inc: number) {
-  return inc * round(val / inc);
-}
 function getTerrainHeightAt(x: number, z: number, terrainConfig: TerrainConfig): number {
   return map(
     noise(100000 + x * terrainConfig.noiseScale, 100000 + z * terrainConfig.noiseScale),

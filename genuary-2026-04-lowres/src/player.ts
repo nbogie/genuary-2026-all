@@ -1,5 +1,6 @@
 import p5 from "p5";
 import { getPalette, type Palette } from "./utils/palette.ts";
+import { snapTo } from "./utils/functional.ts";
 export interface Player {
   pos: p5.Vector;
   vel: p5.Vector;
@@ -43,14 +44,14 @@ export function drawPlayer(player: Player) {
   const vec2D = xzVectorFrom3D(player.vel);
   push();
   noStroke();
-  translate(player.pos);
-  rotateY(-vec2D.heading());
+  translate(player.pos.x, snapTo(player.pos.y, 10), player.pos.z);
+
+  rotateY(snapTo(-vec2D.heading(), PI / 8));
   push();
   rotateZ(PI / 2);
 
   fill(palette.boat.wood);
   box(5, 20, 3, 1);
-  // rotateY(PI / 2);
   pop();
   translate(0, -10, 0);
 

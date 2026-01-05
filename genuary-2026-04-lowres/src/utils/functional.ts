@@ -3,3 +3,6 @@ export function repeat(n: number, fn: (ix: number) => void) {
     fn(i);
   }
 }
+export function snapTo(val: number, inc: number) {
+  return inc * round(val / inc);
+}

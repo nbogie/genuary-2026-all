@@ -1,3 +1,4 @@
+import { createConfig, type Config } from "./config.ts";
 import { createPlayer, type Player } from "./player.ts";
 import { createTerrainConfig, type TerrainConfig } from "./terrain.ts";
 
@@ -11,20 +12,6 @@ export function createGlobalState(): GlobalState {
   return {
     player: createPlayer(),
     terrainConfig: createTerrainConfig(),
-    config: {
-      lighting: {
-        blueTopLightEnabled: true,
-        pinkAmbientLightEnabled: false,
-        whiteDirectionalLightEnabled: false,
-      },
-    },
+    config: createConfig(),
   };
 }
-
-export type Config = {
-  lighting: {
-    blueTopLightEnabled: boolean;
-    pinkAmbientLightEnabled: boolean;
-    whiteDirectionalLightEnabled: boolean;
-  };
-};

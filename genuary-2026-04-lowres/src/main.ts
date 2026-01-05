@@ -2,6 +2,7 @@ import "p5/global";
 //@ts-ignore
 import p5 from "p5";
 import { createGlobalState, type GlobalState } from "./globalState.ts";
+import { addLights } from "./lights.ts";
 import { drawPlayer, updatePlayer } from "./player.ts";
 import { drawTerrainAround } from "./terrain.ts";
 
@@ -12,13 +13,15 @@ let gState: GlobalState;
 window.setup = function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
   gState = createGlobalState();
+  setupCamera();
+  setInterval(toggleNightDayLightingConfig, 5000);
 };
 
 window.draw = function draw() {
   push();
   // lights();
 
-  addLights();
+  addLights(gState.config);
 
   orbitControl();
   background(30);
@@ -42,17 +45,26 @@ window.keyPressed = function keyPressed() {
     toggleConfigBoolean(gState.config.lighting, "pinkAmbientLightEnabled");
   }
   if (key === "d") {
-    //daytime
-    gState.config.lighting.blueTopLightEnabled = true;
-    gState.config.lighting.pinkAmbientLightEnabled = true;
-    gState.config.lighting.whiteDirectionalLightEnabled = true;
+    setDaytimeLightingConfig();
   }
   if (key === "n") {
-    gState.config.lighting.blueTopLightEnabled = true;
-    gState.config.lighting.pinkAmbientLightEnabled = false;
-    gState.config.lighting.whiteDirectionalLightEnabled = false;
+    setNighttimeLightingConfig();
   }
 };
+
+function setNighttimeLightingConfig() {
+  gState.config.lighting.blueTopLightEnabled = true;
+  gState.config.lighting.eerieAmbientLightEnabled = true;
+  gState.config.lighting.pinkAmbientLightEnabled = false;
+  gState.config.lighting.whiteDirectionalLightEnabled = false;
+}
+
+function setDaytimeLightingConfig() {
+  gState.config.lighting.blueTopLightEnabled = true;
+  gState.config.lighting.eerieAmbientLightEnabled = false;
+  gState.config.lighting.pinkAmbientLightEnabled = true;
+  gState.config.lighting.whiteDirectionalLightEnabled = true;
+}
 
 function toggleConfigBoolean(config: Record<string, boolean>, key: string) {
   if (key in config) {
@@ -60,15 +72,16 @@ function toggleConfigBoolean(config: Record<string, boolean>, key: string) {
   }
 }
 
-function addLights() {
-  if (gState.config.lighting.blueTopLightEnabled) {
-    directionalLight(color("skyblue"), createVector(0, 1, 0.3).normalize());
-    directionalLight(color("skyblue"), createVector(-1, 0.2, -0.3).normalize());
-  }
+function setupCamera() {
+  const near = 0.1;
+  const far = 3000;
+  perspective(2 * atan(height / 2 / 800), width / height, near, far);
+}
+
+function toggleNightDayLightingConfig() {
   if (gState.config.lighting.pinkAmbientLightEnabled) {
-    ambientLight(100, 20, 20);
-  }
-  if (gState.config.lighting.whiteDirectionalLightEnabled) {
-    directionalLight(color("white"), createVector(1, 0.4, 0.3).normalize());
+    setNighttimeLightingConfig();
+  } else {
+    setDaytimeLightingConfig();
   }
 }
