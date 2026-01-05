@@ -18,7 +18,9 @@
 
 # day 3 - fib
 
-I never find fib series inspiring. Attempted something with strudel but got stuck generating pitch from sequence via external callback (callback was called too often). There's not time for tech-spikes that might block you for days, if you want to successfully do each day time effectively.
+-   summary: I never find fib series inspiring. Attempted something with strudel but got stuck generating pitch from sequence via external callback (callback was called too often).
+
+-   reflection: There's not time for tech-spikes that might block you for days, if you want to successfully do each day time effectively.
 
 # day 4 - lowres
 
