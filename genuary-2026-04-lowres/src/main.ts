@@ -10,7 +10,7 @@ import {
 } from "./lights.ts";
 import { drawPlayer, updatePlayer } from "./player.ts";
 import { drawTerrainAround } from "./terrain.ts";
-import { setupCamera } from "./camera.ts";
+import { setCameraPerspective, setupCamera } from "./camera.ts";
 
 p5.disableFriendlyErrors = true;
 
@@ -21,13 +21,13 @@ window.setup = function setup() {
   gState = createGlobalState();
   setupCamera();
   setDaytimeLightingConfig(gState.config);
-  setInterval(toggleNightDayLightingConfig, 10_000);
+  setInterval(() => toggleNightDayLightingConfig(gState.config), 10_000);
 };
 
 window.draw = function draw() {
   push();
   addLights(gState.config);
-  orbitControl();
+  orbitControl(1.5, 1.5, 0.2);
   background(20);
   push();
 
@@ -39,6 +39,11 @@ window.draw = function draw() {
   updatePlayer(gState.player);
   pop();
   pop();
+};
+
+window.windowResized = function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+  setCameraPerspective();
 };
 
 window.keyPressed = function keyPressed() {
@@ -54,10 +59,23 @@ window.keyPressed = function keyPressed() {
   if (key === "n") {
     setNighttimeLightingConfig(gState.config);
   }
+  if (key === "p") {
+    togglePlayPause();
+  }
+  if (key === "m") {
+    toggleConfigBoolean(gState.terrainConfig, "shouldDrawMilePosts");
+  }
 };
 
-function toggleConfigBoolean(config: Record<string, boolean>, key: string) {
-  if (key in config) {
+function toggleConfigBoolean(config: Record<string, any>, key: string) {
+  if (key in config && typeof config[key] === "boolean") {
     config[key] = !config[key];
+  }
+}
+function togglePlayPause() {
+  if (isLooping()) {
+    noLoop();
+  } else {
+    loop();
   }
 }

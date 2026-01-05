@@ -1,15 +1,18 @@
 import type p5 from "p5";
-import { repeat, snapTo } from "./utils/functional.ts";
 import type { Player } from "./player.ts";
+import { repeat, snapTo } from "./utils/functional.ts";
 import { getPalette } from "./utils/palette.ts";
 
 export function drawTerrainAround(player: Player, terrainConfig: TerrainConfig) {
   repeat(1000, (ix) => drawRandomTerrainBlock(player.pos, ix, terrainConfig));
 
-  drawMilePosts();
+  if (terrainConfig.shouldDrawMilePosts) {
+    drawMilePosts();
+  }
 }
 
 export type TerrainConfig = {
+  shouldDrawMilePosts: boolean;
   noiseScale: number;
   deepSeaTopLevel: number;
   mediumSeaTopLevel: number;
@@ -113,6 +116,7 @@ function getTerrainHeightAt(x: number, z: number, terrainConfig: TerrainConfig):
 
 export function createTerrainConfig(): TerrainConfig {
   return {
+    shouldDrawMilePosts: false,
     noiseScale: 0.01,
     deepSeaTopLevel: 70,
     mediumSeaTopLevel: 60,
