@@ -32,14 +32,9 @@ export function setupAndAnimateMyThreeJSScene(): void {
 
     setupHelpers(scene);
 
-    const geometry = new BoxGeometry(10, 10, 10);
-    const material = new MeshStandardMaterial({ color: new Color("yellow") });
-    const myCubeMesh = new Mesh(geometry, material);
-    myCubeMesh.position.y = 20;
-    scene.add(myCubeMesh);
-
-    createAndAddCSGMeshes(scene);
-
+    const csgBrush = createCSGMeshes();
+    csgBrush.position.y = 10;
+    scene.add(csgBrush);
     animate();
 
     /**
@@ -49,8 +44,8 @@ export function setupAndAnimateMyThreeJSScene(): void {
      * You can name this function whatever you like.
      */
     function animate() {
-        myCubeMesh.rotation.y += 0.01;
-        myCubeMesh.rotation.x += 0.02;
+        csgBrush.rotation.y += 0.01;
+        csgBrush.rotation.x += 0.02;
 
         //Draw the current scene to the canvas - one frame of animation.
         renderer.render(scene, camera);
@@ -65,18 +60,19 @@ export function setupAndAnimateMyThreeJSScene(): void {
 
 setupAndAnimateMyThreeJSScene();
 
-function createAndAddCSGMeshes(scene: Scene) {
-    const brush1 = new Brush(new SphereGeometry());
+function createCSGMeshes(): Brush {
+    const brush1 = new Brush(new SphereGeometry(5));
     const material = new MeshStandardMaterial({ color: new Color("yellow") });
     brush1.material = material;
     brush1.updateMatrixWorld();
 
     const material2 = new MeshStandardMaterial({ color: new Color("magenta") });
-    const brush2 = new Brush(new BoxGeometry(), material2);
-    brush2.position.y = 0.4;
+    const brush2 = new Brush(new BoxGeometry(7, 7, 7), material2);
+    brush2.position.y = 4;
     brush2.updateMatrixWorld();
 
     const evaluator = new Evaluator();
     const result = evaluator.evaluate(brush1, brush2, SUBTRACTION);
-    scene.add(result);
+
+    return result;
 }
