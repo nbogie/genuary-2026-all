@@ -46,18 +46,23 @@ export function setupAndAnimateMyThreeJSScene(): void {
     let finishedBrushes = createAllBrushes();
     animate();
 
+    setInterval(regenerateBrushes, 8000);
+
     window.addEventListener("keydown", (event) => {
         if (event.code === "KeyV") {
             const b = pickRandom(finishedBrushes);
             b.visible = !b.visible;
         }
-        if (event.code === "KeyR") {
-            finishedBrushes.forEach((b) => scene.remove(b));
-            finishedBrushes.length = 0;
-            finishedBrushes = createAllBrushes();
+        if (event.code === "KeyR" || event.code === "Space") {
+            regenerateBrushes();
         }
     });
 
+    function regenerateBrushes() {
+        finishedBrushes.forEach((b) => scene.remove(b));
+        finishedBrushes.length = 0;
+        finishedBrushes = createAllBrushes();
+    }
     function createAllBrushes(): Brush[] {
         const palette = createPalette();
 
@@ -109,7 +114,9 @@ export function setupAndAnimateMyThreeJSScene(): void {
      * You can name this function whatever you like.
      */
     function animate() {
-        finishedBrushes.forEach((b) => (b.rotation.y += 0.01));
+        //rotation should be a function of elapsed time, to properly sync with orbitcam
+        //regeneration interval would be more accurate if it was run from here in animate()
+        finishedBrushes.forEach((b) => (b.rotation.y += Math.PI / (8 * 60)));
 
         // csgBrush.rotation.x += 0.02;
 

@@ -12,7 +12,8 @@ export function setupOrbitControls(
 ): OrbitControls {
     const controls = new OrbitControls(camera, htmlElement);
 
-    controls.autoRotate = false;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 4;
     controls.enableDamping = true;
 
     //IF you change the camera transform manually (e.g. position, orientation) you MUST call controls.update() after.
