@@ -14,14 +14,18 @@ import { setupOrbitControls } from "./setupOrbitControls";
 import { setupRenderer } from "./setupRenderer";
 import { randFloat } from "three/src/math/MathUtils.js";
 
+type Palette = ReturnType<typeof createPalette>;
+
 /**
  * Build a three.js scene and start it animating.
  * (This function can be named whatever you like.)
  */
 export function setupAndAnimateMyThreeJSScene(): void {
     const scene = new Scene();
-    const palette = createPalette();
     const credits = { palette: "KGolid from chromotome" };
+    if (1 + 1 > 10) {
+        console.log({ credits });
+    }
 
     const dimensions = { w: window.innerWidth, h: window.innerHeight };
 
@@ -51,9 +55,11 @@ export function setupAndAnimateMyThreeJSScene(): void {
     });
 
     function createAllBrushes(): Brush[] {
+        const palette = createPalette();
+
         const brushes: Brush[] = [];
         for (let i = 0; i < 7; i++) {
-            const csgBrush = createCSGMeshes();
+            const csgBrush = createCSGMeshes(palette);
             csgBrush.position.x = (i - 3) * 15;
             csgBrush.position.y = 10;
             scene.add(csgBrush);
@@ -62,7 +68,7 @@ export function setupAndAnimateMyThreeJSScene(): void {
         return brushes;
     }
 
-    function createCSGMeshes(): Brush {
+    function createCSGMeshes(palette: Palette): Brush {
         const brush1 = new Brush(new BoxGeometry(12, 25, 5));
         const material = new MeshStandardMaterial({
             color: new Color(pickRandom(palette.colors)),
@@ -163,6 +169,72 @@ function createPalette() {
                 "#ca2847",
             ],
             size: 20,
+            type: "chromotome",
+        },
+        {
+            name: "tsu_arcade",
+            colors: [
+                "#4aad8b",
+                "#e15147",
+                "#f3b551",
+                "#cec8b8",
+                "#d1af84",
+                "#544e47",
+            ],
+            stroke: "#251c12",
+            background: "#cfc7b9",
+            size: 6,
+            type: "chromotome",
+        },
+        {
+            name: "mably",
+            colors: [
+                "#13477b",
+                "#2f1b10",
+                "#d18529",
+                "#d72a25",
+                "#e42184",
+                "#138898",
+                "#9d2787",
+                "#7f311b",
+            ],
+            stroke: "#2a1f1d",
+            background: "#dfc792",
+            size: 8,
+            type: "chromotome",
+        },
+        {
+            name: "giftcard_sub",
+            colors: [
+                "#FBF5E9",
+                "#FF514E",
+                "#FDBC2E",
+                "#4561CC",
+                "#2A303E",
+                "#6CC283",
+                "#238DA5",
+                "#9BD7CB",
+            ],
+            stroke: "#000",
+            background: "#FBF5E9",
+            size: 8,
+            type: "chromotome",
+        },
+        {
+            name: "five-stars",
+            colors: [
+                "#f5e8c7",
+                "#d9dcad",
+                "#cf3933",
+                "#f3f4f4",
+                "#74330d",
+                "#8bb896",
+                "#eba824",
+                "#f05c03",
+            ],
+            stroke: "#380c05",
+            background: "#ecd598",
+            size: 8,
             type: "chromotome",
         },
     ]);
