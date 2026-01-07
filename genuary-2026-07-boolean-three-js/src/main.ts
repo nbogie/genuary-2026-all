@@ -66,13 +66,24 @@ function createCSGMeshes(): Brush {
     brush1.material = material;
     brush1.updateMatrixWorld();
 
-    const material2 = new MeshStandardMaterial({ color: new Color("magenta") });
-    const brush2 = new Brush(new BoxGeometry(7, 7, 7), material2);
-    brush2.position.y = 4;
-    brush2.updateMatrixWorld();
-
     const evaluator = new Evaluator();
-    const result = evaluator.evaluate(brush1, brush2, SUBTRACTION);
+    let ongoingResult = brush1;
+    for (let i = 0; i < 8; i++) {
+        const material2 = new MeshStandardMaterial({
+            color: new Color("magenta"),
+        });
+        const brush2 = new Brush(
+            new BoxGeometry(rDim(), rDim(), rDim()),
+            material2
+        );
+        brush2.position.y = 4;
+        brush2.updateMatrixWorld();
+        ongoingResult = evaluator.evaluate(ongoingResult, brush2, SUBTRACTION);
+    }
 
-    return result;
+    return ongoingResult;
+}
+
+function rDim(): number {
+    return Math.random() * 10;
 }
