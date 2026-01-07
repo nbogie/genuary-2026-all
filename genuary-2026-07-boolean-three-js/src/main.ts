@@ -22,12 +22,13 @@ export function setupAndAnimateMyThreeJSScene(): void {
             "https://github.com/nbogie/genuary-2026-all/tree/main/genuary-2026-07-boolean-three-js",
         credits: "Palettes from KGolid from chromotome",
     };
-    if (1 + 1 > 10) {
+    if (Math.random() > 10) {
         console.log({ meta });
     }
 
     const config = {
         shouldShowHelper: false,
+        shouldRotateIndividuals: true,
         shouldAutoRegenerate: true,
         shouldAutoRotate: true,
     };
@@ -49,25 +50,51 @@ export function setupAndAnimateMyThreeJSScene(): void {
     let finishedBrushes = createAllBrushes();
     animate();
     if (config.shouldAutoRegenerate) {
-        setInterval(regenerateBrushes, 8000);
+        setInterval(
+            () => config.shouldAutoRegenerate && regenerateBrushes(),
+            4000
+        );
     }
     orbitControls.autoRotate = config.shouldAutoRotate;
 
     window.addEventListener("keydown", (event) => {
-        if (event.code === "KeyV") {
-            const b = pickRandom(finishedBrushes);
-            b.visible = !b.visible;
-        }
-        if (event.code === "KeyR" || event.code === "Space") {
+        if (event.code === "Space") {
             regenerateBrushes();
+        }
+
+        if (event.code === "KeyC") {
+            orbitControls.autoRotate = !orbitControls.autoRotate;
+        }
+
+        if (event.code === "KeyG") {
+            config.shouldAutoRegenerate = !config.shouldAutoRegenerate;
+        }
+
+        if (event.code === "KeyI") {
+            config.shouldRotateIndividuals = !config.shouldRotateIndividuals;
+        }
+
+        if (event.code === "KeyS") {
+            saveScreenshot();
         }
     });
 
+    function saveScreenshot() {
+        const filename = "genuary-2026-07-booleans.png";
+        const link = document.createElement("a");
+        link.download = filename;
+        link.href = renderer.domElement.toDataURL("image/png");
+        link.click();
+    }
+
     function regenerateBrushes() {
+        const oldAngle = finishedBrushes[0].rotation.y;
         finishedBrushes.forEach((b) => scene.remove(b));
         finishedBrushes.length = 0;
         finishedBrushes = createAllBrushes();
+        finishedBrushes.forEach((b) => (b.rotation.y = oldAngle));
     }
+
     function createAllBrushes(): Brush[] {
         const palette = createPalette();
         const brushes: Brush[] = [];
@@ -120,7 +147,11 @@ export function setupAndAnimateMyThreeJSScene(): void {
     function animate() {
         //rotation should be a function of elapsed time, to properly sync with orbitcam
         //regeneration interval would be more accurate if it was run from here in animate()
-        finishedBrushes.forEach((b) => (b.rotation.y += Math.PI / (8 * 60)));
+        if (config.shouldRotateIndividuals) {
+            finishedBrushes.forEach(
+                (b) => (b.rotation.y += Math.PI / (8 * 60))
+            );
+        }
 
         // csgBrush.rotation.x += 0.02;
 

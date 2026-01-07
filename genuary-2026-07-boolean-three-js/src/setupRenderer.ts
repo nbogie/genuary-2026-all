@@ -4,7 +4,10 @@ export function setupRenderer(
     camera: PerspectiveCamera,
     dim: { w: number; h: number }
 ): WebGLRenderer {
-    const renderer: WebGLRenderer = new WebGLRenderer({ antialias: true });
+    const renderer: WebGLRenderer = new WebGLRenderer({
+        antialias: true,
+        preserveDrawingBuffer: true, //allows saving screenshots of canvas. Performance issues?
+    });
     renderer.setSize(dim.w, dim.h);
 
     //Add the canvas (created by the renderer) to the end of the html page's body
