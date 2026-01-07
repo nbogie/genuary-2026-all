@@ -20,6 +20,7 @@ export function setupLights(scene: Scene): void {
     // const helper2 = new DirectionalLightHelper(directionalLight2);
     // scene.add(helper1, helper2);
 
-    const ambLight = new AmbientLight(0x604040); // a little warm-white light from everywhere
+    // a LOT of warm-white light from everywhere
+    const ambLight = new AmbientLight("white");
     scene.add(ambLight);
 }
