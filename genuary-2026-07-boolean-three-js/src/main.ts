@@ -27,6 +27,8 @@ export function setupAndAnimateMyThreeJSScene(): void {
         console.log({ credits });
     }
 
+    const config = { shouldShowHelper: false };
+
     const dimensions = { w: window.innerWidth, h: window.innerHeight };
 
     const camera = setupCamera(dimensions);
@@ -37,7 +39,9 @@ export function setupAndAnimateMyThreeJSScene(): void {
 
     setupLights(scene);
 
-    setupHelpers(scene);
+    if (config.shouldShowHelper) {
+        setupHelpers(scene);
+    }
 
     let finishedBrushes = createAllBrushes();
     animate();
