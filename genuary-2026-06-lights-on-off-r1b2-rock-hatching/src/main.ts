@@ -47,7 +47,7 @@ window.setup = function setup() {
   frameRate(5);
   gConfig = {
     isLightOn: false,
-    seed: 123,
+    seed: random(999999999),
     lightDirection: createVector(0, 1),
     shouldShowBoulderShadow: false,
     generationTimeMillis: millis(),
@@ -61,7 +61,12 @@ window.setup = function setup() {
       "playing dead when the lights are turned on.",
     ].join("")
   );
-  setCredits(
+  keepComment(
+    "The TypeScript source-code is at",
+    "https://github.com/nbogie/genuary-2026-all/tree/main/genuary-2026-06-lights-on-off-r1b2-rock-hatching"
+  );
+  keepComment(
+    "Credits",
     [
       "The hatching algorithm is loosely (and lazily) following that ",
       "described by Arwan Beetooh (R1B2) in this great write-up: ",
@@ -455,8 +460,10 @@ function setBoulderShadow(b: Boulder) {
   (drawingContext as CanvasRenderingContext2D).shadowOffsetX = xOffset * shadowLength;
   (drawingContext as CanvasRenderingContext2D).shadowOffsetY = yOffset * shadowLength;
 }
-function setCredits(msg: string) {
+
+function keepComment(label: string, msg: string) {
+  //never does anything but keeps this fn from being over-aggressively tree-shaken away by rollup.
   if (random() < 0) {
-    console.log("credits: " + msg);
+    console.log(label + ": " + msg);
   }
 }
