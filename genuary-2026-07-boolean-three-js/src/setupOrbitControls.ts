@@ -12,7 +12,7 @@ export function setupOrbitControls(
 ): OrbitControls {
     const controls = new OrbitControls(camera, htmlElement);
 
-    controls.autoRotate = true;
+    controls.autoRotate = false;
     controls.autoRotateSpeed = 4;
     controls.enableDamping = true;
 

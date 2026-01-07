@@ -27,7 +27,11 @@ export function setupAndAnimateMyThreeJSScene(): void {
         console.log({ credits });
     }
 
-    const config = { shouldShowHelper: false };
+    const config = {
+        shouldShowHelper: false,
+        shouldAutoRegenerate: true,
+        shouldAutoRotate: true,
+    };
 
     const dimensions = { w: window.innerWidth, h: window.innerHeight };
 
@@ -45,8 +49,10 @@ export function setupAndAnimateMyThreeJSScene(): void {
 
     let finishedBrushes = createAllBrushes();
     animate();
-
-    setInterval(regenerateBrushes, 8000);
+    if (config.shouldAutoRegenerate) {
+        setInterval(regenerateBrushes, 8000);
+    }
+    orbitControls.autoRotate = config.shouldAutoRotate;
 
     window.addEventListener("keydown", (event) => {
         if (event.code === "KeyV") {
