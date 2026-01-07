@@ -2,7 +2,19 @@ import "p5/global";
 //@ts-ignore
 import p5 from "p5";
 
-//Credits: hatching algorithm loosely (and lazily) following that described by Arwan Beetooh (R1B2) here: https://www.r1b2.com/2022/01/28/mining-structures-walkthrough/, via Duaran on birb's nest discord.
+// credits:
+// The hatching algorithm is loosely (and lazily) following that
+// described by Arwan Beetooh (R1B2) in this great write-up:
+// https://www.r1b2.com/2022/01/28/mining-structures-walkthrough/
+// via @Duaran on birb's-nest discord.
+//
+//transpiled from the typescript source.
+//See: https://github.com/nbogie/genuary-2026-all/tree/main/genuary-2026-06-lights-on-off-r1b2-rock-hatching
+
+// In comparison with original walk-through algorithm, here we:
+// * Don't have humanised, wobbly lines yet
+// * Add hatch lines on all side, original omits from one side as this is light source
+// * Don't set the hatch line lengths correctly with according to the position (though when lights on i use the y component of the edge normal for something similar)
 p5.disableFriendlyErrors = true;
 
 interface BoulderConfig {
