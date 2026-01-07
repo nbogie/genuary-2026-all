@@ -1,6 +1,6 @@
 import { Camera } from "three";
-// import { OrbitControls } from "orbitControls";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { OrbitControls } from "orbitControls";
+// import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
 /**
  * @param htmlElement - html (canvas?) element on which to listen for mouse events

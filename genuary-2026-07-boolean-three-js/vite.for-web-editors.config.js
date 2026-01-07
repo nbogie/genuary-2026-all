@@ -41,8 +41,7 @@ export default defineConfig((_opts) => {
                     "three",
                     "three-mesh-bvh",
                     "three-bvh-csg",
-                    "three/examples",
-                    "OrbitControls",
+                    "orbitControls",
                 ],
                 preserveEntrySignatures: "strict",
                 output: {
