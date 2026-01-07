@@ -5,26 +5,25 @@ import {
     MeshStandardMaterial,
     Scene,
 } from "three";
-
 import { Brush, Evaluator, SUBTRACTION } from "three-bvh-csg";
+import { randFloat } from "three/src/math/MathUtils.js";
 import { setupCamera } from "./setupCamera";
 import { setupHelpers } from "./setupHelpers";
 import { setupLights } from "./setupLights.ts";
 import { setupOrbitControls } from "./setupOrbitControls";
 import { setupRenderer } from "./setupRenderer";
-import { randFloat } from "three/src/math/MathUtils.js";
 
 type Palette = ReturnType<typeof createPalette>;
 
-/**
- * Build a three.js scene and start it animating.
- * (This function can be named whatever you like.)
- */
 export function setupAndAnimateMyThreeJSScene(): void {
     const scene = new Scene();
-    const credits = { palette: "KGolid from chromotome" };
+    const meta = {
+        typeScriptSource:
+            "https://github.com/nbogie/genuary-2026-all/tree/main/genuary-2026-07-boolean-three-js",
+        credits: "Palettes from KGolid from chromotome",
+    };
     if (1 + 1 > 10) {
-        console.log({ credits });
+        console.log({ meta });
     }
 
     const config = {
@@ -71,7 +70,6 @@ export function setupAndAnimateMyThreeJSScene(): void {
     }
     function createAllBrushes(): Brush[] {
         const palette = createPalette();
-
         const brushes: Brush[] = [];
         for (let i = 0; i < 7; i++) {
             const csgBrush = createCSGMeshes(palette);
@@ -201,23 +199,6 @@ function createPalette() {
             stroke: "#251c12",
             background: "#cfc7b9",
             size: 6,
-            type: "chromotome",
-        },
-        {
-            name: "mably",
-            colors: [
-                "#13477b",
-                "#2f1b10",
-                "#d18529",
-                "#d72a25",
-                "#e42184",
-                "#138898",
-                "#9d2787",
-                "#7f311b",
-            ],
-            stroke: "#2a1f1d",
-            background: "#dfc792",
-            size: 8,
             type: "chromotome",
         },
         {
