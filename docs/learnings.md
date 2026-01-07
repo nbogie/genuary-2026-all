@@ -27,3 +27,13 @@
 -   summary: Started really late. I like the idea of the game, sailing from water patch to water patch.
 -   todo: needs more mood - like rising moon, blood moon, eerie ghosts, sunset, storm, and maybe biomes to encourage exploration (desert, open ocean, snow + ice zone).
 -   issue: I wasn't sure how to further lowres the environment: voxelising the player ship, perhaps?
+
+# day 5 - write genuary without a font
+
+-   summary. didn't do. uninspired by prompt.
+
+# day 6 - lights on/off
+
+summary: got distracted by r1b2's rock-shading walk-through. belatedly figured I could use it as the day's submission, but as a result the lights on/off part was rubbish. I like the look of the hatching, though! Thanks to Duaran for sharing the secrets!
+reflection: i need to spend a little time looking at relative colours in p5 (like we can do in css) - i generate bad in-the-dark versions of colours which look too saturated.
+todo: it'd be nice to do some contact shadows under the rocks using the same style of hatching.
