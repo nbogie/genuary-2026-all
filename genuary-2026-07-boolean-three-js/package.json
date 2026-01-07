@@ -1,0 +1,19 @@
+{
+    "name": "genuary-2026-07-boolean-three-js",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "tsc && vite build",
+        "build:for-web-editors": "tsc && vite build --config vite.for-web-editors.config.js",
+        "preview": "vite preview"
+    },
+    "devDependencies": {
+        "@types/three": "^0.182.0",
+        "three-bvh-csg": "^0.0.17",
+        "three": "^0.182.0",
+        "typescript": "~5.9.3",
+        "vite": "^7.2.4"
+    }
+}
