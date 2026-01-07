@@ -21,6 +21,8 @@ export function setupAndAnimateMyThreeJSScene(): void {
         typeScriptSource:
             "https://github.com/nbogie/genuary-2026-all/tree/main/genuary-2026-07-boolean-three-js",
         credits: "Palettes from KGolid from chromotome",
+        references:
+            "three-bvh-csg example: https://threejs.org/examples/webgl_geometry_csg.html",
     };
     if (Math.random() > 10) {
         console.log({ meta });
