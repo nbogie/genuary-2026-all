@@ -12,7 +12,7 @@ import {
     Evaluator,
     SUBTRACTION,
 } from "three-bvh-csg";
-import { randFloat } from "three/src/math/MathUtils.js";
+import { randFloat, randInt } from "three/src/math/MathUtils.js";
 import { setupCamera } from "./setupCamera";
 import { setupHelpers } from "./setupHelpers";
 import { setupLights } from "./setupLights.ts";
@@ -55,7 +55,7 @@ export function setupAndAnimateMyThreeJSScene(): void {
         setupHelpers(scene);
     }
 
-    let finishedBrushes = createAllBrushes();
+    let finishedBrushes = createAllStructures();
     animate();
     if (config.shouldAutoRegenerate) {
         setInterval(
@@ -99,24 +99,15 @@ export function setupAndAnimateMyThreeJSScene(): void {
         const oldAngle = finishedBrushes[0].rotation.y;
         finishedBrushes.forEach((b) => scene.remove(b));
         finishedBrushes.length = 0;
-        finishedBrushes = createAllBrushes();
+        finishedBrushes = createAllStructures();
         finishedBrushes.forEach((b) => (b.rotation.y = oldAngle));
     }
 
-    function createAllBrushes(): Brush[] {
+    function createAllStructures(): Brush[] {
         const palette = createPalette();
         const brushes: Brush[] = [];
-        const numBrushes = 7;
+        const numStructures = 7;
         const spacingPerBrush = 15;
-        const csgConfigAsym: CSGConfig = {
-            genOffset: () => ({
-                x: randFloat(-2, 2),
-                z: randFloat(-1, 1),
-                y: randFloat(-10, 10),
-            }),
-            genOperation: () =>
-                pickRandom([SUBTRACTION, SUBTRACTION, ADDITION]),
-        };
 
         const csgConfigSimplest: CSGConfig = {
             genOffset: () => ({
@@ -125,12 +116,30 @@ export function setupAndAnimateMyThreeJSScene(): void {
                 y: randFloat(-10, 10),
             }),
             genOperation: () => pickRandom([SUBTRACTION]),
+            genNumberOfElements: () => randInt(9, 11),
         };
-        const csgConfig = pickRandom([csgConfigAsym, csgConfigSimplest]);
+        const csgConfigAsym: CSGConfig = {
+            genOffset: () => ({
+                x: randFloat(-2, 2),
+                z: randFloat(-1, 1),
+                y: randFloat(-10, 10),
+            }),
+            genOperation: () =>
+                pickRandom([SUBTRACTION, SUBTRACTION, ADDITION]),
+            genNumberOfElements: () => randInt(8, 12),
+        };
+        const csgConfig = pickRandom([
+            csgConfigAsym,
+            csgConfigAsym,
+            csgConfigSimplest,
+        ]);
 
-        for (let i = 0; i < numBrushes; i++) {
-            const csgBrush = createCSGMeshes(palette, csgConfig);
-            csgBrush.position.x = (i - numBrushes / 2) * spacingPerBrush;
+        for (let i = 0; i < numStructures; i++) {
+            const csgBrush = createOneStructureFromCSGBrushes(
+                palette,
+                csgConfig
+            );
+            csgBrush.position.x = (i - numStructures / 2) * spacingPerBrush;
             csgBrush.position.y = 10;
             scene.add(csgBrush);
             brushes.push(csgBrush);
@@ -144,8 +153,12 @@ export function setupAndAnimateMyThreeJSScene(): void {
             y: number;
             z: number;
         };
+        genNumberOfElements: () => number;
     };
-    function createCSGMeshes(palette: Palette, config: CSGConfig): Brush {
+    function createOneStructureFromCSGBrushes(
+        palette: Palette,
+        config: CSGConfig
+    ): Brush {
         const brush1 = new Brush(new BoxGeometry(12, 25, 5));
         const material = new MeshStandardMaterial({
             color: new Color(pickRandom(palette.colors)),
@@ -153,9 +166,10 @@ export function setupAndAnimateMyThreeJSScene(): void {
         brush1.material = material;
         brush1.updateMatrixWorld();
 
+        const numElements = config.genNumberOfElements();
         const evaluator = new Evaluator();
         let ongoingResult = brush1;
-        for (let i = 0; i < 8; i++) {
+        for (let i = 1; i < numElements; i++) {
             const material2 = new MeshStandardMaterial({
                 color: new Color(pickRandom(palette.colors)),
             });
