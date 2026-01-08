@@ -28,9 +28,9 @@ export function setupAndAnimateMyThreeJSScene(): void {
     const config = {
         shouldShowHelper: false,
         shouldRotateIndividuals: true,
+        shouldAutoRotate: false,
         shouldAutoRegenerate: true,
-        shouldAutoRotate: true,
-        shouldIncludeGrids: false,
+        shouldIncludeGridPanels: false,
     };
 
     const dimensions = { w: window.innerWidth, h: window.innerHeight };
@@ -70,7 +70,7 @@ export function setupAndAnimateMyThreeJSScene(): void {
             config.shouldRotateIndividuals = !config.shouldRotateIndividuals;
         }
         if (event.code === "KeyD") {
-            config.shouldIncludeGrids = !config.shouldIncludeGrids;
+            config.shouldIncludeGridPanels = !config.shouldIncludeGridPanels;
             regenerateBrushes();
         }
 
@@ -158,7 +158,7 @@ export function setupAndAnimateMyThreeJSScene(): void {
                 color: new Color(pickRandom(palette.colors)),
             });
             const operation = csgConfig.genOperation();
-            const isGrid = config.shouldIncludeGrids
+            const isGrid = config.shouldIncludeGridPanels
                 ? Math.random() < 0.1
                 : false;
 
