@@ -1,26 +1,17 @@
-import {
-    BoxGeometry,
-    Color,
-    MathUtils,
-    MeshStandardMaterial,
-    Scene,
-} from "three";
-import {
-    ADDITION,
-    Brush,
-    type CSGOperation,
-    Evaluator,
-    SUBTRACTION,
-} from "three-bvh-csg";
+import { BoxGeometry, Color, MeshStandardMaterial, Scene } from "three";
+import { ADDITION, Brush, Evaluator, SUBTRACTION } from "three-bvh-csg";
 import { randFloat, randInt } from "three/src/math/MathUtils.js";
+import { buildGridBrush } from "./buildGridBrush.ts";
+import { createPalette, type Palette } from "./palette.ts";
 import { setupCamera } from "./setupCamera";
 import { setupHelpers } from "./setupHelpers";
 import { setupLights } from "./setupLights.ts";
 import { setupOrbitControls } from "./setupOrbitControls";
 import { setupRenderer } from "./setupRenderer";
+import type { CSGConfig } from "./types.ts";
+import { pickRandom, rDim } from "./utils.ts";
 
-type Palette = ReturnType<typeof createPalette>;
-
+//TODO: check how to dispose fully of meshes and materials (and CSG, if special)
 export function setupAndAnimateMyThreeJSScene(): void {
     const scene = new Scene();
     const meta = {
@@ -39,6 +30,7 @@ export function setupAndAnimateMyThreeJSScene(): void {
         shouldRotateIndividuals: true,
         shouldAutoRegenerate: true,
         shouldAutoRotate: true,
+        shouldIncludeGrids: false,
     };
 
     const dimensions = { w: window.innerWidth, h: window.innerHeight };
@@ -80,6 +72,10 @@ export function setupAndAnimateMyThreeJSScene(): void {
 
         if (event.code === "KeyI") {
             config.shouldRotateIndividuals = !config.shouldRotateIndividuals;
+        }
+        if (event.code === "KeyD") {
+            config.shouldIncludeGrids = !config.shouldIncludeGrids;
+            regenerateBrushes();
         }
 
         if (event.code === "KeyS") {
@@ -146,50 +142,58 @@ export function setupAndAnimateMyThreeJSScene(): void {
         }
         return brushes;
     }
-    type CSGConfig = {
-        genOperation: () => CSGOperation;
-        genOffset: () => {
-            x: number;
-            y: number;
-            z: number;
-        };
-        genNumberOfElements: () => number;
-    };
+
     function createOneStructureFromCSGBrushes(
         palette: Palette,
-        config: CSGConfig
+        csgConfig: CSGConfig
     ): Brush {
-        const brush1 = new Brush(new BoxGeometry(12, 25, 5));
+        const brushStarting = new Brush(new BoxGeometry(12, 25, 5));
         const material = new MeshStandardMaterial({
             color: new Color(pickRandom(palette.colors)),
         });
-        brush1.material = material;
-        brush1.updateMatrixWorld();
+        brushStarting.material = material;
+        brushStarting.updateMatrixWorld();
 
-        const numElements = config.genNumberOfElements();
+        const numElements = csgConfig.genNumberOfElements();
         const evaluator = new Evaluator();
-        let ongoingResult = brush1;
+        let ongoingResult = brushStarting;
         for (let i = 1; i < numElements; i++) {
-            const material2 = new MeshStandardMaterial({
+            const myMaterial = new MeshStandardMaterial({
                 color: new Color(pickRandom(palette.colors)),
             });
-            const brush2 = new Brush(
-                new BoxGeometry(rDim(), rDim(), rDim()),
-                material2
-            );
+            const operation = csgConfig.genOperation();
+            const isGrid = config.shouldIncludeGrids
+                ? Math.random() < 0.1
+                : false;
 
-            const offset = config.genOffset();
-            brush2.position.y = offset.y;
-            brush2.position.z = offset.z;
-            brush2.position.x = offset.x;
-            const operation = config.genOperation();
+            if (!isGrid) {
+                const totalWidth = rDim();
+                const totalHeight = rDim();
+                const totalDepth = rDim();
 
-            brush2.updateMatrixWorld();
-            ongoingResult = evaluator.evaluate(
-                ongoingResult,
-                brush2,
-                operation
-            );
+                const brush = new Brush(
+                    new BoxGeometry(totalWidth, totalHeight, totalDepth),
+                    myMaterial
+                );
+                const offset = csgConfig.genOffset();
+                brush.position.y = offset.y;
+                brush.position.z = offset.z;
+                brush.position.x = offset.x;
+                brush.updateMatrixWorld();
+                ongoingResult = evaluator.evaluate(
+                    ongoingResult,
+                    brush,
+                    operation
+                );
+            } else {
+                const gridBrush = buildGridBrush(csgConfig, evaluator, palette);
+                // then combine the intermediate brush to the ongoing result according to the already-chosen operation
+                ongoingResult = evaluator.evaluate(
+                    ongoingResult,
+                    gridBrush,
+                    ADDITION
+                );
+            }
         }
 
         return ongoingResult;
@@ -224,108 +228,3 @@ export function setupAndAnimateMyThreeJSScene(): void {
 }
 
 setupAndAnimateMyThreeJSScene();
-
-function rDim(): number {
-    return MathUtils.randFloat(1, 10);
-}
-
-function createPalette() {
-    //credit: kgolid
-    return pickRandom([
-        {
-            name: "tsu_akasaka",
-            colors: [
-                "#687f72",
-                "#cc7d6c",
-                "#dec36f",
-                "#dec7af",
-                "#ad8470",
-                "#424637",
-            ],
-            stroke: "#251c12",
-            background: "#cfc7b9",
-            size: 6,
-            type: "chromotome",
-        },
-        {
-            name: "present-correct",
-            colors: [
-                "#fd3741",
-                "#fe4f11",
-                "#ff6800",
-                "#ffa61a",
-                "#ffc219",
-                "#ffd114",
-                "#fcd82e",
-                "#f4d730",
-                "#ced562",
-                "#8ac38f",
-                "#79b7a0",
-                "#72b5b1",
-                "#5b9bae",
-                "#6ba1b7",
-                "#49619d",
-                "#604791",
-                "#721e7f",
-                "#9b2b77",
-                "#ab2562",
-                "#ca2847",
-            ],
-            size: 20,
-            type: "chromotome",
-        },
-        {
-            name: "tsu_arcade",
-            colors: [
-                "#4aad8b",
-                "#e15147",
-                "#f3b551",
-                "#cec8b8",
-                "#d1af84",
-                "#544e47",
-            ],
-            stroke: "#251c12",
-            background: "#cfc7b9",
-            size: 6,
-            type: "chromotome",
-        },
-        {
-            name: "giftcard_sub",
-            colors: [
-                "#FBF5E9",
-                "#FF514E",
-                "#FDBC2E",
-                "#4561CC",
-                "#2A303E",
-                "#6CC283",
-                "#238DA5",
-                "#9BD7CB",
-            ],
-            stroke: "#000",
-            background: "#FBF5E9",
-            size: 8,
-            type: "chromotome",
-        },
-        {
-            name: "five-stars",
-            colors: [
-                "#f5e8c7",
-                "#d9dcad",
-                "#cf3933",
-                "#f3f4f4",
-                "#74330d",
-                "#8bb896",
-                "#eba824",
-                "#f05c03",
-            ],
-            stroke: "#380c05",
-            background: "#ecd598",
-            size: 8,
-            type: "chromotome",
-        },
-    ]);
-}
-
-function pickRandom<T>(arr: T[]): T {
-    return arr[Math.floor(Math.random() * arr.length)];
-}

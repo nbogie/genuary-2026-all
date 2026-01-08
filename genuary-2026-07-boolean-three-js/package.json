@@ -4,10 +4,11 @@
     "version": "0.0.0",
     "type": "module",
     "scripts": {
+        "type-check": "tsc --noEmit",
+        "type-check:always-happy": "tsc --noEmit ; cd .",
         "dev": "vite",
         "build": "tsc && vite build",
         "build:for-web-editors": "tsc && vite build --config vite.for-web-editors.config.js",
-        "type-check": "tsc --noEmit",
         "preview": "vite preview"
     },
     "devDependencies": {
