@@ -49,12 +49,8 @@ export function setupAndAnimateMyThreeJSScene(): void {
 
     let finishedBrushes = createAllStructures();
     animate();
-    if (config.shouldAutoRegenerate) {
-        setInterval(
-            () => config.shouldAutoRegenerate && regenerateBrushes(),
-            4000
-        );
-    }
+    setInterval(() => config.shouldAutoRegenerate && regenerateBrushes(), 4000);
+
     orbitControls.autoRotate = config.shouldAutoRotate;
 
     window.addEventListener("keydown", (event) => {
