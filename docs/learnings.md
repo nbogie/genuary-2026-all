@@ -44,3 +44,4 @@ summary: end result is colourful, if not artistic. I spent most of the time wras
 reflection: i'm still learning about vite, rollup, and browser module loading (whether i want to or not).
 reflection: if it's a hassle externalising libs, maybe just don't share the code on OP that day!
 reflection: if it looks like the p5 v2 + typescript setup is going to be a hassle, pivot quickly.
+reflection: these letters could be used for the day 5 prompt, with a little manual input or image input to specify zones for erosion.
