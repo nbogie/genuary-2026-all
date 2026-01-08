@@ -37,3 +37,10 @@
 summary: got distracted by r1b2's rock-shading walk-through. belatedly figured I could use it as the day's submission, but as a result the lights on/off part was rubbish. I like the look of the hatching, though! Thanks to Duaran for sharing the secrets!
 reflection: i need to spend a little time looking at relative colours in p5 (like we can do in css) - i generate bad in-the-dark versions of colours which look too saturated.
 todo: it'd be nice to do some contact shadows under the rocks using the same style of hatching.
+
+# day 7 - boolean constructive solid geometry - structures
+
+summary: end result is colourful, if not artistic. I spent most of the time wrassling typescript + p5.csg before giving up and shifting to three.js. Then had a lot of hassles externalising the various libraries and orbitControls to avoid bundling them, so that only the app code could be pushed to openprocessing.
+reflection: i'm still learning about vite, rollup, and browser module loading (whether i want to or not).
+reflection: if it's a hassle externalising libs, maybe just don't share the code on OP that day!
+reflection: if it looks like the p5 v2 + typescript setup is going to be a hassle, pivot quickly.
