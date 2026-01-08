@@ -5,7 +5,13 @@ import {
     MeshStandardMaterial,
     Scene,
 } from "three";
-import { Brush, Evaluator, SUBTRACTION } from "three-bvh-csg";
+import {
+    ADDITION,
+    Brush,
+    type CSGOperation,
+    Evaluator,
+    SUBTRACTION,
+} from "three-bvh-csg";
 import { randFloat } from "three/src/math/MathUtils.js";
 import { setupCamera } from "./setupCamera";
 import { setupHelpers } from "./setupHelpers";
@@ -100,17 +106,46 @@ export function setupAndAnimateMyThreeJSScene(): void {
     function createAllBrushes(): Brush[] {
         const palette = createPalette();
         const brushes: Brush[] = [];
-        for (let i = 0; i < 7; i++) {
-            const csgBrush = createCSGMeshes(palette);
-            csgBrush.position.x = (i - 3) * 15;
+        const numBrushes = 7;
+        const spacingPerBrush = 15;
+        const csgConfigAsym: CSGConfig = {
+            genOffset: () => ({
+                x: randFloat(-2, 2),
+                z: randFloat(-1, 1),
+                y: randFloat(-10, 10),
+            }),
+            genOperation: () =>
+                pickRandom([SUBTRACTION, SUBTRACTION, ADDITION]),
+        };
+
+        const csgConfigSimplest: CSGConfig = {
+            genOffset: () => ({
+                x: 0,
+                z: 0,
+                y: randFloat(-10, 10),
+            }),
+            genOperation: () => pickRandom([SUBTRACTION]),
+        };
+        const csgConfig = pickRandom([csgConfigAsym, csgConfigSimplest]);
+
+        for (let i = 0; i < numBrushes; i++) {
+            const csgBrush = createCSGMeshes(palette, csgConfig);
+            csgBrush.position.x = (i - numBrushes / 2) * spacingPerBrush;
             csgBrush.position.y = 10;
             scene.add(csgBrush);
             brushes.push(csgBrush);
         }
         return brushes;
     }
-
-    function createCSGMeshes(palette: Palette): Brush {
+    type CSGConfig = {
+        genOperation: () => CSGOperation;
+        genOffset: () => {
+            x: number;
+            y: number;
+            z: number;
+        };
+    };
+    function createCSGMeshes(palette: Palette, config: CSGConfig): Brush {
         const brush1 = new Brush(new BoxGeometry(12, 25, 5));
         const material = new MeshStandardMaterial({
             color: new Color(pickRandom(palette.colors)),
@@ -128,12 +163,18 @@ export function setupAndAnimateMyThreeJSScene(): void {
                 new BoxGeometry(rDim(), rDim(), rDim()),
                 material2
             );
-            brush2.position.y = randFloat(-10, 10);
+
+            const offset = config.genOffset();
+            brush2.position.y = offset.y;
+            brush2.position.z = offset.z;
+            brush2.position.x = offset.x;
+            const operation = config.genOperation();
+
             brush2.updateMatrixWorld();
             ongoingResult = evaluator.evaluate(
                 ongoingResult,
                 brush2,
-                SUBTRACTION
+                operation
             );
         }
 
