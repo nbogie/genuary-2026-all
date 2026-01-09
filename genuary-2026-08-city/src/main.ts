@@ -8,6 +8,7 @@ type PartialConfig = Partial<Config>;
 let config: Config;
 let palette: Palette;
 let timeouts: number[] = [];
+
 type Palette = {
   name: string;
   colors: string[];
@@ -35,6 +36,7 @@ function createConfig() {
   return {
     focusDepthFar: random([true, false]),
     invertFocus: false,
+    useTVNoise: true,
     seed: 123,
     fogDensity: 0.1,
     shouldRotateOnXAndZ: false,
@@ -86,8 +88,13 @@ function drawOneSkyline(configOverride: PartialConfig) {
   layerG.lights();
   const numLayers = 6;
 
+  const distortFrontRowsIfAny = false;
+
   for (let ix = 0; ix < numLayers; ix++) {
     layerG.clear();
+    /** 0 when layer is furthest, 1 when foreground layer */
+    const zFraction = map(ix, 0, numLayers - 1, 0, 1, true);
+
     // camera(random([-20, 20]), random([-700, -400]), 700);
 
     //originally, -100
@@ -114,6 +121,21 @@ function drawOneSkyline(configOverride: PartialConfig) {
     if (shouldBlur) {
       layerG.filter(BLUR, blurAmount);
     }
+    if (
+      config.useTVNoise &&
+      ((distortFrontRowsIfAny && zFraction > 0.5) || (!distortFrontRowsIfAny && zFraction < 0.5))
+    ) {
+      // Pass dynamic values to the shader
+      // tvNoiseShader.copyToContext(layerG);
+      //TODO:this should be compiled once and copied to the context when needed
+      //TODO: dispose of this
+      //TODO: check if it is messing with alpha - can we see behind a layer it has touched?
+      const tvNoiseShader = layerG.createFilterShader(fragSrc);
+      tvNoiseShader.setUniform("time", random());
+      tvNoiseShader.setUniform("distortionAmount", random([0.1, 0.01]));
+      layerG.filter(tvNoiseShader);
+    }
+
     const extraFilter = config.wildcardFilters
       ? random(["GRAY", "INVERT", "POSTERIZE", "THRESHOLD"] satisfies FilterName[])
       : config.extraFilter;
@@ -199,10 +221,12 @@ window.keyPressed = function keyPressed() {
 
   if (key === " ") {
     config.seed = millis();
+    config.useTVNoise = random([true, false]);
     config.shouldRotateY = random([true, false, "mixed", "mixed"]);
-    config.wireframe = random() < 0.1;
+    config.wireframe = random() < 0.08;
     config.shouldRotateOnXAndZ = random() < 0.2;
-    config.wildcardFilters = random([false, false, false, false, true]);
+    config.wildcardFilters = random() < 0.1;
+    // config.fogDensity = random([0.1, 0.15, 0.2, 0.25, 0.3]);
     palette = createPalette();
     redraw();
 
@@ -320,3 +344,31 @@ function clearAllTimeouts() {
   timeouts.forEach((t) => clearTimeout(t));
   timeouts = [];
 }
+
+/** @AI: gemini (LLM) wrote this shader for me */
+const fragSrc = `
+  precision highp float;
+  varying vec2 vTexCoord;
+  uniform sampler2D tex0;
+  uniform float time;
+  uniform float distortionAmount;
+
+  float noise(float p) {
+    return fract(sin(p) * 43758.5453123);
+  }
+
+  void main() {
+    vec2 uv = vTexCoord;
+    
+    // Calculate row-based jitter
+    float row = floor(uv.y * 50.0); 
+    float jitter = noise(row + time) * 2.0 - 1.0;
+    
+    // Only apply offset to specific random rows
+    if (noise(row + time * 0.5) > 0.7) {
+      uv.x += jitter * distortionAmount;
+    }
+
+    vec4 color = texture2D(tex0, uv);
+    gl_FragColor = vec4(color.rgb, 1.0);
+  }`;
