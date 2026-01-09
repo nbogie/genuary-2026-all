@@ -6,7 +6,8 @@ p5.disableFriendlyErrors = true;
 type Config = ReturnType<typeof createConfig>;
 type PartialConfig = Partial<Config>;
 let config: Config;
-let palette: ReturnType<typeof createPalette>;
+let palette: Palette;
+// type Palette = ReturnType<typeof createPalette>;
 
 window.setup = function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -19,17 +20,18 @@ window.setup = function setup() {
 function createConfig() {
   return {
     focusDepthFar: random([true, false]),
+    invertFocus: false,
     seed: 123,
     fogDensity: 0.1,
     buildingWidth: 30,
     shouldRotateY: true as boolean | "mixed",
-    wireframe: random([true, false, false, false]),
+    wireframe: random() < 0.1,
     shouldDrawFraming: false,
   };
 }
 
 window.draw = function draw() {
-  background(palette.background);
+  background(config.wireframe ? palette.wireframeBackground : palette.background);
   const numSkylines = 3;
   for (let ix = 0; ix < numSkylines; ix++) {
     const img = drawOneSkyline({
@@ -84,7 +86,7 @@ function drawOneSkyline(configOverride: PartialConfig) {
     const blurFraction = map(ix, 0, numLayers - 1, 0, 1);
     const focusDepthFar = config.wireframe
       ? false
-      : configOverride.focusDepthFar ?? config.focusDepthFar;
+      : (configOverride.focusDepthFar ?? config.focusDepthFar) !== config.invertFocus;
     const shouldBlur = !config.wireframe;
     const blurAmount = 4 * (focusDepthFar ? blurFraction : 1 - blurFraction);
 
@@ -106,21 +108,21 @@ function drawOneLayerOfBuildingsOnto(g: p5.Graphics, z: number, partialConfig: P
   for (let x = -worldWidth; x < worldWidth; x += config.buildingWidth * 1.1) {
     g.push();
     const maxBuildingHeight = config.buildingWidth * 5;
-    const y = random([0, 0, random(0.1, 1) * maxBuildingHeight]);
+    const y = random([0, 0, random(0.2, 1) * maxBuildingHeight]);
     if (y) {
       g.translate(x, -y / 2, z);
       const w = config.buildingWidth;
       // g.rotateX(random(-1, 1) * 0.1);
       // g.rotateZ(random(-1, 1) * 0.02);
       if (partialConfig.shouldRotateY === true) {
-        g.rotateY(random(-1, 1) * 0.9);
+        g.rotateY(random(-1, 1) * 0.6);
       }
 
       if (config.wireframe) {
         g.stroke(palette.stroke);
         g.noFill();
       } else {
-        const colour = pickBiased(palette.colors, 0.8);
+        const colour = pickBiased(palette.colors, palette.weightOverride ?? 0.8);
         g.ambientMaterial(colour);
         g.noStroke();
       }
@@ -137,17 +139,21 @@ function drawOneLayerOfBuildingsOnto(g: p5.Graphics, z: number, partialConfig: P
 window.windowResized = function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
 };
-
+window.mousePressed = function mousePressed() {
+  config.invertFocus = !config.invertFocus;
+  redraw();
+};
 window.keyPressed = function keyPressed() {
   if (key === "f") {
     config.focusDepthFar = !config.focusDepthFar;
 
     redraw();
   }
+
   if (key === " ") {
     config.seed = millis();
     config.shouldRotateY = random([true, false, "mixed", "mixed"]);
-    config.wireframe = random([true, false]);
+    config.wireframe = random() < 0.1;
     palette = createPalette();
 
     redraw();
@@ -175,27 +181,53 @@ function pickBiased<T>(arr: T[], decay = 0.5): T {
   return arr[indexCapped];
 }
 
+type Palette = {
+  name: string;
+  colors: string[];
+  stroke: string;
+  background: string;
+  wireframeBackground: string;
+  fogColour: string;
+  size: number;
+  weightOverride?: number;
+  type: string;
+};
+
 function createPalette() {
-  const palette1 = {
+  const palette1: Palette = {
     name: "book",
     colors: ["#1c2738", "#d8b1a5", "#c95a3f", "#d1a082", "#037b68", "#be1c24"],
     stroke: "#0e0f27",
     background: "#f5b28a",
+    wireframeBackground: "#f5b28a",
     fogColour: "#1e1e1e",
     size: 6,
     type: "chromotome",
   };
-  const paletteBlueprint = (() => {
-    const bg = random(["dodgerblue", "#1c2738", "#1c2738", "#1c2738"]);
+
+  const palette2: Palette = {
+    name: "system.#05",
+    colors: ["#2e3853", "#3e6a90", "#a3c9d3", "#d1e1e1", "#db4549"],
+    stroke: "linen",
+    background: "#141823ff",
+    wireframeBackground: "#141823ff",
+    fogColour: "#141823ff",
+    size: 5,
+    weightOverride: 0.65,
+    type: "chromotome",
+  };
+
+  const paletteBlueprint: Palette = (() => {
     return {
       name: "blueprint-book",
       colors: ["#1c2738", "#d8b1a5", "#c95a3f", "#d1a082", "#037b68", "#be1c24"],
       stroke: "white",
-      background: bg,
-      fogColour: bg,
+      background: "#1c2738",
+      fogColour: "#1c2738",
+      wireframeBackground: "dodgerblue",
       size: 6,
       type: "chromotome",
     };
   })();
-  return random([palette1, paletteBlueprint]);
+  return random([palette1, palette2, paletteBlueprint]);
 }
