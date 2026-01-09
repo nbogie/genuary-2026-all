@@ -7,7 +7,19 @@ type Config = ReturnType<typeof createConfig>;
 type PartialConfig = Partial<Config>;
 let config: Config;
 let palette: Palette;
-// type Palette = ReturnType<typeof createPalette>;
+
+type Palette = {
+  name: string;
+  colors: string[];
+  stroke: string;
+  background: string;
+  wireframeBackground: string;
+  fog: string;
+  framing: string;
+  size: number;
+  weightOverride?: number;
+  type: string;
+};
 
 window.setup = function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -23,10 +35,11 @@ function createConfig() {
     invertFocus: false,
     seed: 123,
     fogDensity: 0.1,
+    shouldRotateOnXAndZ: false,
     buildingWidth: 30,
     shouldRotateY: true as boolean | "mixed",
     wireframe: random() < 0.1,
-    shouldDrawFraming: false,
+    shouldDrawFraming: true,
   };
 }
 
@@ -55,7 +68,7 @@ function drawFraming() {
   const fakeHeight = height - gapWidth;
   for (let i = 0; i <= 3; i++) {
     const y = map(i, 0, 3, 0, fakeHeight, true);
-    fill(50);
+    fill(palette.framing);
     noStroke();
     rect(0, y, width, gapWidth);
   }
@@ -72,12 +85,15 @@ function drawOneSkyline(configOverride: PartialConfig) {
   for (let ix = 0; ix < numLayers; ix++) {
     layerG.clear();
     // camera(random([-20, 20]), random([-700, -400]), 700);
-    const z = map(ix, 0, numLayers - 1, -100, 300);
+
+    //originally, -100
+    const maxZ = random([-1000, -500, -500, -100, -100]);
+    const z = map(ix, 0, numLayers - 1, maxZ, 250);
     drawOneLayerOfBuildingsOnto(layerG, z, configOverride);
 
     layerG.push();
 
-    const fogColour = color(palette.fogColour);
+    const fogColour = color(palette.fog);
     fogColour.setAlpha(config.fogDensity * 255);
     layerG.fill(fogColour);
     layerG.noStroke();
@@ -108,12 +124,14 @@ function drawOneLayerOfBuildingsOnto(g: p5.Graphics, z: number, partialConfig: P
   for (let x = -worldWidth; x < worldWidth; x += config.buildingWidth * 1.1) {
     g.push();
     const maxBuildingHeight = config.buildingWidth * 5;
-    const y = random([0, 0, random(0.2, 1) * maxBuildingHeight]);
+    const y = random() < 0.6 ? 0 : random(0.2, 1) * maxBuildingHeight;
     if (y) {
       g.translate(x, -y / 2, z);
       const w = config.buildingWidth;
-      // g.rotateX(random(-1, 1) * 0.1);
-      // g.rotateZ(random(-1, 1) * 0.02);
+      if (config.shouldRotateOnXAndZ) {
+        g.rotateX(random(-1, 1) * 0.1);
+        g.rotateZ(random(-1, 1) * 0.03);
+      }
       if (partialConfig.shouldRotateY === true) {
         g.rotateY(random(-1, 1) * 0.6);
       }
@@ -154,6 +172,7 @@ window.keyPressed = function keyPressed() {
     config.seed = millis();
     config.shouldRotateY = random([true, false, "mixed", "mixed"]);
     config.wireframe = random() < 0.1;
+    config.shouldRotateOnXAndZ = random() < 0.2;
     palette = createPalette();
 
     redraw();
@@ -181,26 +200,15 @@ function pickBiased<T>(arr: T[], decay = 0.5): T {
   return arr[indexCapped];
 }
 
-type Palette = {
-  name: string;
-  colors: string[];
-  stroke: string;
-  background: string;
-  wireframeBackground: string;
-  fogColour: string;
-  size: number;
-  weightOverride?: number;
-  type: string;
-};
-
 function createPalette() {
   const palette1: Palette = {
     name: "book",
     colors: ["#1c2738", "#d8b1a5", "#c95a3f", "#d1a082", "#037b68", "#be1c24"],
     stroke: "#0e0f27",
     background: "#f5b28a",
-    wireframeBackground: "#f5b28a",
-    fogColour: "#1e1e1e",
+    wireframeBackground: "#d8b1a5",
+    framing: "#d1a082", //"#0e0f27",
+    fog: "#1e1e1e",
     size: 6,
     type: "chromotome",
   };
@@ -211,7 +219,8 @@ function createPalette() {
     stroke: "linen",
     background: "#141823ff",
     wireframeBackground: "#141823ff",
-    fogColour: "#141823ff",
+    framing: "#3e6a90",
+    fog: "#141823ff",
     size: 5,
     weightOverride: 0.65,
     type: "chromotome",
@@ -223,7 +232,8 @@ function createPalette() {
       colors: ["#1c2738", "#d8b1a5", "#c95a3f", "#d1a082", "#037b68", "#be1c24"],
       stroke: "white",
       background: "#1c2738",
-      fogColour: "#1c2738",
+      fog: "#1c2738",
+      framing: "#c95a3f",
       wireframeBackground: "dodgerblue",
       size: 6,
       type: "chromotome",
