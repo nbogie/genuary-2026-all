@@ -131,7 +131,7 @@ function drawOneSkyline(configOverride: PartialConfig) {
       //TODO: dispose of this
       //TODO: check if it is messing with alpha - can we see behind a layer it has touched?
       const tvNoiseShader = layerG.createFilterShader(fragSrc);
-      tvNoiseShader.setUniform("time", random());
+      tvNoiseShader.setUniform("time", millis());
       tvNoiseShader.setUniform("distortionAmount", random([0.1, 0.01]));
       layerG.filter(tvNoiseShader);
     }
