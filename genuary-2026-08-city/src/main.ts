@@ -8,6 +8,7 @@ type PartialConfig = Partial<Config>;
 let config: Config;
 let palette: Palette;
 let timeouts: number[] = [];
+let tvNoiseShader: p5.Shader;
 
 type Palette = {
   name: string;
@@ -21,10 +22,10 @@ type Palette = {
   weightOverride?: number;
   type: string;
 };
-
 window.setup = function setup() {
   createCanvas(windowWidth, windowHeight);
-  frameRate(2);
+  tvNoiseShader = createFilterShader(fragSrc);
+
   config = createConfig();
   palette = createPalette();
   noLoop();
@@ -125,15 +126,12 @@ function drawOneSkyline(configOverride: PartialConfig) {
       config.useTVNoise &&
       ((distortFrontRowsIfAny && zFraction > 0.5) || (!distortFrontRowsIfAny && zFraction < 0.5))
     ) {
-      // Pass dynamic values to the shader
-      // tvNoiseShader.copyToContext(layerG);
-      //TODO:this should be compiled once and copied to the context when needed
       //TODO: dispose of this
       //TODO: check if it is messing with alpha - can we see behind a layer it has touched?
-      const tvNoiseShader = layerG.createFilterShader(fragSrc);
-      tvNoiseShader.setUniform("time", millis());
-      tvNoiseShader.setUniform("distortionAmount", random([0.1, 0.01]));
-      layerG.filter(tvNoiseShader);
+      const copiedShader = tvNoiseShader.copyToContext(layerG);
+      copiedShader.setUniform("time", millis());
+      copiedShader.setUniform("distortionAmount", random([0.1, 0.01]));
+      layerG.filter(copiedShader);
     }
 
     const extraFilter = config.wildcardFilters
