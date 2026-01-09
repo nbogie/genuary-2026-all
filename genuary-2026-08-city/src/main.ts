@@ -302,7 +302,7 @@ function createPalette(): Palette {
   const palette1: Palette = {
     name: "book",
     colors: ["#1c2738", "#d8b1a5", "#c95a3f", "#d1a082", "#037b68", "#be1c24"],
-    stroke: "#0e0f27",
+    stroke: "linen",
     background: "#f5b28a",
     wireframeBackground: "#d8b1a5",
     framing: "#d1a082", //"#0e0f27",
