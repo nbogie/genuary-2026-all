@@ -7,7 +7,7 @@ type Config = ReturnType<typeof createConfig>;
 type PartialConfig = Partial<Config>;
 let config: Config;
 let palette: Palette;
-
+let timeouts: number[] = [];
 type Palette = {
   name: string;
   colors: string[];
@@ -29,6 +29,8 @@ window.setup = function setup() {
   noLoop();
 };
 
+type FilterName = "INVERT" | "GRAY" | "THRESHOLD" | "POSTERIZE";
+
 function createConfig() {
   return {
     focusDepthFar: random([true, false]),
@@ -40,6 +42,8 @@ function createConfig() {
     shouldRotateY: true as boolean | "mixed",
     wireframe: random() < 0.1,
     shouldDrawFraming: true,
+    wildcardFilters: false,
+    extraFilter: random(["POSTERIZE", undefined, undefined, undefined]) as undefined | FilterName,
   };
 }
 
@@ -87,7 +91,8 @@ function drawOneSkyline(configOverride: PartialConfig) {
     // camera(random([-20, 20]), random([-700, -400]), 700);
 
     //originally, -100
-    const maxZ = random([-1000, -500, -500, -100, -100]);
+    // const maxZ = random([-1000, -500, -500, -100, -100]);
+    const maxZ = random([-100, -100, -200]);
     const z = map(ix, 0, numLayers - 1, maxZ, 250);
     drawOneLayerOfBuildingsOnto(layerG, z, configOverride);
 
@@ -109,6 +114,25 @@ function drawOneSkyline(configOverride: PartialConfig) {
     if (shouldBlur) {
       layerG.filter(BLUR, blurAmount);
     }
+    const extraFilter = config.wildcardFilters
+      ? random(["GRAY", "INVERT", "POSTERIZE", "THRESHOLD"] satisfies FilterName[])
+      : config.extraFilter;
+
+    if (extraFilter === "POSTERIZE") {
+      if (random() < 0.5) {
+        layerG.filter(POSTERIZE, random([1, 2, 3]));
+      }
+    }
+    if (extraFilter === "INVERT") {
+      layerG.filter(INVERT);
+    }
+    if (extraFilter === "THRESHOLD") {
+      layerG.filter(THRESHOLD);
+    }
+    if (extraFilter === "GRAY") {
+      layerG.filter(GRAY);
+    }
+
     layerG.pop();
     finalG.image(layerG, 0, 0);
   }
@@ -164,7 +188,12 @@ window.mousePressed = function mousePressed() {
 window.keyPressed = function keyPressed() {
   if (key === "f") {
     config.focusDepthFar = !config.focusDepthFar;
+    redraw();
+  }
 
+  if (key === "w") {
+    config.seed = millis();
+    config.wildcardFilters = true;
     redraw();
   }
 
@@ -173,9 +202,26 @@ window.keyPressed = function keyPressed() {
     config.shouldRotateY = random([true, false, "mixed", "mixed"]);
     config.wireframe = random() < 0.1;
     config.shouldRotateOnXAndZ = random() < 0.2;
+    config.wildcardFilters = random([false, false, false, false, true]);
     palette = createPalette();
-
     redraw();
+
+    if (!config.wireframe) {
+      clearAllTimeouts();
+      //schedule some focus-flipped redraws
+      timeouts.push(
+        setTimeout(() => {
+          config.invertFocus = !config.invertFocus;
+          redraw();
+        }, 2000)
+      );
+      timeouts.push(
+        setTimeout(() => {
+          config.invertFocus = !config.invertFocus;
+          redraw();
+        }, 4000)
+      );
+    }
   }
   if (key === ".") {
     config.fogDensity += 0.05;
@@ -185,8 +231,36 @@ window.keyPressed = function keyPressed() {
     config.fogDensity -= 0.05;
     redraw();
   }
+
+  if (key === "0") {
+    config.extraFilter = undefined;
+    redraw();
+  }
+  if (key === "1") {
+    toggleExtraFilter("INVERT");
+    redraw();
+  }
+  if (key === "2") {
+    toggleExtraFilter("GRAY");
+    redraw();
+  }
+  if (key === "3") {
+    toggleExtraFilter("THRESHOLD");
+    redraw();
+  }
+  if (key === "4") {
+    toggleExtraFilter("POSTERIZE");
+    redraw();
+  }
 };
 
+function toggleExtraFilter(filterName: FilterName) {
+  if (config.extraFilter !== filterName) {
+    config.extraFilter = filterName;
+  } else {
+    config.extraFilter = undefined;
+  }
+}
 /**
  * Pick from an array preferring the earlier elements, based on exponential distribution
  */
@@ -200,7 +274,7 @@ function pickBiased<T>(arr: T[], decay = 0.5): T {
   return arr[indexCapped];
 }
 
-function createPalette() {
+function createPalette(): Palette {
   const palette1: Palette = {
     name: "book",
     colors: ["#1c2738", "#d8b1a5", "#c95a3f", "#d1a082", "#037b68", "#be1c24"],
@@ -240,4 +314,9 @@ function createPalette() {
     };
   })();
   return random([palette1, palette2, paletteBlueprint]);
+}
+
+function clearAllTimeouts() {
+  timeouts.forEach((t) => clearTimeout(t));
+  timeouts = [];
 }
