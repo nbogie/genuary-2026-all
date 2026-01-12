@@ -198,13 +198,52 @@ function drawOneLayerOfBuildingsOnto(g: p5.Graphics, z: number, partialConfig: P
   pop();
   return g;
 }
+function randomiseAndRedraw() {
+  config.seed = millis();
+  config.useTVNoise = random([true, false]);
+  config.shouldRotateY = random([true, false, "mixed", "mixed"]);
+  config.wireframe = random() < 0.08;
+  config.shouldRotateOnXAndZ = random() < 0.2;
+  config.wildcardFilters = random() < 0.1;
+  // config.fogDensity = random([0.1, 0.15, 0.2, 0.25, 0.3]);
+  palette = createPalette();
+  redraw();
+
+  if (!config.wireframe) {
+    clearAllTimeouts();
+    //schedule some focus-flipped redraws
+    timeouts.push(
+      setTimeout(() => {
+        config.invertFocus = !config.invertFocus;
+        redraw();
+      }, 2000)
+    );
+    timeouts.push(
+      setTimeout(() => {
+        config.invertFocus = !config.invertFocus;
+        redraw();
+      }, 4000)
+    );
+  }
+}
+
 window.windowResized = function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
 };
+
 window.mousePressed = function mousePressed() {
   config.invertFocus = !config.invertFocus;
   redraw();
 };
+
+window.deviceShaken = function deviceShaken() {
+  randomiseAndRedraw();
+};
+
+window.deviceTurned = function deviceTurned() {
+  randomiseAndRedraw();
+};
+
 window.keyPressed = function keyPressed() {
   if (key === "f") {
     config.focusDepthFar = !config.focusDepthFar;
@@ -218,32 +257,7 @@ window.keyPressed = function keyPressed() {
   }
 
   if (key === " ") {
-    config.seed = millis();
-    config.useTVNoise = random([true, false]);
-    config.shouldRotateY = random([true, false, "mixed", "mixed"]);
-    config.wireframe = random() < 0.08;
-    config.shouldRotateOnXAndZ = random() < 0.2;
-    config.wildcardFilters = random() < 0.1;
-    // config.fogDensity = random([0.1, 0.15, 0.2, 0.25, 0.3]);
-    palette = createPalette();
-    redraw();
-
-    if (!config.wireframe) {
-      clearAllTimeouts();
-      //schedule some focus-flipped redraws
-      timeouts.push(
-        setTimeout(() => {
-          config.invertFocus = !config.invertFocus;
-          redraw();
-        }, 2000)
-      );
-      timeouts.push(
-        setTimeout(() => {
-          config.invertFocus = !config.invertFocus;
-          redraw();
-        }, 4000)
-      );
-    }
+    randomiseAndRedraw();
   }
   if (key === ".") {
     config.fogDensity += 0.05;
