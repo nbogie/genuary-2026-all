@@ -24,7 +24,7 @@ type Palette = {
 };
 window.setup = function setup() {
   createCanvas(windowWidth, windowHeight);
-  tvNoiseShader = createFilterShader(fragSrc);
+  tvNoiseShader = createFilterShader(fragSrc());
 
   config = createConfig();
   palette = createPalette();
@@ -288,6 +288,12 @@ window.keyPressed = function keyPressed() {
     toggleExtraFilter("POSTERIZE");
     redraw();
   }
+  if (key === "[") {
+    window.open("https://openprocessing.org/sketch/2841697", "_blank");
+  }
+  if (key === "]") {
+    window.open("https://openprocessing.org/sketch/2837979", "_blank");
+  }
 };
 
 function toggleExtraFilter(filterName: FilterName) {
@@ -357,8 +363,29 @@ function clearAllTimeouts() {
   timeouts = [];
 }
 
+//taken from the p5.strands introduction tutorial:
+//https://beta.p5js.org/tutorials/intro-to-p5-strands/#post-processing
+//@ts-ignore - unused strands filter shader generator
+function modifyToPixelateShader() {
+  // const fc = uniformFloat(() => frameCount)
+  const pixelCountX = uniformFloat(300);
+
+  getColor((inputs: any, canvasContent: { x: number; y: number }) => {
+    const aspectRatio = inputs.canvasSize.x / inputs.canvasSize.y;
+    const pixelSize: any = [pixelCountX, pixelCountX / aspectRatio];
+
+    // Sample the canvasContent texture with the modified texCoord
+    const coord = inputs.texCoord;
+    const modifiedCoord = floor(coord * pixelSize) / pixelSize;
+
+    const col = getTexture(canvasContent, modifiedCoord);
+    return col;
+  });
+}
+
 /** @AI: gemini (LLM) wrote this shader for me */
-const fragSrc = `
+function fragSrc() {
+  return `
   precision highp float;
   varying vec2 vTexCoord;
   uniform sampler2D tex0;
@@ -384,3 +411,4 @@ const fragSrc = `
     vec4 color = texture2D(tex0, uv);
     gl_FragColor = vec4(color.rgb, 1.0);
   }`;
+}
