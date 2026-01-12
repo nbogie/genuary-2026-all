@@ -24,7 +24,7 @@ type Palette = {
 };
 window.setup = function setup() {
   createCanvas(windowWidth, windowHeight);
-  tvNoiseShader = createFilterShader(fragSrc());
+  tvNoiseShader = createFilterShader(tvNoiseFragShaderSrc());
 
   config = createConfig();
   palette = createPalette();
@@ -383,8 +383,8 @@ function modifyToPixelateShader() {
   });
 }
 
-/** @AI: gemini (LLM) wrote this shader for me */
-function fragSrc() {
+/** @AI: gemini (LLM) wrote this shader for me initially */
+function tvNoiseFragShaderSrc() {
   return `
   precision highp float;
   varying vec2 vTexCoord;
@@ -400,15 +400,20 @@ function fragSrc() {
     vec2 uv = vTexCoord;
     
     // Calculate row-based jitter
+    
+    //find out what row this pixel is on (0-50)
     float row = floor(uv.y * 50.0); 
+    //all pixels in a given row at same time will have the same jitter value.
     float jitter = noise(row + time) * 2.0 - 1.0;
     
     // Only apply offset to specific random rows
     if (noise(row + time * 0.5) > 0.7) {
       uv.x += jitter * distortionAmount;
     }
-
+    //sample the pixel colour from the framebuffer at this distorted coord
     vec4 color = texture2D(tex0, uv);
+    
+    //use that other pixel's colour as our output colour for this pixel
     gl_FragColor = vec4(color.rgb, 1.0);
   }`;
 }
