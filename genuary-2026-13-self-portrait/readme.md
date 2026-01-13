@@ -2,6 +2,23 @@
 
 This is an opinionated starter project for coding p5.js v2.x sketches in TypeScript
 
+## Exporting models from blender
+
+Do the following to export an .obj and accompanying .mtl into the project's public/ dir, for each object.
+
+- For each object in turn,
+  - select the object
+  - file: export: wavefront .obj
+  - options:
+    - inlclude selection only: true
+    - scale: 1
+    - forward axis: z
+    - up axis: -y
+    - apply modifiers: true
+    - apply transforms: false
+    - materials: true
+  - name it according to the data object in the source-code.
+
 ## Install - do this before coding
 
 In the editor you will see typescript errors about p5 functions until this step is done:
