@@ -7,10 +7,13 @@ import "p5/global";
 import p5 from "p5";
 import {
   attachmentSlots,
+  blenderCoordsToP5,
   modelParts,
+  vecLiteToP5,
   type AttachmentSlot,
   type LoadedModelPart,
   type ModelPart,
+  type VecLite,
 } from "./modelParts.ts";
 
 p5.disableFriendlyErrors = true;
@@ -18,7 +21,13 @@ let itemModelParts: LoadedModelPart[];
 let config: ReturnType<typeof createConfig>;
 
 function createConfig() {
-  return { seed: 123, shouldJumble: true };
+  return {
+    seed: 123,
+    shouldJumble: true,
+    overallScale: 120,
+    shouldRotateRandomly: true,
+    hideBody: false,
+  };
 }
 
 window.setup = async function setup() {
@@ -43,15 +52,16 @@ window.draw = function draw() {
   background(100);
   orbitControl(1, 1, 0.2);
   randomSeed(config.seed);
-  // debugMode();
+  debugMode();
   lights();
   ambientLight("#aaaaaa");
+
   noStroke();
   drawJumbledParts();
 };
 
 function drawJumbledParts() {
-  scale(100);
+  scale(config.overallScale);
   const freeAttachmentSlots = shuffle(
     attachmentSlots.filter((p) => !p.isReserved)
   ) as AttachmentSlot[];
@@ -64,21 +74,30 @@ function drawJumbledParts() {
         return;
       }
       //todo; align to the attachment normal at that pos.
-      translate(slot.position.x, -slot.position.z, -slot.position.y);
-      orientPartToNormal(part, slot);
+      translate(blenderCoordsToP5(slot.position));
+
+      orientPartToSlotNormal(part, slot.normal);
+      push();
+      translate(0, 0, 0.5);
+      box(0.02, 0.02, 1);
+      pop();
     } else {
-      translate(part.position.x, -part.position.z, -part.position.y);
+      translate(blenderCoordsToP5(part.position));
     }
+
     //fix up eyes. they have to be rotated to align with body.
     if (part.path.startsWith("item-eye")) {
       rotateX(-radians(part.rotationDeg?.x));
     }
     //do some fun rotation on one axis
-    if (!part.isStatic) {
-      rotatePartOnAxis(part, random(TWO_PI));
+    if (config.shouldRotateRandomly && !part.isStatic) {
+      // rotatePartOnAxis(part, random(TWO_PI));
+      rotatePartOnAxis(part, millis() / 1000);
     }
 
-    model(part.loadedModel);
+    if (!(config.hideBody && part.path.startsWith("item-potato"))) {
+      model(part.loadedModel);
+    }
     pop();
   });
 }
@@ -104,11 +123,13 @@ window.keyPressed = function keyPressed() {
     config.shouldJumble = !config.shouldJumble;
   }
 };
-function orientPartToNormal(_part: LoadedModelPart, slot: AttachmentSlot) {
-  const targetNormal = createVector(slot.normal.x, slot.normal.z, slot.normal.y);
+function orientPartToSlotNormal(_part: LoadedModelPart, targetNormalXYZ: VecLite) {
+  //note, converting here.
+
+  const targetNormal = vecLiteToP5(targetNormalXYZ);
 
   //All models have been saved with the same up-vector
-  let initialUp = createVector(0, -1, 0);
+  let initialUp = createVector(0, 0, 1);
 
   // 2. Calculate rotation axis (perpendicular to both vectors)
   let axis = initialUp.cross(targetNormal);

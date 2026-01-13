@@ -1,48 +1,49 @@
 export type LoadedModelPart = ModelPart & { loadedModel: p5.Geometry };
 
+export type VecLite = { x: number; y: number; z: number };
 export type ModelPart = {
   /** relative filename to .obj file including extension*/
   path: string;
-  position: { x: number; y: number; z: number };
-  rotationDeg?: { x: number; y: number; z: number };
+  position: VecLite;
+  rotationDeg?: VecLite;
   rotationAxis?: "x" | "y" | "z";
-  inVector: { x: number; y: number; z: number };
+  inVector: VecLite;
   isFixedPeg?: boolean;
   /**
    *indicates this part should not be translated, rotated, randomly or by user.  (probably the potato-body)
    */
   isStatic: boolean;
 };
+//convert a position from blender (where z is up)
+//to one in p5 (where -y is up)
+//return a p5.Vector for convenience
+export function blenderCoordsToP5(vec: VecLite): p5.Vector {
+  return createVector(vec.x, -vec.z, -vec.y);
+}
 
+export function vecLiteToP5(vec: VecLite): p5.Vector {
+  return createVector(vec.x, vec.y, vec.z);
+}
 export const modelParts: ModelPart[] = [
   {
     path: "item-arm1.obj",
-    position: {
-      x: -0.782,
-      y: -0.153,
-      z: 0.25,
-    },
+    position: { x: -0.782, y: -0.153, z: 0.25 },
     inVector: { x: 1, y: 0, z: 0 },
+    rotationAxis: "x",
     isStatic: false,
   },
   {
     path: "item-arm2.obj",
-    position: {
-      x: 0.78,
-      y: -0.153,
-      z: 0.25,
-    },
+    position: { x: 0.78, y: -0.153, z: 0.25 },
     inVector: { x: -1, y: 0, z: 0 },
+    rotationAxis: "x",
     isStatic: false,
   },
   {
     path: "item-brow1.obj",
-    position: {
-      x: -0.19,
-      y: -0.61,
-      z: 1.035,
-    },
+    position: { x: -0.19, y: -0.61, z: 1.035 },
     isStatic: false,
+    rotationAxis: "z",
     inVector: { x: 0, y: 0, z: -1 },
   },
   {
@@ -50,6 +51,7 @@ export const modelParts: ModelPart[] = [
     position: { x: 0.185, y: -0.59, z: 1.07 },
     isStatic: false,
     rotationDeg: { x: -19, y: 90, z: 0 },
+    rotationAxis: "z",
     inVector: { x: 0, y: 0, z: -1 },
   },
   {
@@ -70,11 +72,7 @@ export const modelParts: ModelPart[] = [
   },
   {
     path: "item-hat.obj",
-    position: {
-      x: 0,
-      y: 0,
-      z: 1.51,
-    },
+    position: { x: 0, y: 0, z: 1.51 },
     isStatic: false,
     isFixedPeg: true,
     inVector: { x: 0, y: 1, z: 0 },
@@ -82,20 +80,18 @@ export const modelParts: ModelPart[] = [
   },
   {
     path: "item-mouth.obj",
-    position: {
-      x: 0,
-      y: -0.91,
-      z: -0.33,
-    },
+    position: { x: 0, y: -0.91, z: -0.33 },
     isStatic: false,
-    inVector: { x: 0, y: 0, z: 1 },
+    inVector: { x: 0, y: 0, z: -1 },
+    rotationAxis: "z",
   },
   {
     path: "item-nose.obj",
     position: { x: 0, y: -0.8233, z: 0.3 },
     isStatic: false,
     rotationDeg: { x: -13, y: 3.5, z: 14.5 },
-    inVector: { x: 0, y: 0, z: 1 },
+    inVector: { x: 0, y: 0, z: -1 },
+    rotationAxis: "z",
   },
   {
     path: "item-potato.obj",
@@ -107,8 +103,8 @@ export const modelParts: ModelPart[] = [
 
 export type AttachmentSlot = {
   name: string;
-  position: { x: number; y: number; z: number };
-  normal: { x: number; y: number; z: number };
+  position: VecLite;
+  normal: VecLite;
   /** is reserved for a specific item.  don't jumble into here */
   isReserved?: boolean;
 };
@@ -116,29 +112,17 @@ export type AttachmentSlot = {
 export const attachmentSlots: AttachmentSlot[] = [
   {
     name: "item-arm1.slot",
-    position: {
-      x: -0.782,
-      y: -0.153,
-      z: 0.25,
-    },
+    position: { x: -0.782, y: -0.153, z: 0.25 },
     normal: { x: -1, y: 0, z: 0 },
   },
   {
     name: "item-arm2.slot",
-    position: {
-      x: 0.78,
-      y: -0.153,
-      z: 0.25,
-    },
+    position: { x: 0.78, y: -0.153, z: 0.25 },
     normal: { x: 1, y: 0, z: 0 },
   },
   {
     name: "item-brow1.slot",
-    position: {
-      x: -0.19,
-      y: -0.61,
-      z: 1.035,
-    },
+    position: { x: -0.19, y: -0.61, z: 1.035 },
     normal: { x: 0, y: 0, z: 1 },
   },
   {
@@ -158,21 +142,13 @@ export const attachmentSlots: AttachmentSlot[] = [
   },
   {
     name: "item-hat.slot",
-    position: {
-      x: 0,
-      y: 0,
-      z: 1.51,
-    },
+    position: { x: 0, y: 0, z: 1.51 },
     isReserved: true,
     normal: { x: 0, y: -1, z: 0 },
   },
   {
     name: "item-mouth.slot",
-    position: {
-      x: 0,
-      y: -0.91,
-      z: -0.33,
-    },
+    position: { x: 0, y: -0.91, z: -0.33 },
     normal: { x: 0, y: 0, z: 1 },
   },
   {
