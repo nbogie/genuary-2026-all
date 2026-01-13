@@ -29,7 +29,7 @@ const state = {
 function createConfig() {
   return {
     overallScale: 120,
-    seed: performance.timeOrigin,
+    seed: round(performance.timeOrigin),
     shakeThreshold: 20,
     shouldAutoRandomise: true,
     shouldHideBody: false,
@@ -79,7 +79,7 @@ window.draw = function draw() {
   orbitControl(1, 1, 0.2);
   randomSeed(config.seed);
   lights();
-  ambientLight("#aaaaaa");
+  ambientLight("#c0c0c0");
 
   noStroke();
   drawJumbledParts();
@@ -214,6 +214,9 @@ window.keyPressed = function keyPressed() {
   if (key === "w") {
     config.shouldShowWireframe = !config.shouldShowWireframe;
   }
+  if (key === "s") {
+    save("self-portrait-seed-" + config.seed);
+  }
   if (key === "f") {
     if (config.shouldFill && config.shouldShowWireframe) {
       config.shouldFill = false;
@@ -243,7 +246,7 @@ export function showDebugLineBox() {
 }
 
 function randomiseStuff() {
-  config.seed = millis();
+  config.seed = round(1000 * millis());
   modelPartsLoaded.forEach((p) => (p.autoRotateDir = random([1, -1])));
   state.generatedAtMillis = millis();
 }
