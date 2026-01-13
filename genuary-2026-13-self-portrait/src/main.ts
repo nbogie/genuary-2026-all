@@ -36,6 +36,8 @@ function createConfig() {
     hideBody: false,
     shouldShowDebug: false,
     shakeThreshold: 20,
+    wireframe: false,
+    noFill: false,
   };
 }
 
@@ -117,6 +119,12 @@ function drawJumbledParts() {
     }
 
     if (!(config.hideBody && part.path.startsWith("item-potato"))) {
+      if (config.wireframe) {
+        stroke(30, 60);
+      }
+      if (config.noFill) {
+        noFill();
+      }
       model(part.loadedModel);
     }
     pop();
@@ -199,6 +207,17 @@ window.keyPressed = function keyPressed() {
     config.shouldJumble = !config.shouldJumble;
     state.lastUserInteractionMillis = millis();
   }
+  if (key === "w") {
+    config.wireframe = !config.wireframe;
+  }
+  if (key === "f") {
+    if (config.noFill) {
+      config.noFill = false;
+    } else if (!config.noFill && config.wireframe) {
+      config.noFill = true;
+    }
+  }
+
   if (key === "%") {
     window.open(
       "https://github.com/nbogie/genuary-2026-all/tree/main/genuary-2026-13-self-portrait",
