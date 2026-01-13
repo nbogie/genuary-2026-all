@@ -8,44 +8,61 @@ import p5 from "p5";
 import {
   attachmentSlots,
   blenderCoordsToP5,
-  modelParts,
+  modelPartsInfo,
   vecLiteToP5,
   type AttachmentSlot,
   type LoadedModelPart,
-  type ModelPart,
+  type ModelPartInfo,
   type VecLite,
 } from "./modelParts.ts";
 
 p5.disableFriendlyErrors = true;
-let itemModelParts: LoadedModelPart[];
+let modelPartsLoaded: LoadedModelPart[];
 let config: ReturnType<typeof createConfig>;
+
+const state = {
+  generatedAtMillis: 0,
+  lastUserInteractionMillis: 0,
+};
 
 function createConfig() {
   return {
-    seed: 123,
+    seed: performance.timeOrigin,
     shouldJumble: true,
     overallScale: 120,
     rotateContinually: true,
+    shouldAutoRandomise: true,
     shouldRotateRandomly: true,
     hideBody: false,
+    shouldShowDebug: false,
   };
 }
 
 window.setup = async function setup() {
   config = createConfig();
   createCanvas(windowWidth, windowHeight, WEBGL);
-  itemModelParts = await loadItemPartModels();
+  modelPartsLoaded = await loadItemPartModels();
+  setInterval(maybeAutoRandomise, 2000);
 };
 
+function maybeAutoRandomise() {
+  const timeUntouched = millis() - state.lastUserInteractionMillis;
+  const timeInThisGen = millis() - state.generatedAtMillis;
+  if (config.shouldAutoRandomise && timeUntouched >= 5000 && timeInThisGen >= 3000) {
+    randomiseStuff();
+    config.rotateContinually = random([true, false]);
+  }
+}
 async function loadItemPartModels(): Promise<LoadedModelPart[]> {
-  return Promise.all(modelParts.map((part) => loadAndTagOneModelPart(part)));
+  return Promise.all(modelPartsInfo.map((part) => loadAndTagOneModelPart(part)));
 }
 
-async function loadAndTagOneModelPart(part: ModelPart): Promise<LoadedModelPart> {
+async function loadAndTagOneModelPart(part: ModelPartInfo): Promise<LoadedModelPart> {
   const loadedModel = await loadModel(part.path);
   const loadedPart: LoadedModelPart = {
     ...part,
     loadedModel,
+    autoRotateDir: random([-1, 1]),
   };
   return loadedPart;
 }
@@ -53,7 +70,6 @@ window.draw = function draw() {
   background(100);
   orbitControl(1, 1, 0.2);
   randomSeed(config.seed);
-  debugMode();
   lights();
   ambientLight("#aaaaaa");
 
@@ -69,7 +85,7 @@ function drawJumbledParts() {
     attachmentSlots.filter((p) => !p.isReserved)
   ) as AttachmentSlot[];
 
-  itemModelParts.forEach((part) => {
+  modelPartsLoaded.forEach((part) => {
     push();
 
     if (config.shouldJumble && !part.isStatic && !part.isFixedPeg) {
@@ -92,7 +108,10 @@ function drawJumbledParts() {
     }
     //do some fun rotation on one axis
     if (config.shouldRotateRandomly && !part.isStatic) {
-      rotatePartOnAxis(part, config.rotateContinually ? millis() / 1000 : random(TWO_PI));
+      rotatePartOnAxis(
+        part,
+        config.rotateContinually ? (part.autoRotateDir * millis()) / 1000 : random(TWO_PI)
+      );
     }
 
     if (!(config.hideBody && part.path.startsWith("item-potato"))) {
@@ -141,24 +160,55 @@ function orientPartToSlotNormal(_part: LoadedModelPart, targetNormalXYZ: VecLite
   }
 }
 
+window.doubleClicked = function doubleClicked() {
+  randomiseStuff();
+  state.lastUserInteractionMillis = millis();
+};
+
 window.keyPressed = function keyPressed() {
   if (key === " ") {
-    config.seed = millis();
+    randomiseStuff();
+    state.lastUserInteractionMillis = millis();
   }
-  if (key === "j") {
-    config.shouldJumble = !config.shouldJumble;
+  if (key === "a") {
+    config.shouldAutoRandomise = !config.shouldAutoRandomise;
   }
   if (key === "b") {
     config.hideBody = !config.hideBody;
   }
   if (key === "c") {
     config.rotateContinually = !config.rotateContinually;
+    state.lastUserInteractionMillis = millis();
+  }
+  if (key === "d") {
+    config.shouldShowDebug = !config.shouldShowDebug;
+    if (config.shouldShowDebug) {
+      debugMode();
+    } else {
+      noDebugMode();
+    }
+  }
+  if (key === "j") {
+    config.shouldJumble = !config.shouldJumble;
+    state.lastUserInteractionMillis = millis();
+  }
+  if (key === "%") {
+    window.open(
+      "https://github.com/nbogie/genuary-2026-all/tree/main/genuary-2026-13-self-portrait",
+      "_blank"
+    );
   }
 };
 
-function showDebugLineBox() {
+export function showDebugLineBox() {
   push();
   translate(0, 0, 0.5);
   box(0.02, 0.02, 1);
   pop();
+}
+
+function randomiseStuff() {
+  config.seed = millis();
+  modelPartsLoaded.forEach((p) => (p.autoRotateDir = random([1, -1])));
+  state.generatedAtMillis = millis();
 }

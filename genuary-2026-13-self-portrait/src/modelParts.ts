@@ -1,7 +1,6 @@
-export type LoadedModelPart = ModelPart & { loadedModel: p5.Geometry };
-
 export type VecLite = { x: number; y: number; z: number };
-export type ModelPart = {
+export type LoadedModelPart = ModelPartInfo & { loadedModel: p5.Geometry; autoRotateDir: 1 | -1 };
+export type ModelPartInfo = {
   /** relative filename to .obj file including extension*/
   path: string;
   position: VecLite;
@@ -24,7 +23,7 @@ export function blenderCoordsToP5(vec: VecLite): p5.Vector {
 export function vecLiteToP5(vec: VecLite): p5.Vector {
   return createVector(vec.x, vec.y, vec.z);
 }
-export const modelParts: ModelPart[] = [
+export const modelPartsInfo: ModelPartInfo[] = [
   {
     path: "item-arm1.obj",
     position: { x: -0.782, y: -0.153, z: 0.25 },
