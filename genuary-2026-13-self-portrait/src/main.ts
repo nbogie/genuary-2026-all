@@ -1,6 +1,10 @@
-//have all models be attached to simple matter.js bodies (spheres?)
-//and have those bodies sprung to random attachment points.
-//ideally, drag and drop would move a model/body between attachment parts.
+//TODO:
+// * Improve the lighting
+// * Have all models be attached to simple matter.js bodies (spheres?)
+//   and have those bodies sprung to random attachment points.
+//   Ideally, drag and drop would move a model/body between attachment parts.
+// * Fine-tune and observe attachment-point normals for angled faces, to lessen clipping
+// * Model the rest of the character
 
 import "p5/global";
 //@ts-ignore
