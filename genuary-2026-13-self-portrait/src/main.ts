@@ -48,6 +48,9 @@ window.setup = async function setup() {
   setShakeThreshold(config.shakeThreshold);
   modelPartsLoaded = await loadItemPartModels();
   setInterval(maybeAutoRandomise, 2000);
+  if (state.isMobile) {
+    setupFloatingInstructionElement({ msg: "(Shake Me!)", durationMillis: 2000 });
+  }
 };
 
 function maybeAutoRandomise() {
@@ -86,7 +89,6 @@ window.draw = function draw() {
 };
 
 function drawMobileInstructions() {
-  //TODO: float the word "shake me!"
   push();
   translate(0, 200, 1);
   push();
@@ -283,4 +285,29 @@ function detectIfMobileDevice(): boolean {
     console.log("ignoring error while trying to find if we are on mobile device: ", err);
     return false;
   }
+}
+
+/** setup and show a floating instruction over the canvas.  it will auto-remove */
+function setupFloatingInstructionElement({
+  msg,
+  durationMillis,
+}: {
+  msg: string;
+  durationMillis: number;
+}) {
+  const instructionElement = createElement("h1", msg);
+  //This css-layout code is from an LLM
+  instructionElement.style("position", "fixed");
+  instructionElement.style("top", "70%");
+  instructionElement.style("left", "50%");
+  instructionElement.style("transform", "translate(-50%, -50%)");
+  instructionElement.style("margin", "0");
+  instructionElement.style("font-family", "sans-serif");
+  instructionElement.style("color", "#ffffff");
+  instructionElement.style("font-size", "2rem");
+  // Clicks pass through to canvas
+  instructionElement.style("pointer-events", "none");
+
+  setTimeout(() => instructionElement.remove(), durationMillis);
+  return instructionElement;
 }
