@@ -35,12 +35,14 @@ function createConfig() {
     shouldRotateRandomly: true,
     hideBody: false,
     shouldShowDebug: false,
+    shakeThreshold: 20,
   };
 }
 
 window.setup = async function setup() {
   config = createConfig();
   createCanvas(windowWidth, windowHeight, WEBGL);
+  setShakeThreshold(config.shakeThreshold);
   modelPartsLoaded = await loadItemPartModels();
   setInterval(maybeAutoRandomise, 2000);
 };
@@ -159,6 +161,11 @@ function orientPartToSlotNormal(_part: LoadedModelPart, targetNormalXYZ: VecLite
     rotate(angle, axis);
   }
 }
+
+window.deviceShaken = function deviceShaken() {
+  randomiseStuff();
+  state.lastUserInteractionMillis = millis();
+};
 
 window.doubleClicked = function doubleClicked() {
   randomiseStuff();
