@@ -83,33 +83,7 @@ window.draw = function draw() {
 
   noStroke();
   drawJumbledParts();
-  if (state.isMobile && frameCount < 30) {
-    drawMobileInstructions();
-  }
 };
-
-function drawMobileInstructions() {
-  push();
-  translate(0, 200, 1);
-  push();
-  fill("red");
-  translate(50, 0, 0);
-  box(100, 10, 10);
-  pop();
-  rotateZ(PI / 2);
-  push();
-  fill("lime");
-  translate(50, 0, 0);
-  box(100, 10, 10);
-  pop();
-  rotateY(-PI / 2);
-  push();
-  fill("dodgerblue");
-  translate(50, 0, 0);
-  box(100, 10, 10);
-  pop();
-  pop();
-}
 
 function drawJumbledParts() {
   push();
