@@ -115,14 +115,6 @@ function rotatePartOnAxis(part: LoadedModelPart, angle: number) {
   }
 }
 
-window.keyPressed = function keyPressed() {
-  if (key === " ") {
-    config.seed = millis();
-  }
-  if (key === "j") {
-    config.shouldJumble = !config.shouldJumble;
-  }
-};
 function orientPartToSlotNormal(_part: LoadedModelPart, targetNormalXYZ: VecLite) {
   //note, converting here.
 
@@ -143,3 +135,12 @@ function orientPartToSlotNormal(_part: LoadedModelPart, targetNormalXYZ: VecLite
     rotate(angle, axis);
   }
 }
+
+window.keyPressed = function keyPressed() {
+  if (key === " ") {
+    config.seed = millis();
+  }
+  if (key === "j") {
+    config.shouldJumble = !config.shouldJumble;
+  }
+};
