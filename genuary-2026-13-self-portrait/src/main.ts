@@ -23,6 +23,7 @@ let config: ReturnType<typeof createConfig>;
 const state = {
   generatedAtMillis: 0,
   lastUserInteractionMillis: 0,
+  isMobile: detectIfMobileDevice(),
 };
 
 function createConfig() {
@@ -79,7 +80,34 @@ window.draw = function draw() {
 
   noStroke();
   drawJumbledParts();
+  if (state.isMobile && frameCount < 30) {
+    drawMobileInstructions();
+  }
 };
+
+function drawMobileInstructions() {
+  //TODO: float the word "shake me!"
+  push();
+  translate(0, 200, 1);
+  push();
+  fill("red");
+  translate(50, 0, 0);
+  box(100, 10, 10);
+  pop();
+  rotateZ(PI / 2);
+  push();
+  fill("lime");
+  translate(50, 0, 0);
+  box(100, 10, 10);
+  pop();
+  rotateY(-PI / 2);
+  push();
+  fill("dodgerblue");
+  translate(50, 0, 0);
+  box(100, 10, 10);
+  pop();
+  pop();
+}
 
 function drawJumbledParts() {
   push();
@@ -226,6 +254,11 @@ window.keyPressed = function keyPressed() {
   }
 };
 
+window.windowResized = function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+  //TODO: update camera aspect ratio, perspective, etc?
+};
+
 export function showDebugLineBox() {
   push();
   translate(0, 0, 0.5);
@@ -237,4 +270,17 @@ function randomiseStuff() {
   config.seed = millis();
   modelPartsLoaded.forEach((p) => (p.autoRotateDir = random([1, -1])));
   state.generatedAtMillis = millis();
+}
+
+function detectIfMobileDevice(): boolean {
+  try {
+    const check = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent
+    );
+    const hasTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+    return check || hasTouch;
+  } catch (err) {
+    console.log("ignoring error while trying to find if we are on mobile device: ", err);
+    return false;
+  }
 }
