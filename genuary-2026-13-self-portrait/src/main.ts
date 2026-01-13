@@ -28,17 +28,17 @@ const state = {
 
 function createConfig() {
   return {
-    seed: performance.timeOrigin,
-    shouldJumble: true,
     overallScale: 120,
-    rotateContinually: true,
-    shouldAutoRandomise: true,
-    shouldRotateRandomly: true,
-    hideBody: false,
-    shouldShowDebug: false,
+    seed: performance.timeOrigin,
     shakeThreshold: 20,
-    wireframe: false,
-    noFill: false,
+    shouldAutoRandomise: true,
+    shouldHideBody: false,
+    shouldJumble: true,
+    shouldRotateContinually: true,
+    shouldRotateRandomly: true,
+    shouldShowDebug: false,
+    shouldShowWireframe: false,
+    shouldFill: true,
   };
 }
 
@@ -58,7 +58,7 @@ function maybeAutoRandomise() {
   const timeInThisGen = millis() - state.generatedAtMillis;
   if (config.shouldAutoRandomise && timeUntouched >= 5000 && timeInThisGen >= 3000) {
     randomiseStuff();
-    config.rotateContinually = random([true, false]);
+    config.shouldRotateContinually = random([true, false]);
   }
 }
 async function loadItemPartModels(): Promise<LoadedModelPart[]> {
@@ -118,15 +118,15 @@ function drawJumbledParts() {
     if (config.shouldRotateRandomly && !part.isStatic) {
       rotatePartOnAxis(
         part,
-        config.rotateContinually ? (part.autoRotateDir * millis()) / 1000 : random(TWO_PI)
+        config.shouldRotateContinually ? (part.autoRotateDir * millis()) / 1000 : random(TWO_PI)
       );
     }
 
-    if (!(config.hideBody && part.path.startsWith("item-potato"))) {
-      if (config.wireframe) {
+    if (!(config.shouldHideBody && part.path.startsWith("item-potato"))) {
+      if (config.shouldShowWireframe) {
         stroke(30, 60);
       }
-      if (config.noFill) {
+      if (!config.shouldFill) {
         noFill();
       }
       model(part.loadedModel);
@@ -193,10 +193,10 @@ window.keyPressed = function keyPressed() {
     config.shouldAutoRandomise = !config.shouldAutoRandomise;
   }
   if (key === "b") {
-    config.hideBody = !config.hideBody;
+    config.shouldHideBody = !config.shouldHideBody;
   }
   if (key === "c") {
-    config.rotateContinually = !config.rotateContinually;
+    config.shouldRotateContinually;
     state.lastUserInteractionMillis = millis();
   }
   if (key === "d") {
@@ -212,13 +212,13 @@ window.keyPressed = function keyPressed() {
     state.lastUserInteractionMillis = millis();
   }
   if (key === "w") {
-    config.wireframe = !config.wireframe;
+    config.shouldShowWireframe = !config.shouldShowWireframe;
   }
   if (key === "f") {
-    if (config.noFill) {
-      config.noFill = false;
-    } else if (!config.noFill && config.wireframe) {
-      config.noFill = true;
+    if (config.shouldFill && config.shouldShowWireframe) {
+      config.shouldFill = false;
+    } else {
+      config.shouldFill = true;
     }
   }
 
