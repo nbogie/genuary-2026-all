@@ -25,6 +25,7 @@ function createConfig() {
     seed: 123,
     shouldJumble: true,
     overallScale: 120,
+    rotateContinually: true,
     shouldRotateRandomly: true,
     hideBody: false,
   };
@@ -61,28 +62,28 @@ window.draw = function draw() {
 };
 
 function drawJumbledParts() {
+  push();
   scale(config.overallScale);
+
   const freeAttachmentSlots = shuffle(
     attachmentSlots.filter((p) => !p.isReserved)
   ) as AttachmentSlot[];
+
   itemModelParts.forEach((part) => {
     push();
+
     if (config.shouldJumble && !part.isStatic && !part.isFixedPeg) {
       const slot = freeAttachmentSlots.pop();
       if (!slot) {
         console.error("ran out of attachment slots at part: " + part.path);
         return;
       }
-      //todo; align to the attachment normal at that pos.
       translate(blenderCoordsToP5(slot.position));
-
       orientPartToSlotNormal(part, slot.normal);
-      push();
-      translate(0, 0, 0.5);
-      box(0.02, 0.02, 1);
-      pop();
+      // showDebugLineBox();
     } else {
       translate(blenderCoordsToP5(part.position));
+      // orientPartToSlotNormal(part, slot.normal);
     }
 
     //fix up eyes. they have to be rotated to align with body.
@@ -91,8 +92,7 @@ function drawJumbledParts() {
     }
     //do some fun rotation on one axis
     if (config.shouldRotateRandomly && !part.isStatic) {
-      // rotatePartOnAxis(part, random(TWO_PI));
-      rotatePartOnAxis(part, millis() / 1000);
+      rotatePartOnAxis(part, config.rotateContinually ? millis() / 1000 : random(TWO_PI));
     }
 
     if (!(config.hideBody && part.path.startsWith("item-potato"))) {
@@ -100,6 +100,7 @@ function drawJumbledParts() {
     }
     pop();
   });
+  pop();
 }
 function rotatePartOnAxis(part: LoadedModelPart, angle: number) {
   if (!part.rotationAxis) {
@@ -120,8 +121,12 @@ function orientPartToSlotNormal(_part: LoadedModelPart, targetNormalXYZ: VecLite
 
   const targetNormal = vecLiteToP5(targetNormalXYZ);
 
-  //All models have been saved with the same up-vector
-  let initialUp = createVector(0, 0, 1);
+  //TODO: record these vectors in the model part data.
+  let initialUp = _part.path.startsWith("item-arm1")
+    ? createVector(-1, 0, 0)
+    : _part.path.startsWith("item-arm2")
+    ? createVector(1, 0, 0)
+    : createVector(0, 0, 1);
 
   // 2. Calculate rotation axis (perpendicular to both vectors)
   let axis = initialUp.cross(targetNormal);
@@ -143,4 +148,17 @@ window.keyPressed = function keyPressed() {
   if (key === "j") {
     config.shouldJumble = !config.shouldJumble;
   }
+  if (key === "b") {
+    config.hideBody = !config.hideBody;
+  }
+  if (key === "c") {
+    config.rotateContinually = !config.rotateContinually;
+  }
 };
+
+function showDebugLineBox() {
+  push();
+  translate(0, 0, 0.5);
+  box(0.02, 0.02, 1);
+  pop();
+}
