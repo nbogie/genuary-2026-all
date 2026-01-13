@@ -1,10 +1,10 @@
 # Blender 5.0.1 MTL File: 'mr-potatohead.blend'
 # www.blender.org
 
-newmtl potato-brown
-Ns 0.000000
+newmtl arm-white
+Ns 250.000000
 Ka 1.000000 1.000000 1.000000
-Kd 0.345901 0.178610 0.076682
+Kd 0.648340 0.648340 0.648340
 Ks 0.500000 0.500000 0.500000
 Ke 0.000000 0.000000 0.000000
 Ni 1.500000
