@@ -43,6 +43,7 @@ function createConfig() {
     shouldShowDebug: false,
     shouldShowWireframe: false,
     shouldFill: true,
+    shouldUseHorrorLightingWarningStrobing: false,
   };
 }
 
@@ -51,7 +52,7 @@ window.setup = async function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
   setShakeThreshold(config.shakeThreshold);
   modelPartsLoaded = await loadItemPartModels();
-  setInterval(maybeAutoRandomise, 2000);
+  setInterval(maybeAutoRandomise, 500);
   if (state.isMobile) {
     setupFloatingInstructionElement({ msg: "(Shake Me!)", durationMillis: 2000 });
   }
@@ -60,7 +61,8 @@ window.setup = async function setup() {
 function maybeAutoRandomise() {
   const timeUntouched = millis() - state.lastUserInteractionMillis;
   const timeInThisGen = millis() - state.generatedAtMillis;
-  if (config.shouldAutoRandomise && timeUntouched >= 5000 && timeInThisGen >= 3000) {
+  const minTimePerGen = config.shouldUseHorrorLightingWarningStrobing ? 1400 : 3000;
+  if (config.shouldAutoRandomise && timeUntouched >= 5000 && timeInThisGen >= minTimePerGen) {
     randomiseStuff();
     config.shouldRotateContinually = random([true, false]);
   }
@@ -79,16 +81,38 @@ async function loadAndTagOneModelPart(part: ModelPartInfo): Promise<LoadedModelP
   return loadedPart;
 }
 window.draw = function draw() {
-  background(100);
+  drawBackground();
   orbitControl(1, 1, 0.2);
   randomSeed(config.seed);
-  lights();
-  ambientLight("#c0c0c0");
-
+  drawLights();
   noStroke();
   drawJumbledParts();
 };
 
+function drawBackground() {
+  if (config.shouldUseHorrorLightingWarningStrobing) {
+    background(0);
+  } else {
+    background(100);
+  }
+}
+
+function drawLights() {
+  if (config.shouldUseHorrorLightingWarningStrobing) {
+    drawHorrorModeLights();
+    return;
+  }
+  lights();
+  ambientLight("#c0c0c0");
+}
+function drawHorrorModeLights() {
+  if (frameCount % 90 < 10) {
+    directionalLight([255, 100, 100], createVector(0.1, -1, -0.6).normalize());
+    ambientLight([255, 50, 50].map((v) => v * 0.2));
+  } else {
+    ambientLight(0);
+  }
+}
 function drawJumbledParts() {
   push();
   scale(config.overallScale);
@@ -217,6 +241,9 @@ window.keyPressed = function keyPressed() {
   }
   if (key === "w") {
     config.shouldShowWireframe = !config.shouldShowWireframe;
+  }
+  if (key === "H") {
+    config.shouldUseHorrorLightingWarningStrobing = !config.shouldUseHorrorLightingWarningStrobing;
   }
   if (key === "s") {
     save("self-portrait-seed-" + config.seed);
