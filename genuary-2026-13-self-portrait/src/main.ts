@@ -57,7 +57,7 @@ function createConfig() {
       },
     },
     mobile: {
-      startCamera: { eye: [0, 0, 800], look: [0, 0, 0] } satisfies CamInfo,
+      cameras: { start: { eye: [0, 0, 800], look: [0, 0, 0] } satisfies CamInfo },
     },
   };
 }
@@ -66,7 +66,8 @@ window.setup = async function setup() {
   config = createConfig();
   createCanvas(windowWidth, windowHeight, WEBGL);
   state.myCamera = createCamera();
-  configureCamera(config.desktop.cameras.start);
+
+  configureCamera(state.isMobile ? config.mobile.cameras.start : config.desktop.cameras.start);
   setCamera(state.myCamera);
 
   setShakeThreshold(config.shakeThreshold);
@@ -267,6 +268,9 @@ function orientPartToSlotNormal(_part: LoadedModelPart, targetNormalXYZ: VecLite
 }
 
 window.deviceShaken = function deviceShaken() {
+  if (millis() - state.generatedAtMillis < 500) {
+    return;
+  }
   randomiseStuff();
   state.lastUserInteractionMillis = millis();
   if (touches.length > 0) {
