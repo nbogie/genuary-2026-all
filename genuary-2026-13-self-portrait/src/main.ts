@@ -25,10 +25,14 @@ let modelPartsLoaded: LoadedModelPart[];
 let config: ReturnType<typeof createConfig>;
 
 const state = {
+  myCamera: undefined! as p5.Camera,
   generatedAtMillis: 0,
   lastUserInteractionMillis: 0,
   isMobile: detectIfMobileDevice(),
+  horrorModeStepCount: 0,
 };
+
+type CamInfo = { eye: [number, number, number]; look: [number, number, number] };
 
 function createConfig() {
   return {
@@ -45,24 +49,41 @@ function createConfig() {
     shouldFill: true,
     shouldUseThreePointLighting: true,
     shouldUseHorrorLightingWarningStrobing: false,
+    desktop: {
+      cameras: {
+        start: { eye: [20, -100, 500], look: [-0.4, -31, 0] } satisfies CamInfo,
+        horrorStart: { eye: [134, -486, 3300], look: [-0.4, -31, 0] } satisfies CamInfo,
+        horrorEnd: { eye: [-38, 23, 364], look: [-0.4, -31, 0] } satisfies CamInfo,
+      },
+    },
+    mobile: {
+      startCamera: { eye: [0, 0, 800], look: [0, 0, 0] } satisfies CamInfo,
+    },
   };
 }
 
 window.setup = async function setup() {
   config = createConfig();
   createCanvas(windowWidth, windowHeight, WEBGL);
+  state.myCamera = createCamera();
+  configureCamera(config.desktop.cameras.start);
+  setCamera(state.myCamera);
+
   setShakeThreshold(config.shakeThreshold);
   modelPartsLoaded = await loadItemPartModels();
-  setInterval(maybeAutoRandomise, 500);
+  setInterval(maybeRandomise, 500);
   if (state.isMobile) {
     setupFloatingInstructionElement({ msg: "(Shake Me!)", durationMillis: 2000 });
   }
 };
 
-function maybeAutoRandomise() {
+function maybeRandomise() {
+  if (config.shouldUseHorrorLightingWarningStrobing) {
+    return;
+  }
   const timeUntouched = millis() - state.lastUserInteractionMillis;
   const timeInThisGen = millis() - state.generatedAtMillis;
-  const minTimePerGen = config.shouldUseHorrorLightingWarningStrobing ? 1400 : 3000;
+  const minTimePerGen = 3000;
   if (config.shouldAutoRandomise && timeUntouched >= 5000 && timeInThisGen >= minTimePerGen) {
     randomiseStuff();
     config.shouldRotateContinually = random([true, false]);
@@ -126,13 +147,36 @@ function drawThreePointLighting() {
   ambientLight("#8a739a");
 }
 function drawHorrorModeLights() {
-  if (frameCount % 90 < 10) {
+  const remainder = frameCount % 90;
+  if (remainder < 10) {
+    //blink on
     directionalLight([255, 100, 100], createVector(0.1, -1, -0.6).normalize());
     ambientLight([255, 50, 50].map((v) => v * 0.2));
   } else {
     ambientLight(0);
   }
+  if (remainder === 20) {
+    progressTehHorror();
+  }
 }
+
+function progressTehHorror() {
+  //under cover of darkness, randomise limbs and step camera closer, to a max.
+  randomiseStuff();
+
+  //frozen snapshots for first n strobes.  then maybe allow some twisting.
+  config.shouldRotateContinually = state.horrorModeStepCount > 4 && random([true, false]);
+
+  const camInfo: CamInfo = lerpCameraInfos(
+    config.desktop.cameras.horrorStart,
+    config.desktop.cameras.horrorEnd,
+    min(2, state.horrorModeStepCount) / 2
+  );
+  configureCamera(camInfo);
+
+  state.horrorModeStepCount++;
+}
+
 function drawJumbledParts() {
   push();
   scale(config.overallScale);
@@ -225,6 +269,9 @@ function orientPartToSlotNormal(_part: LoadedModelPart, targetNormalXYZ: VecLite
 window.deviceShaken = function deviceShaken() {
   randomiseStuff();
   state.lastUserInteractionMillis = millis();
+  if (touches.length > 0) {
+    config.shouldUseThreePointLighting = !config.shouldUseThreePointLighting;
+  }
 };
 
 window.doubleClicked = function doubleClicked() {
@@ -236,6 +283,9 @@ window.keyPressed = function keyPressed() {
   if (key === " ") {
     randomiseStuff();
     state.lastUserInteractionMillis = millis();
+  }
+  if (key === "#") {
+    copyCameraPositionToClipboard();
   }
   if (key === "a") {
     config.shouldAutoRandomise = !config.shouldAutoRandomise;
@@ -264,6 +314,12 @@ window.keyPressed = function keyPressed() {
   }
   if (key === "H") {
     config.shouldUseHorrorLightingWarningStrobing = !config.shouldUseHorrorLightingWarningStrobing;
+    state.horrorModeStepCount = 0;
+    if (config.shouldUseHorrorLightingWarningStrobing) {
+      progressTehHorror();
+    } else {
+      configureCamera(config.desktop.cameras.start);
+    }
   }
   if (key === "s") {
     save("self-portrait-seed-" + config.seed);
@@ -340,4 +396,37 @@ function setupFloatingInstructionElement({
 
   setTimeout(() => instructionElement.remove(), durationMillis);
   return instructionElement;
+}
+
+function copyCameraPositionToClipboard() {
+  const camera = state.myCamera;
+  const position = {
+    eyeX: camera.eyeX,
+    eyeY: camera.eyeY,
+    eyeZ: camera.eyeZ,
+    lookX: camera.centerX,
+    lookY: camera.centerY,
+    lookZ: camera.centerZ,
+  };
+  navigator.clipboard.writeText(JSON.stringify(position, null, 2));
+}
+
+function configureCamera(config: CamInfo) {
+  state.myCamera.camera(...config.eye, ...config.look);
+}
+
+function lerpCameraInfos(a: CamInfo, b: CamInfo, frac: number): CamInfo {
+  frac = constrain(frac, 0, 1);
+  return {
+    eye: [
+      lerp(a.eye[0], b.eye[0], frac),
+      lerp(a.eye[1], b.eye[1], frac),
+      lerp(a.eye[2], b.eye[2], frac),
+    ],
+    look: [
+      lerp(a.look[0], b.look[0], frac),
+      lerp(a.look[1], b.look[1], frac),
+      lerp(a.look[2], b.look[2], frac),
+    ],
+  };
 }
