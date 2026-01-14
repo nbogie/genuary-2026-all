@@ -51,7 +51,7 @@ function createConfig() {
     shouldUseHorrorLightingWarningStrobing: false,
     desktop: {
       cameras: {
-        start: { eye: [20, -100, 500], look: [-0.4, -31, 0] } satisfies CamInfo,
+        start: { eye: [18, -94, 456], look: [-0.4, -31, 0] } satisfies CamInfo,
         horrorStart: { eye: [134, -486, 3300], look: [-0.4, -31, 0] } satisfies CamInfo,
         horrorEnd: { eye: [-38, 23, 364], look: [-0.4, -31, 0] } satisfies CamInfo,
       },
