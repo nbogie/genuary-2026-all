@@ -43,6 +43,7 @@ function createConfig() {
     shouldShowDebug: false,
     shouldShowWireframe: false,
     shouldFill: true,
+    shouldUseThreePointLighting: true,
     shouldUseHorrorLightingWarningStrobing: false,
   };
 }
@@ -102,8 +103,27 @@ function drawLights() {
     drawHorrorModeLights();
     return;
   }
+  if (config.shouldUseThreePointLighting) {
+    drawThreePointLighting();
+    return;
+  }
   lights();
   ambientLight("#c0c0c0");
+}
+
+//I don't think this an improvement!
+function drawThreePointLighting() {
+  //key light, warm.  called twice for more intensity
+  for (let i = 0; i < 2; i++) {
+    directionalLight("#ffebae", createVector(-0.6, 0.7, -0.8).normalize());
+  }
+  //key light - teal-ish
+  for (let i = 0; i < 1; i++) {
+    directionalLight("#005050", createVector(0.7, 0.5, -0.6).normalize());
+  }
+  //back light not worth it - no hair, etc catching this rim light
+
+  ambientLight("#8a739a");
 }
 function drawHorrorModeLights() {
   if (frameCount % 90 < 10) {
@@ -255,7 +275,9 @@ window.keyPressed = function keyPressed() {
       config.shouldFill = true;
     }
   }
-
+  if (key === "t") {
+    config.shouldUseThreePointLighting = !config.shouldUseThreePointLighting;
+  }
   if (key === "%") {
     window.open(
       "https://github.com/nbogie/genuary-2026-all/tree/main/genuary-2026-13-self-portrait",
