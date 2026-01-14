@@ -200,7 +200,7 @@ window.keyPressed = function keyPressed() {
     config.shouldHideBody = !config.shouldHideBody;
   }
   if (key === "c") {
-    config.shouldRotateContinually;
+    config.shouldRotateContinually = !config.shouldRotateContinually;
     state.lastUserInteractionMillis = millis();
   }
   if (key === "d") {
