@@ -68,12 +68,15 @@ function createPatterns() {
                     n("[- -, -] [- - - <1*6 - - - >] [- -] 3*6")
                         .sound("jazz")
                         .lpf(gWorld.myInputs.entityCloseness.range(100, 4000))
+
                         //duck the drums as the entity comes closer
                         .lpq(10)
                         .delay(1),
                     note("<d1 a1 c1 f1>*1.75")
                         .cutoff(gWorld.myInputs.shipX.range(0, 2000))
-                        .gain(0.8)
+                        // .cutoff(perlin.slow(2).range(300, 1000))
+                        // .lpq(perlin.slow(2).range(1, 10))
+                        .gain(0.4)
                         .s("supersaw")
                         .delay(0.1)
                 )
@@ -92,9 +95,11 @@ function createPatterns() {
                         .gain(0.8)
                         .s("supersaw")
                         .delay(0.1),
-                    note("<e5>*1.75")
-                        .cutoff(gWorld.myInputs.shipX.range(0, 2000))
-                        .gain(0.2)
+                    note("<e5>*1")
+                        .slow(3)
+                        // .cutoff(gWorld.myInputs.shipX.range(0, 2000))
+                        .cutoff(perlin.slow(1).range(50, 2000))
+                        .gain(0.3)
                         .s("supersaw")
                         .delay(0.1)
                     //disorder
@@ -109,18 +114,33 @@ function createPatterns() {
                     .sz(0.4)
                     .play(),
         },
+
+        {
+            title: ["fast burble"].join("\n"),
+            fn: () =>
+                note("<e5>*1")
+                    //fast repeats of the note with proximity
+                    .fast(gWorld.myInputs.entityCloseness.range(3, 100))
+                    .cutoff(perlin.fast(10).range(3, 2000))
+                    .gain(saw.fast(2).range(0.1, 0.4))
+                    .gain(gWorld.myInputs.entityCloseness.range(0, 0.4))
+                    .s("supersaw")
+                    .delay(0.5)
+                    .cpm(120 / 4)
+                    .room(3)
+                    .sz(0.4)
+                    .play(),
+        },
         {
             title: ["clipped osti"].join("\n"),
             fn: () =>
-                stack(
-                    note(
-                        "<~ <[d4 a3 d3] [d e] [a g]> f g <[c4 d4] a a> d e f g a <c4 b [c4 d4]> <g c> a g f e>*16"
-                        // ).clip(saw.slow(2))
-                    ).clip(0.15)
-                    // note("<d2 a2 c2 f2>*1.75")
+                note(
+                    "<~ <[d4 a3 d3] [d e] [a g]> f g <[c4 d4] a a> d e f g a <c4 b [c4 d4]> <g c> a g f e>*16"
+                    // ).clip(saw.slow(2))
                 )
+                    .clip(0.1)
                     .cutoff(gWorld.myInputs.shipX.range(0, 2000))
-                    .gain(0.35)
+                    .gain(0.45)
                     .s("supersaw")
                     .delay(0.1)
                     .cpm(120 / 4)
