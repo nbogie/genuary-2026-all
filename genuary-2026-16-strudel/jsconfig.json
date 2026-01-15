@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "checkJs": true,
+        "lib": ["ESNext", "dom"]
+    },
+    "include": [
+        "./src/**/*.js",
+        "./more-examples/**/*.js",
+        "./node_modules/p5/types/global.d.ts"
+    ]
+}
