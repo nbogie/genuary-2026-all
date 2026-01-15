@@ -12,21 +12,23 @@
  * I have to use instance-mode p5, to avoid clashes with strudel's global injections
  * Our p5 code makes the sacrifice because it's more important to keep strudel with
  * global functions for its concise music DSL.
+ * 20250727 Fl Studio HQ Funk Kit playing Fpc Ambient Groove 05 at 100bpm (or 104.5?)
  */
 
 // p5.disableFriendlyErrors = true;
 
-let myInputs;
-
 /**
- * @type Ship
+ * @typedef {Object} World
+ * @property {Ship} playerShip
+ * @property {Entity} entity
+ * @property {any} myInputs
+ *
  */
-let playerShip;
 
-/**
- * @type Entity
- */
-let entity;
+//Keeping this outside the sketch function so it's available globally...
+//We won't be running multiple instances of this sketch despite the mode-name.
+/** @type {World} */
+let gWorld;
 
 new p5(sketch);
 
@@ -39,9 +41,7 @@ function sketch(p) {
 
     function setup() {
         p.createCanvas(p.windowWidth, p.windowHeight);
-        playerShip = createPlayerShip(p);
-        entity = createEntity(p);
-        myInputs = setupMyInputs(playerShip, entity, p);
+        gWorld = createWorld();
         strudel.initStrudel({
             prebake: () => samples("github:tidalcycles/dirt-samples"),
         });
@@ -50,13 +50,25 @@ function sketch(p) {
 
     function draw() {
         p.background(20);
-        updatePlayerShip(playerShip, p);
-        drawPlayerShip(playerShip, p);
+        updatePlayerShip(gWorld.playerShip, p);
+        drawPlayerShip(gWorld.playerShip, p);
 
-        updateEntity(entity, p);
-        drawEntity(entity, p);
+        updateEntity(gWorld.entity, p);
+        drawEntity(gWorld.entity, p);
     }
-
+    /**
+     *
+     * @returns {World}
+     */
+    function createWorld() {
+        const playerShip = createPlayerShip(p);
+        const entity = createEntity(p);
+        return {
+            playerShip,
+            entity,
+            myInputs: setupMyInputs(playerShip, entity, p),
+        };
+    }
     function windowResized() {
         p.resizeCanvas(p.windowWidth, p.windowHeight);
     }
@@ -88,6 +100,6 @@ function sketch(p) {
     }
 
     function mousePressed() {
-        playerShip.targetPos = p.createVector(p.mouseX, p.mouseY);
+        gWorld.playerShip.targetPos = p.createVector(p.mouseX, p.mouseY);
     }
 }
