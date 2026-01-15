@@ -1,10 +1,19 @@
 /**
+ * @typedef {Object} MyInputs
+ * @property {any} shipX
+ * @property {any} shipY
+ * @property {any} mouseX
+ * @property {any} entityOrderCloseness
+ * @property {any} entityChaosCloseness
+ */
+/**
  *@param {Ship} playerShip
  *@param {Entity} entity
+ *@param {Entity} entityChaos
  * @param {p5} p
- * @todo annotate return type
+ * @return {MyInputs}
  */
-function setupMyInputs(playerShip, entity, p) {
+function setupMyInputs(playerShip, entity, entityChaos, p) {
     //strudel already provides "mousex", but that is for the window not the canvas. we have more control here.
 
     if (!playerShip) {
@@ -18,8 +27,13 @@ function setupMyInputs(playerShip, entity, p) {
         //note, inverted
         return p.map(playerShip.pos.y, 0, p.height, 1, 0, true);
     });
-    const entityCloseness = strudel.pure("unused").withValue((val) => {
+    const entityOrderCloseness = strudel.pure("unused").withValue((val) => {
         const d = playerShip.pos.dist(entity.pos);
+        return p.map(d, 0, 200, 1, 0, true);
+    });
+
+    const entityChaosCloseness = strudel.pure("unused").withValue((val) => {
+        const d = playerShip.pos.dist(entityChaos.pos);
         return p.map(d, 0, 200, 1, 0, true);
     });
 
@@ -31,6 +45,7 @@ function setupMyInputs(playerShip, entity, p) {
         shipX,
         shipY,
         mouseX: mouseXInput,
-        entityCloseness,
+        entityOrderCloseness,
+        entityChaosCloseness,
     };
 }

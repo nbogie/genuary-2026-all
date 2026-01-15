@@ -3,8 +3,9 @@
 /**
  * @typedef {Object} World
  * @property {Ship} playerShip
- * @property {Entity} entity
- * @property {any} myInputs
+ * @property {Entity} entityOrder
+ * @property {Entity} entityChaos
+ * @property {MyInputs} myInputs
  * @property {number} radius
  * @property {{starfield: p5.Graphics}} graphics
  *
@@ -31,7 +32,10 @@ function sketch(p) {
         p.createCanvas(p.windowWidth, p.windowHeight);
         gWorld = createWorld();
         strudel.initStrudel({
-            prebake: () => samples("github:tidalcycles/dirt-samples"),
+            prebake: () => {
+                samples("github:tidalcycles/dirt-samples"),
+                    samples("github:yaxu/clean-breaks");
+            },
         });
         myPatterns = createPatterns();
 
@@ -52,8 +56,11 @@ function sketch(p) {
         updatePlayerShip(gWorld.playerShip, p);
         drawPlayerShip(gWorld.playerShip, p);
 
-        updateEntity(gWorld.entity, p);
-        drawEntity(gWorld.entity, p);
+        updateEntity(gWorld.entityOrder, p);
+        drawOrderEntity(gWorld.entityOrder, p);
+
+        updateEntity(gWorld.entityChaos, p);
+        drawChaosEntity(gWorld.entityChaos, p);
     }
     /**
      *
@@ -61,11 +68,13 @@ function sketch(p) {
      */
     function createWorld() {
         const playerShip = createPlayerShip(p);
-        const entity = createEntity(p);
+        const entityOrder = createEntityOrder(p);
+        const entityChaos = createEntityChaos(p);
         return {
             playerShip,
-            entity,
-            myInputs: setupMyInputs(playerShip, entity, p),
+            entityOrder,
+            entityChaos,
+            myInputs: setupMyInputs(playerShip, entityOrder, entityChaos, p),
             graphics: {
                 starfield: p.createGraphics(2 * p.width, 2 * p.height),
             },

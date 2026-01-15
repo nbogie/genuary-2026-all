@@ -1,5 +1,9 @@
 /**
+ * @typedef {"order" | "chaos"} EntityType
+ */
+/**
  * @typedef {Object} Entity
+ * @property {EntityType} typ
  * @property {p5.Vector} pos
  * @property {p5.Vector} vel
  * @property {p5.Vector} targetPos
@@ -10,8 +14,22 @@
  * @returns {Entity}
  */
 
-function createEntity(p) {
+function createEntityOrder(p) {
     return {
+        typ: "order",
+        pos: p.createVector(p.random(p.width), p.random(p.height)),
+        vel: p5.Vector.random2D().mult(1),
+        targetPos: createRandomTargetPosForEntity(p),
+    };
+}
+
+/**
+ * @param {p5} p
+ * @returns {Entity}
+ */
+function createEntityChaos(p) {
+    return {
+        typ: "chaos",
         pos: p.createVector(p.random(p.width), p.random(p.height)),
         vel: p5.Vector.random2D().mult(1),
         targetPos: createRandomTargetPosForEntity(p),
@@ -28,11 +46,12 @@ function createRandomTargetPosForEntity(p) {
         .createVector(p.width / 2, p.height / 2)
         .add(p5.Vector.random2D().mult(p.random(100, p.height / 2)));
 }
+
 /**
  * @param {Entity} entity
  * @param {p5} p
  */
-function drawEntity(entity, p) {
+function drawOrderEntity(entity, p) {
     p.push();
     p.translate(entity.pos);
     //TODO: this finds a strudel function, "rotate".  use ESM strudel, or p5 instance mode (or both)
@@ -46,6 +65,26 @@ function drawEntity(entity, p) {
     p.rect(0, 0, sz * 0.2, sz);
     p.pop();
     drawTarget(entity.targetPos, "dodgerblue", p);
+}
+/**
+ * @param {Entity} entity
+ * @param {p5} p
+ */
+function drawChaosEntity(entity, p) {
+    p.push();
+    p.translate(entity.pos);
+    //TODO: this finds a strudel function, "rotate".  use ESM strudel, or p5 instance mode (or both)
+    p.rotate(p.frameCount / 10);
+    const sz = p.map(p.sin(p.millis() / 160), -1, 1, 0.6, 1, true) * 40;
+    p.fill("tomato");
+    p.rectMode(p.CENTER);
+
+    //TODO: have entity be a slow-rotating cog-wheel, no visual indication of time-signature
+    p.rect(0, 0, sz * 0.2, sz);
+    p.rotate(p.PI / 2);
+    p.rect(0, 0, sz * 0.2, sz);
+    p.pop();
+    drawTarget(entity.targetPos, "purple", p);
 }
 
 /**@param {Entity} entity
