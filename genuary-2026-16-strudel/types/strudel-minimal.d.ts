@@ -12,6 +12,7 @@ declare var note: any;
 declare var s: any;
 declare var samples: any;
 declare var stack: any;
+declare var saw: any;
 
 //if this becomes a module rather than a script, we'd need:
 // declare global {
