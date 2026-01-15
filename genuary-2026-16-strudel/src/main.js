@@ -1,6 +1,4 @@
 /* TODO:
- * Use instance-mode p5, keeping strudel's global injections so that its music DSL stays concise. Too many global fns collide:
- *  rotate, now, clashes - pretty fundamental
  *  scale does suspiciously nothing now!
  * Add scrolling map - it MUST take time to reach certain zones/objects, so the user can appreciate gradual changes over time, not just everything together within the first 5 seconds of playing.
  * Make positional audio input VERY obvious, or ppl will just think oh it's music (which anyway changes)
@@ -9,7 +7,13 @@
  *   as we get nearer, that sound appears and increases in volume, maybe an LFP cutoff increases
  *   TODO: have some other element fade OUT / duck when we're near entity, so it's not just "more"
  * Chop a beat for disorder. figure out how to chop a little vs a lot.
+ *
+ * Notes;
+ * I have to use instance-mode p5, to avoid clashes with strudel's global injections
+ * Our p5 code makes the sacrifice because it's more important to keep strudel with
+ * global functions for its concise music DSL.
  */
+
 // p5.disableFriendlyErrors = true;
 
 let myInputs;
