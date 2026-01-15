@@ -91,8 +91,38 @@ function createPatterns() {
                         .cutoff(gWorld.myInputs.shipX.range(0, 2000))
                         .gain(0.8)
                         .s("supersaw")
+                        .delay(0.1),
+                    note("<e5>*1.75")
+                        .cutoff(gWorld.myInputs.shipX.range(0, 2000))
+                        .gain(0.2)
+                        .s("supersaw")
                         .delay(0.1)
+                    //disorder
+                    // note("<f5 b4 eb5>*1.75")
+                    //     .cutoff(gWorld.myInputs.shipX.range(0, 2000))
+                    //     .gain(0.2)
+                    //     .s("supersaw")
+                    //     .delay(0.1)
                 )
+                    .cpm(120 / 4)
+                    .room(3)
+                    .sz(0.4)
+                    .play(),
+        },
+        {
+            title: ["clipped osti"].join("\n"),
+            fn: () =>
+                stack(
+                    note(
+                        "<~ <[d4 a3 d3] [d e] [a g]> f g <[c4 d4] a a> d e f g a <c4 b [c4 d4]> <g c> a g f e>*16"
+                        // ).clip(saw.slow(2))
+                    ).clip(0.15)
+                    // note("<d2 a2 c2 f2>*1.75")
+                )
+                    .cutoff(gWorld.myInputs.shipX.range(0, 2000))
+                    .gain(0.35)
+                    .s("supersaw")
+                    .delay(0.1)
                     .cpm(120 / 4)
                     .room(3)
                     .sz(0.4)
