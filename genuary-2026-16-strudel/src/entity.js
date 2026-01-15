@@ -45,12 +45,7 @@ function drawEntity(entity, p) {
     p.rotate(p.PI / 2);
     p.rect(0, 0, sz * 0.2, sz);
     p.pop();
-
-    p.push();
-    p.translate(entity.targetPos);
-    p.fill("dodgerblue");
-    p.circle(0, 0, 20);
-    p.pop();
+    drawTarget(entity.targetPos, "dodgerblue", p);
 }
 
 /**@param {Entity} entity
