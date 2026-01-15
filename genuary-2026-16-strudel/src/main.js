@@ -15,6 +15,9 @@
 /** @type {World} */
 let gWorld;
 
+//keeping the strudel patterns separate for now.
+let myPatterns;
+
 new p5(sketch);
 /** @param {p5} p */
 function sketch(p) {
@@ -30,6 +33,8 @@ function sketch(p) {
         strudel.initStrudel({
             prebake: () => samples("github:tidalcycles/dirt-samples"),
         });
+        myPatterns = createPatterns();
+
         drawStarfield(gWorld.graphics.starfield);
 
         p.frameRate(30);
