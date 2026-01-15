@@ -6,35 +6,37 @@
  */
 
 /**
+ * @param {p5} p
  * @returns {Ship}
  */
-
-function createPlayerShip() {
+function createPlayerShip(p) {
     return {
-        pos: createVector(width / 2, height * 0.9),
-        vel: createVector(0, -2),
-        targetPos: createVector(width / 2, height / 2).add(
-            p5.Vector.random2D().mult(random(100, height / 2))
-        ),
+        pos: p.createVector(p.width / 2, p.height * 0.9),
+        vel: p.createVector(0, -2),
+        targetPos: p
+            .createVector(p.width / 2, p.height / 2)
+            .add(p5.Vector.random2D().mult(p.random(100, p.height / 2))),
     };
 }
 
 /**@param {Ship} ship */
-function drawPlayerShip(ship) {
-    push();
-    translate(ship.pos);
-    fill("lime");
-    rect(0, 0, 10, 30);
-    pop();
-    push();
-    translate(ship.targetPos);
-    fill("red");
-    circle(0, 0, 20);
-    pop();
+function drawPlayerShip(ship, p) {
+    p.push();
+    p.translate(ship.pos);
+    p.fill("lime");
+    p.rect(0, 0, 10, 30);
+    p.pop();
+    p.push();
+    p.translate(ship.targetPos);
+    p.fill("red");
+    p.circle(0, 0, 20);
+    p.pop();
 }
 
-/**@param {Ship} ship */
-function updatePlayerShip(ship) {
+/**
+ * @param {Ship} ship
+ * @param {p5} p */
+function updatePlayerShip(ship, p) {
     // ship.pos.add(ship.vel);
 
     ship.pos.lerp(ship.targetPos, 0.02);

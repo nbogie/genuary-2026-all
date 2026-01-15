@@ -1,11 +1,7 @@
 {
     "compilerOptions": {
-        "checkJs": true,
-        "lib": ["ESNext", "dom"]
+        "target": "ES6",
+        "checkJs": true // Enable type checking for JavaScript files
     },
-    "include": [
-        "./src/**/*.js",
-        "./more-examples/**/*.js",
-        "./node_modules/p5/types/global.d.ts"
-    ]
+    "include": ["**/*.js", "types/*.d.ts"]
 }
