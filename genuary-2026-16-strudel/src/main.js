@@ -1,6 +1,6 @@
 /* TODO:
- *  scale does suspiciously nothing now!
  * Add scrolling map - it MUST take time to reach certain zones/objects, so the user can appreciate gradual changes over time, not just everything together within the first 5 seconds of playing.
+ * Make creatures that come and go fairly quickly, with associated musical side-effects
  * Make positional audio input VERY obvious, or ppl will just think oh it's music (which anyway changes)
  * Player-depth in a level increases disorder
  * Have an entity that floats around and appears to be the source of sound for a noticable element in the track
@@ -18,9 +18,6 @@
 
 let myInputs;
 
-//@ts-ignore
-let myStrudel = window.strudel;
-
 /**
  * @type Ship
  */
@@ -31,7 +28,6 @@ let playerShip;
  */
 let entity;
 
-//@ts-ignore
 new p5(sketch);
 
 function sketch(p) {
@@ -46,8 +42,7 @@ function sketch(p) {
         playerShip = createPlayerShip(p);
         entity = createEntity(p);
         myInputs = setupMyInputs(playerShip, entity, p);
-        myStrudel.initStrudel({
-            //@ts-ignore
+        strudel.initStrudel({
             prebake: () => samples("github:tidalcycles/dirt-samples"),
         });
         p.frameRate(30);
@@ -69,13 +64,11 @@ function sketch(p) {
     function keyPressed() {
         if (p.key === " ") {
             //simplest example
-            //@ts-ignore
             s("bd hh sd hh [bd bd] hh sd hh").play();
         }
 
         if (p.key === ".") {
-            //@ts-ignore
-            myStrudel.hush();
+            strudel.hush();
         }
 
         if (p.key >= "0" && p.key <= "9") {

@@ -1,4 +1,3 @@
-//@ts-nocheck
 const myPatterns = [
     {
         title: ["using custom inputs"].join("\n"),

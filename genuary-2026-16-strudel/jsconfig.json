@@ -3,5 +3,5 @@
         "target": "ES6",
         "checkJs": true // Enable type checking for JavaScript files
     },
-    "include": ["**/*.js", "types/*.d.ts"]
+    "include": ["src/**/*.js", "types/**/*.d.ts"]
 }
