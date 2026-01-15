@@ -1,6 +1,7 @@
 ## TODO:
 
--   Add scrolling map - it MUST take time to reach certain zones/objects, so the user can appreciate gradual changes over time, not just everything together within the first 5 seconds of playing.
+-   give different map/space areas different colours / fetaures
+-   it MUST take time to reach certain zones/objects, so the user can appreciate gradual changes over time, not just everything together within the first 5 seconds of playing.
 -   Make creatures that come and go fairly quickly, with associated musical side-effects
 -   Make positional audio input VERY obvious, or ppl will just think oh it's music (which anyway changes)
 -   Player-depth in a level increases disorder
@@ -10,6 +11,10 @@
 
 ## Done:
 
+-   Add scrolling map
+-   move to type-checked js
+-   start a little types stub for strudel - just method names for auto-complete.
+-   move to instance mode to avoid clash with strudel globals
 -   add a beat sample: cc0 - 20250727 Fl Studio HQ Funk Kit playing Fpc Ambient Groove 05 at 100bpm (or 104.5?)
 
 ## Design notes:

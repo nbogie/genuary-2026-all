@@ -5,6 +5,8 @@
  * @property {Ship} playerShip
  * @property {Entity} entity
  * @property {any} myInputs
+ * @property {number} radius
+ * @property {{starfield: p5.Graphics}} graphics
  *
  */
 
@@ -14,7 +16,7 @@
 let gWorld;
 
 new p5(sketch);
-
+/** @param {p5} p */
 function sketch(p) {
     p.setup = setup;
     p.draw = draw;
@@ -28,11 +30,20 @@ function sketch(p) {
         strudel.initStrudel({
             prebake: () => samples("github:tidalcycles/dirt-samples"),
         });
+        drawStarfield(gWorld.graphics.starfield);
+
         p.frameRate(30);
     }
 
     function draw() {
         p.background(20);
+
+        p.translate(
+            -gWorld.playerShip.pos.x + p.width / 2,
+            -gWorld.playerShip.pos.y + p.height / 2
+        );
+        p.image(gWorld.graphics.starfield, 0, 0);
+
         updatePlayerShip(gWorld.playerShip, p);
         drawPlayerShip(gWorld.playerShip, p);
 
@@ -50,6 +61,10 @@ function sketch(p) {
             playerShip,
             entity,
             myInputs: setupMyInputs(playerShip, entity, p),
+            graphics: {
+                starfield: p.createGraphics(2 * p.width, 2 * p.height),
+            },
+            radius: 4000,
         };
     }
     function windowResized() {
@@ -82,7 +97,38 @@ function sketch(p) {
         }
     }
 
+    function mouseScreenPos() {
+        return p.createVector(p.mouseX, p.mouseY);
+    }
+    function mouseWorldPos() {
+        return screenPosToWorldPos(mouseScreenPos());
+    }
+
     function mousePressed() {
-        gWorld.playerShip.targetPos = p.createVector(p.mouseX, p.mouseY);
+        const pos = mouseWorldPos();
+        gWorld.playerShip.targetPos = pos.copy();
+    }
+
+    /**
+     *writes to the given graphics
+     * @param {p5.Graphics} g
+     */
+    function drawStarfield(g) {
+        for (let i = 0; i < 1000; i++) {
+            const pos = p5.Vector.random2D().mult(p.random(0, gWorld.radius));
+            g.stroke("white");
+            g.strokeWeight(g.random([1, 1, 1, 2, 3]));
+            g.point(pos.x, pos.y);
+        }
+    }
+    /**
+     *
+     * @param {p5.Vector} screenPos
+     */
+    function screenPosToWorldPos(screenPos) {
+        const centreOffset = p.createVector(-p.width / 2, -p.height / 2);
+        //this should be a camera that lerps towards the player, not immediately the player.
+        const shipPos = gWorld.playerShip.pos.copy();
+        return p5.Vector.add(shipPos, screenPos).add(centreOffset);
     }
 }
