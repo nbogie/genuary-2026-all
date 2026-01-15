@@ -21,7 +21,7 @@ const myPatterns = [
                     ),
                     note("<d2 a2 c2 f2>*1.75")
                 )
-                    .cutoff(myInputs.shipX.range(0, 4000))
+                    .cutoff(myInputs.shipX.range(0, 2000))
                     .gain(0.35)
                     .s("supersaw")
                     .delay(0.1)

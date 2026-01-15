@@ -1,3 +1,10 @@
+/**TODO:
+ * Make positional audio input VERY obvious, or ppl will just think oh it's music (which anyway changes)
+ * Player-depth in a level increases disorder
+ * Have an entity that floats around and appears to be the source of sound for a noticable element in the track
+ *   as we get nearer, that sound appears and increases in volume, maybe an LFP cutoff increases
+ * Chop a beat for disorder. figure out how to chop a little vs a lot.
+ */
 p5.disableFriendlyErrors = true;
 
 let myInputs;
