@@ -11,9 +11,9 @@ const myPatterns = [
             stack(
                 n("[0 0*2, 2] [1 - - <1*6 1>] [4 2] 3*6")
                     .sound("jazz")
-                    .lpf(myInputs.mouseX.range(100, 4000))
+                    // .lpf(myInputs.mouseX.range(100, 4000))
                     .lpq(10)
-                    // .gain(myInputs.wandererY.range(0, 0.7))
+                    .gain(myInputs.shipY.range(0, 0.7))
                     .delay(1),
                 stack(
                     note(
@@ -21,7 +21,7 @@ const myPatterns = [
                     ),
                     note("<d2 a2 c2 f2>*1.75")
                 )
-                    // .cutoff(myInputs.wandererX.range(0, 4000))
+                    .cutoff(myInputs.shipX.range(0, 4000))
                     .gain(0.35)
                     .s("supersaw")
                     .delay(0.1)

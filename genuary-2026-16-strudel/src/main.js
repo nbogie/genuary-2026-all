@@ -2,11 +2,15 @@ p5.disableFriendlyErrors = true;
 
 let myInputs;
 
+/** @type {any} */
+//@ts-ignore
+let myStrudel = window.strudel;
+
 function setup() {
     createCanvas(windowWidth, windowHeight);
+    playerShip = createPlayerShip();
     setupMyInputs();
-    //@ts-ignore
-    strudel.initStrudel({
+    myStrudel.initStrudel({
         //@ts-ignore
         prebake: () => samples("github:tidalcycles/dirt-samples"),
     });
@@ -15,6 +19,8 @@ function setup() {
 
 function draw() {
     background(20);
+    updatePlayerShip(playerShip);
+    drawPlayerShip(playerShip);
 }
 
 function windowResized() {
@@ -30,7 +36,7 @@ function keyPressed() {
 
     if (key === ".") {
         //@ts-ignore
-        strudel.hush();
+        myStrudel.hush();
     }
 
     if (key >= "0" && key <= "9") {
@@ -52,12 +58,31 @@ function keyPressed() {
 function setupMyInputs() {
     //strudel already provides "mousex", but that is for the window not the canvas. we have more control here.
 
+    if (!playerShip) {
+        throw new Error("setup playerShip before inputs, please");
+    }
+
+    const shipX = myStrudel.pure("unused").withValue((val) => {
+        return map(playerShip.pos.x, 0, width, 0, 1, true);
+    });
+
+    const shipY = myStrudel.pure("unused").withValue((val) => {
+        //note, inverted
+        return map(playerShip.pos.y, 0, height, 1, 0, true);
+    });
+
     //@ts-ignore
-    const mouseXInput = strudel.pure("unused").withValue((val) => {
+    const mouseXInput = myStrudel.pure("unused").withValue((val) => {
         return map(mouseX, 0, width, 0, 1, true);
     });
 
     myInputs = {
+        shipX,
+        shipY,
         mouseX: mouseXInput,
     };
+}
+
+function mousePressed() {
+    playerShip.targetPos = createVector(mouseX, mouseY);
 }
