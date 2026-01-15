@@ -1,5 +1,7 @@
 ## TODO:
 
+-   add a chaos entity, increased discord the longer we are near it, as well as proximity (keep track of how much time we're in its proximity, reset / balance with order-entity or distance from chaos)
+-   add glitch shader when chaos
 -   give different map/space areas different colours / fetaures
 -   it MUST take time to reach certain zones/objects, so the user can appreciate gradual changes over time, not just everything together within the first 5 seconds of playing.
 -   Make creatures that come and go fairly quickly, with associated musical side-effects
