@@ -6,11 +6,6 @@
  */
 
 /**
- * @type Ship
- */
-let playerShip;
-
-/**
  * @returns {Ship}
  */
 

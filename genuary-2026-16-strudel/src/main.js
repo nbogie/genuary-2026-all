@@ -1,8 +1,13 @@
 /**TODO:
+ * switch to ESM, or at least use instance-mode p5. Too many global fns collide:
+ *  rotate, now, clashes - pretty fundamental
+ *  scale does suspiciously nothing
+ * Add scrolling map - it MUST take time to reach certain zones/objects, so the user can appreciate gradual changes over time, not just everything together within the first 5 seconds of playing.
  * Make positional audio input VERY obvious, or ppl will just think oh it's music (which anyway changes)
  * Player-depth in a level increases disorder
  * Have an entity that floats around and appears to be the source of sound for a noticable element in the track
  *   as we get nearer, that sound appears and increases in volume, maybe an LFP cutoff increases
+ *   TODO: have some other element fade OUT / duck when we're near entity, so it's not just "more"
  * Chop a beat for disorder. figure out how to chop a little vs a lot.
  */
 p5.disableFriendlyErrors = true;
@@ -13,9 +18,20 @@ let myInputs;
 //@ts-ignore
 let myStrudel = window.strudel;
 
+/**
+ * @type Ship
+ */
+let playerShip;
+
+/**
+ * @type Entity
+ */
+let entity;
+
 function setup() {
     createCanvas(windowWidth, windowHeight);
     playerShip = createPlayerShip();
+    entity = createEntity();
     setupMyInputs();
     myStrudel.initStrudel({
         //@ts-ignore
@@ -28,6 +44,9 @@ function draw() {
     background(20);
     updatePlayerShip(playerShip);
     drawPlayerShip(playerShip);
+
+    updateEntity(entity);
+    drawEntity(entity);
 }
 
 function windowResized() {
@@ -60,34 +79,6 @@ function keyPressed() {
         console.log("evaluating strudel code #" + num + ": " + pattn.title);
         pattn.fn();
     }
-}
-
-function setupMyInputs() {
-    //strudel already provides "mousex", but that is for the window not the canvas. we have more control here.
-
-    if (!playerShip) {
-        throw new Error("setup playerShip before inputs, please");
-    }
-
-    const shipX = myStrudel.pure("unused").withValue((val) => {
-        return map(playerShip.pos.x, 0, width, 0, 1, true);
-    });
-
-    const shipY = myStrudel.pure("unused").withValue((val) => {
-        //note, inverted
-        return map(playerShip.pos.y, 0, height, 1, 0, true);
-    });
-
-    //@ts-ignore
-    const mouseXInput = myStrudel.pure("unused").withValue((val) => {
-        return map(mouseX, 0, width, 0, 1, true);
-    });
-
-    myInputs = {
-        shipX,
-        shipY,
-        mouseX: mouseXInput,
-    };
 }
 
 function mousePressed() {
