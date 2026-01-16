@@ -171,5 +171,28 @@ function createPatterns() {
                     .sometimesBy(0.25, mul(speed("-1")))
                     .play(),
         },
+        {
+            //needs
+            //https://strudel.cc/#c2FtcGxlcygnZ2l0aHViOnlheHUvY2xlYW4tYnJlYWtzJykKCnN0YWNrKAogIAogIHMoImFtZW4vNCIpLmZpdCgpCi5zbGljZSg4LCAiPDAgMSAyIDMgNCoyIDUgNiBbNiA3XT4qMiIpCi5jdXQoMSkuc29tZXRpbWVzQnkobW91c2VZLnJhbmdlKDAsIDAuOTkpLCBwbHkoIjEyIikpLmdhaW4obW91c2VYLnJhbmdlKDEsIDApKSwKICAKICBub3RlKCJhMyA8W2E0IGM0XSBlND4gYTQgPGEzIGc0IFtjNCBkNCBlNCBmNF0gYjQ%2BIikudHJhbnNwb3NlKDApCiAgLnNvdW5kKCJzdXBlcnNhdyIpLmNsaXAoMC4xNSkKICAuZmFzdCgyKQogIC5yYXJlbHkocGx5KDIpKS5nYWluKG1vdXNlWC5yYW5nZSgwLCAxKSkKICApCg%3D%3D
+            title: "amen more b0rked, with clipped synth",
+            reqSamples: "github:yaxu/clean-breaks",
+            fn: () =>
+                stack(
+                    s("amen/4")
+                        .fit()
+                        .slice(8, "<0 1 2 3 4*2 5 6 [6 7]>*2")
+                        .cut(1)
+                        .sometimesBy(mouseY.range(0, 0.99), ply("12"))
+                        .gain(mouseX.range(1, 0)),
+
+                    note("a3 <[a4 c4] e4> a4 <a3 g4 [c4 d4 e4 f4] b4>")
+                        .transpose(0)
+                        .sound("supersaw")
+                        .clip(0.15)
+                        .fast(2)
+                        .rarely(ply(2))
+                        .gain(mouseX.range(0, 1))
+                ),
+        },
     ];
 }
