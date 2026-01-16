@@ -9,17 +9,17 @@ new p5(sketch);
  * @param {p5} p - the p5 instance for our sketch.
  */
 function sketch(p) {
-    p.setup = () => {
-        p.createVector(10, 20);
-        p.createCanvas(400, 400);
-        p.background(220);
-        const v = p5.Vector.fromAngle(3);
-    };
+  p.setup = () => {
+    p.createVector(10, 20);
+    p.createCanvas(400, 400);
+    p.background(220);
+    const v = p5.Vector.fromAngle(3);
+  };
 
-    p.draw = () => {
-        // Draw a simple circle that follows the mouse
-        p.ellipse(p.mouseX, p.mouseY, 50, 50);
-    };
+  p.draw = () => {
+    // Draw a simple circle that follows the mouse
+    p.ellipse(p.mouseX, p.mouseY, 50, 50);
+  };
 }
 /**
  *
@@ -27,5 +27,5 @@ function sketch(p) {
  * @param {p5.Vector} pos
  */
 function amazing(p, pos) {
-    const v2 = p.createVector(100, 200);
+  const v2 = p.createVector(100, 200);
 }
