@@ -114,7 +114,7 @@ function sketch(p: p5) {
       s("bd hh sd hh [bd bd] hh sd hh").play();
     }
 
-    if (p.key === ".") {
+    if (p.key === "." || p.key === "h") {
       strudel.hush();
     }
 
