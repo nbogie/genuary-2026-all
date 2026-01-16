@@ -20,25 +20,25 @@ export function setupMyInputs(
   if (!playerShip) {
     throw new Error("setup playerShip before inputs, please");
   }
-  const shipX = strudel.pure("unused").withValue((val) => {
+  const shipX = strudel.pure("unused").withValue((_val: any) => {
     return p.map(playerShip.pos.x, 0, p.width, 0, 1, true);
   });
 
-  const shipY = strudel.pure("unused").withValue((val) => {
+  const shipY = strudel.pure("unused").withValue((_val: any) => {
     //note, inverted
     return p.map(playerShip.pos.y, 0, p.height, 1, 0, true);
   });
-  const entityOrderCloseness = strudel.pure("unused").withValue((val) => {
+  const entityOrderCloseness = strudel.pure("unused").withValue((_val: any) => {
     const d = playerShip.pos.dist(entity.pos);
     return p.map(d, 0, 200, 1, 0, true);
   });
 
-  const entityChaosCloseness = strudel.pure("unused").withValue((val) => {
+  const entityChaosCloseness = strudel.pure("unused").withValue((_val: any) => {
     const d = playerShip.pos.dist(entityChaos.pos);
     return p.map(d, 0, 200, 1, 0, true);
   });
 
-  const mouseXInput = strudel.pure("unused").withValue((val) => {
+  const mouseXInput = strudel.pure("unused").withValue((_val: any) => {
     return p.map(p.mouseX, 0, p.width, 0, 1, true);
   });
 
