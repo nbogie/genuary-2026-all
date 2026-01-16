@@ -1,13 +1,30 @@
 ## TODO:
 
-- staging:
-  - first we travel alone, ship sounds, silence of space, pedals,
-  - then in silence we meet order (single tone burble or perfectly rhythmic),
-  - then we need space where we can move away from and back to order to observe changes (angelic order polyrhythmic satellite tones)
-  - THEN we meet disorder. alien trickles from afar, screen-breakup,
-  - pitchbend up and down as get very close
-  - Stage 2 disorder: somehow introduce a beat which we can disrupt with chaos
+### - staging:
+
+- first we travel alone, ship sounds, silence of space, pedals,
+- then in silence we meet order (single tone burble or perfectly rhythmic),
+- then we need space where we can move away from and back to order to observe changes (angelic order polyrhythmic satellite tones)
+- THEN we meet disorder. alien trickles from afar, screen-breakup,
+- pitchbend up and down as get very close
+- Stage 2 disorder: somehow introduce a beat which we can disrupt with chaos
 - chaos entity: increased discord the longer we are near it, as well as proximity (keep track of how much time we're in its proximity, reset / balance with order-entity or distance from chaos)
+
+### musical effects to attempt to achieve
+
+- breakthrough to drop: only a high thin string extension held note maintains as everything else falls out (with echo)
+- wooly murbles and rumbles
+- brassy supersaw cutoff opening and enriching as we travel
+-
+- pitches bending both up and down ("madness") on approach. like the dolby advert in cinema.
+- shepherd tone? (perceived infinite falling/rising)
+- solo'd tight clippy ostinato before back in
+- increasingly shuffled, glitching breakbeat (or space-domain equivalent)
+- high speed satellite burble - "data-transfer" and alt "radiation / geiger counter".
+- alien trickles / clicking.
+- pedals and higher extensions (gently maj7, add9 for order, but anything goes for chaos)
+- murbly voices? disguise the nasa astronaut chit-chat audio? (try w/out audio files)
+
 - give different map/space areas different colours / fetaures
 - it MUST take time to reach certain zones/objects, so the user can appreciate gradual changes over time, not just everything together within the first 5 seconds of playing.
 - Make creatures that come and go fairly quickly, with associated musical side-effects
