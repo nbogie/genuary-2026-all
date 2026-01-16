@@ -1,19 +1,20 @@
-/**
- * @typedef {Object} MyInputs
- * @property {any} shipX
- * @property {any} shipY
- * @property {any} mouseX
- * @property {any} entityOrderCloseness
- * @property {any} entityChaosCloseness
- */
-/**
- *@param {Ship} playerShip
- *@param {Entity} entity
- *@param {Entity} entityChaos
- * @param {p5} p
- * @return {MyInputs}
- */
-function setupMyInputs(playerShip, entity, entityChaos, p) {
+import p5 from "p5";
+import type { Entity } from "./entity.ts";
+import type { Ship } from "./ship.ts";
+
+export interface MyInputs {
+  shipX: any;
+  shipY: any;
+  mouseX: any;
+  entityOrderCloseness: any;
+  entityChaosCloseness: any;
+}
+export function setupMyInputs(
+  playerShip: Ship,
+  entity: Entity,
+  entityChaos: Entity,
+  p: p5
+): MyInputs {
   //strudel already provides "mousex", but that is for the window not the canvas. we have more control here.
 
   if (!playerShip) {
