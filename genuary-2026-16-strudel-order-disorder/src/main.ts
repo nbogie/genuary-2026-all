@@ -1,16 +1,15 @@
 import p5 from "p5";
-import { createPlayerShip, drawPlayerShip, updatePlayerShip, type Ship } from "./ship.ts";
 import {
+  createEntityChaos,
+  createEntityOrder,
+  drawChaosEntity,
+  drawOrderEntity,
   type Entity,
   updateEntity,
-  drawOrderEntity,
-  drawChaosEntity,
-  createEntityOrder,
-  createEntityChaos,
 } from "./entity.ts";
-
 import { type MyInputs, setupMyInputs } from "./inputs.ts";
 import { createPatterns } from "./patterns.ts";
+import { createPlayerShip, drawPlayerShip, type Ship, updatePlayerShip } from "./ship.ts";
 // p5.disableFriendlyErrors = true;
 
 export function getWorld(): World {
