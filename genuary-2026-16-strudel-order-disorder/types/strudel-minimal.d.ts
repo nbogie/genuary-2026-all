@@ -1,9 +1,9 @@
 //just for autocomplete
 //I don't fill in arg details so as not to fool myself
 interface FakeStrudel {
-    initStrudel: any;
-    hush: any;
-    pure: any;
+  initStrudel: any;
+  hush: any;
+  pure: any;
 }
 
 declare var strudel: FakeStrudel;
@@ -25,37 +25,37 @@ declare var speed: FlentFn;
 declare var mul: FlentFn;
 
 interface Signal {
-    slow: SignalFn;
-    fast: SignalFn;
-    range: SignalFn;
+  slow: SignalFn;
+  fast: SignalFn;
+  range: SignalFn;
 }
 
 interface Fluent {
-    chop: FluentFn;
-    clip: FluentFn;
-    cpm: FluentFn;
-    cut: FluentFn;
-    cutoff: FluentFn;
-    delay: FluentFn;
-    fast: FluentFn;
-    fit: FluentFn;
-    gain: FluentFn;
-    lpf: FluentFn;
-    lpq: FluentFn;
-    note: FluentFn;
-    play: () => void;
-    rarely: FluentFn;
-    room: FluentFn;
-    s: FluentFn;
-    slice: FluentFn;
-    slow: FluentFn;
-    sound: FluentFn;
-    sz: FluentFn;
-    sometimesBy: FlentFn;
-    range: FlentFn;
-    ply: FlentFn;
-    gain: FlentFn;
-    transpose: FlentFn;
+  chop: FluentFn;
+  clip: FluentFn;
+  cpm: FluentFn;
+  cut: FluentFn;
+  cutoff: FluentFn;
+  delay: FluentFn;
+  fast: FluentFn;
+  fit: FluentFn;
+  gain: FluentFn;
+  lpf: FluentFn;
+  lpq: FluentFn;
+  note: FluentFn;
+  play: () => void;
+  rarely: FluentFn;
+  room: FluentFn;
+  s: FluentFn;
+  slice: FluentFn;
+  slow: FluentFn;
+  sound: FluentFn;
+  sz: FluentFn;
+  sometimesBy: FlentFn;
+  range: FlentFn;
+  ply: FlentFn;
+  gain: FlentFn;
+  transpose: FlentFn;
 }
 
 //if this becomes a module rather than a script, we'd need:

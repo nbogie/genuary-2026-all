@@ -1,27 +1,41 @@
+import p5 from "p5";
+import { createPlayerShip, drawPlayerShip, updatePlayerShip, type Ship } from "./ship.ts";
+import {
+  type Entity,
+  updateEntity,
+  drawOrderEntity,
+  drawChaosEntity,
+  createEntityOrder,
+  createEntityChaos,
+} from "./entity.ts";
+
+import { type MyInputs, setupMyInputs } from "./inputs.ts";
+import { createPatterns } from "./patterns.ts";
 // p5.disableFriendlyErrors = true;
 
-/**
- * @typedef {Object} World
- * @property {Ship} playerShip
- * @property {Entity} entityOrder
- * @property {Entity} entityChaos
- * @property {MyInputs} myInputs
- * @property {number} radius
- * @property {{starfield: p5.Graphics}} graphics
- *
- */
+export function getWorld(): World {
+  return gWorld;
+}
 
+export interface World {
+  playerShip: Ship;
+  entityOrder: Entity;
+  entityChaos: Entity;
+  myInputs: MyInputs;
+  radius: number;
+  graphics: {
+    starfield: p5.Graphics;
+  };
+}
 //Keeping this outside the sketch function so it's available globally...
 //We won't be running multiple instances of this sketch despite the mode-name.
-/** @type {World} */
-let gWorld;
+let gWorld: World;
 
 //keeping the strudel patterns separate for now.
-let myPatterns;
+let myPatterns: ReturnType<typeof createPatterns>;
 
 new p5(sketch);
-/** @param {p5} p */
-function sketch(p) {
+function sketch(p: p5) {
   p.setup = setup;
   p.draw = draw;
   p.mousePressed = mousePressed;
@@ -38,7 +52,7 @@ function sketch(p) {
     });
     myPatterns = createPatterns();
 
-    drawStarfield(gWorld.graphics.starfield);
+    drawStarfield(gWorld.graphics.starfield, p);
 
     p.frameRate(30);
   }
@@ -58,11 +72,8 @@ function sketch(p) {
     updateEntity(gWorld.entityChaos, p);
     drawChaosEntity(gWorld.entityChaos, p);
   }
-  /**
-   *
-   * @returns {World}
-   */
-  function createWorld() {
+
+  function createWorld(): World {
     const playerShip = createPlayerShip(p);
     const entityOrder = createEntityOrder(p);
     const entityChaos = createEntityChaos(p);
@@ -119,21 +130,16 @@ function sketch(p) {
 
   /**
    *writes to the given graphics
-   * @param {p5.Graphics} g
    */
-  function drawStarfield(g) {
+  function drawStarfield(g: p5.Graphics, p: p5) {
     for (let i = 0; i < 1000; i++) {
       const pos = p5.Vector.random2D().mult(p.random(0, gWorld.radius));
       g.stroke("white");
-      g.strokeWeight(g.random([1, 1, 1, 2, 3]));
+      g.strokeWeight(p.random([1, 1, 1, 2, 3]));
       g.point(pos.x, pos.y);
     }
   }
-  /**
-   *
-   * @param {p5.Vector} screenPos
-   */
-  function screenPosToWorldPos(screenPos) {
+  function screenPosToWorldPos(screenPos: p5.Vector): p5.Vector {
     const centreOffset = p.createVector(-p.width / 2, -p.height / 2);
     //this should be a camera that lerps towards the player, not immediately the player.
     const shipPos = gWorld.playerShip.pos.copy();

@@ -1,4 +1,8 @@
-function createPatterns() {
+import { getWorld, type World } from "./main.ts";
+
+export function createPatterns() {
+  const world: World = getWorld();
+
   return [
     {
       title: ["drums, syn ostinato, pedal"].join("\n"),
@@ -6,10 +10,10 @@ function createPatterns() {
         stack(
           n("[0 0*2, 2] [1 - - <1*6 1>] [4 2] 3*6")
             .sound("jazz")
-            // .lpf(gWorld.myInputs.mouseX.range(100, 4000))
+            // .lpf(world.myInputs.mouseX.range(100, 4000))
             .lpq(10)
             //louder with shipY.  this should be a proximity to a zone, perhaps
-            .gain(gWorld.myInputs.shipY.range(0, 0.7))
+            .gain(world.myInputs.shipY.range(0, 0.7))
             //amount (not tempo) of delay (1 is lots)
             .delay(1),
           //Synth AND SLOW BASS NOTES
@@ -19,16 +23,16 @@ function createPatterns() {
             ),
             note("<d2 a2 c2 f2>*1.75")
           )
-            .cutoff(gWorld.myInputs.shipX.range(0, 2000))
+            .cutoff(world.myInputs.shipX.range(0, 2000))
             .gain(0.35)
             .s("supersaw")
             .delay(0.1),
           //High synth extensions when near entity
           note("<f4 g4 c6 e4 g6 [e5 e6]>*16")
-            .cutoff(gWorld.myInputs.shipX.range(0, 2000))
+            .cutoff(world.myInputs.shipX.range(0, 2000))
             .gain(0.35)
             .s("supersaw")
-            .gain(gWorld.myInputs.entityOrderCloseness.range(0, 0.7))
+            .gain(world.myInputs.entityOrderCloseness.range(0, 0.7))
             .delay(0.01)
         )
           .cpm(120 / 4)
@@ -43,17 +47,17 @@ function createPatterns() {
         stack(
           n("[0 0*2, 2] [1 - - <1*6 1>] [4 2] 3*6")
             .sound("jazz")
-            .lpf(gWorld.myInputs.mouseX.range(100, 4000))
+            .lpf(world.myInputs.mouseX.range(100, 4000))
             //duck the drums as the entity comes closer
-            .gain(gWorld.myInputs.entityOrderCloseness.range(1, 0))
+            .gain(world.myInputs.entityOrderCloseness.range(1, 0))
             .lpq(10)
             .delay(1),
           //High synth extensions when near entity
           note("<f4 g4 c6 e4 g6 [e5 e6]>*16")
-            .cutoff(gWorld.myInputs.shipX.range(0, 2000))
+            .cutoff(world.myInputs.shipX.range(0, 2000))
             .gain(0.35)
             .s("supersaw")
-            .gain(gWorld.myInputs.entityOrderCloseness.range(0, 0.7))
+            .gain(world.myInputs.entityOrderCloseness.range(0, 0.7))
             .delay(0.3)
         )
           .cpm(120 / 4)
@@ -67,13 +71,13 @@ function createPatterns() {
         stack(
           n("[- -, -] [- - - <1*6 - - - >] [- -] 3*6")
             .sound("jazz")
-            .lpf(gWorld.myInputs.entityOrderCloseness.range(100, 4000))
+            .lpf(world.myInputs.entityOrderCloseness.range(100, 4000))
 
             //duck the drums as the entity comes closer
             .lpq(10)
             .delay(1),
           note("<d1 a1 c1 f1>*1.75")
-            .cutoff(gWorld.myInputs.shipX.range(0, 2000))
+            .cutoff(world.myInputs.shipX.range(0, 2000))
             // .cutoff(perlin.slow(2).range(300, 1000))
             // .lpq(perlin.slow(2).range(1, 10))
             .gain(0.4)
@@ -91,20 +95,20 @@ function createPatterns() {
       fn: () =>
         stack(
           note("<d1 a1 c1 f1>*1.75")
-            .cutoff(gWorld.myInputs.shipX.range(0, 2000))
+            .cutoff(world.myInputs.shipX.range(0, 2000))
             .gain(0.8)
             .s("supersaw")
             .delay(0.1),
           note("<e5>*1")
             .slow(3)
-            // .cutoff(gWorld.myInputs.shipX.range(0, 2000))
+            // .cutoff(world.myInputs.shipX.range(0, 2000))
             .cutoff(perlin.slow(1).range(50, 2000))
             .gain(0.3)
             .s("supersaw")
             .delay(0.1)
           //disorder
           // note("<f5 b4 eb5>*1.75")
-          //     .cutoff(gWorld.myInputs.shipX.range(0, 2000))
+          //     .cutoff(world.myInputs.shipX.range(0, 2000))
           //     .gain(0.2)
           //     .s("supersaw")
           //     .delay(0.1)
@@ -123,10 +127,10 @@ function createPatterns() {
           //TODO: pitch-bend this up (and bisect it up and down)
           // with continued exposure to chaos
 
-          .fast(gWorld.myInputs.entityChaosCloseness.range(3, 100))
+          .fast(world.myInputs.entityChaosCloseness.range(3, 100))
           .cutoff(perlin.fast(10).range(3, 2000))
           .gain(saw.fast(2).range(0.1, 0.4))
-          .gain(gWorld.myInputs.entityChaosCloseness.range(0, 0.4))
+          .gain(world.myInputs.entityChaosCloseness.range(0, 0.4))
           .s("supersaw")
           .delay(0.5)
           .cpm(120 / 4)
@@ -142,7 +146,7 @@ function createPatterns() {
           // ).clip(saw.slow(2))
         )
           .clip(0.1)
-          .cutoff(gWorld.myInputs.shipX.range(0, 2000))
+          .cutoff(world.myInputs.shipX.range(0, 2000))
           .gain(0.45)
           .s("supersaw")
           .delay(0.1)
