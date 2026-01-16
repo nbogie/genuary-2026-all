@@ -25,9 +25,9 @@ declare var speed: FlentFn;
 declare var mul: FlentFn;
 
 interface Signal {
-  slow: SignalFn;
-  fast: SignalFn;
-  range: SignalFn;
+  slow: FluentFn;
+  fast: FluentFn;
+  range: FluentFn;
 }
 
 interface Fluent {
