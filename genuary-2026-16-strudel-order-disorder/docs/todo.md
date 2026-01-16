@@ -38,6 +38,15 @@
 - TODO: have some other element fade OUT / duck when we're near entity, so it's not just "more"
 - Chop a beat for disorder. figure out how to chop a little vs a lot.
 
+### todo: visuals
+
+- replace all placeholders (entities, player, starfield)
+- colours/features in the nebula to help the player distinguish zones.
+- add alien writing / glyphs / constellations that come and go
+- somewhat periodically highlight+link constellations from the stars in the starfield
+- make the visual distortion exponentially worse as one gets really close to chaos.
+  - what else can start to become disordered? (audio, screen..., palette? blend mode? controls?)
+
 ## Done:
 
 - add glitch shader when chaos
