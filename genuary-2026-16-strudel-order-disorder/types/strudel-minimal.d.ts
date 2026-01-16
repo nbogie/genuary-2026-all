@@ -22,11 +22,19 @@ declare var ply: FluentFn;
 declare var speed: FluentFn;
 declare var mul: FluentFn;
 
-declare var saw: any;
+declare var brandBy: FluentFn;
+declare var irand: FluentFn;
 
-declare var perlin: Fluent;
-declare var mouseY: Fluent;
+declare var brand: Fluent;
+declare var cosine: Fluent;
 declare var mouseX: Fluent;
+declare var mouseY: Fluent;
+declare var perlin: Fluent;
+declare var rand: Fluent;
+declare var saw: Fluent;
+declare var sine: Fluent;
+declare var square: Fluent;
+declare var tri: Fluent;
 
 interface Fluent {
   chop: FluentFn;
