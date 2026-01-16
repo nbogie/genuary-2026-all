@@ -1,3 +1,5 @@
+//@ts-check
+
 //just for autocomplete
 //I don't fill in arg details so as not to fool myself
 interface FakeStrudel {
@@ -9,26 +11,22 @@ interface FakeStrudel {
 declare var strudel: FakeStrudel;
 
 type FluentFn = (...args: any[]) => Fluent;
-type SignalFn = (...args: any[]) => Signal;
+
+declare var samples: any;
 
 declare var n: FluentFn;
 declare var note: FluentFn;
 declare var s: FluentFn;
 declare var stack: FluentFn;
-declare var saw: any;
-declare var samples: any;
-declare var perlin: SignalFn;
 declare var ply: FluentFn;
-declare var mouseY: FlentFn;
-declare var mouseX: FlentFn;
-declare var speed: FlentFn;
-declare var mul: FlentFn;
+declare var speed: FluentFn;
+declare var mul: FluentFn;
 
-interface Signal {
-  slow: FluentFn;
-  fast: FluentFn;
-  range: FluentFn;
-}
+declare var saw: any;
+
+declare var perlin: Fluent;
+declare var mouseY: Fluent;
+declare var mouseX: Fluent;
 
 interface Fluent {
   chop: FluentFn;
@@ -51,11 +49,11 @@ interface Fluent {
   slow: FluentFn;
   sound: FluentFn;
   sz: FluentFn;
-  sometimesBy: FlentFn;
-  range: FlentFn;
-  ply: FlentFn;
-  gain: FlentFn;
-  transpose: FlentFn;
+  sometimesBy: FluentFn;
+  range: FluentFn;
+  ply: FluentFn;
+  gain: FluentFn;
+  transpose: FluentFn;
 }
 
 //if this becomes a module rather than a script, we'd need:
