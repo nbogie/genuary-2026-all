@@ -37,30 +37,39 @@ declare var square: Fluent;
 declare var tri: Fluent;
 
 interface Fluent {
+  begin;
   chop: FluentFn;
   clip: FluentFn;
   cpm: FluentFn;
   cut: FluentFn;
   cutoff: FluentFn;
   delay: FluentFn;
+  end: FluentFn;
   fast: FluentFn;
   fit: FluentFn;
   gain: FluentFn;
+  loop: FluentFn;
+  loopAt: FluentFn;
+  loopBegin: FluentFn;
+  loopEnd: FluentFn;
   lpf: FluentFn;
   lpq: FluentFn;
   note: FluentFn;
   play: () => void;
+  ply: FluentFn;
+  range: FluentFn;
   rarely: FluentFn;
   room: FluentFn;
   s: FluentFn;
+  scrub: FluentFn;
   slice: FluentFn;
   slow: FluentFn;
-  sound: FluentFn;
-  sz: FluentFn;
   sometimesBy: FluentFn;
-  range: FluentFn;
-  ply: FluentFn;
-  gain: FluentFn;
+  sound: FluentFn;
+  speed: FluentFn;
+  splice: FluentFn;
+  striate: FluentFn;
+  sz: FluentFn;
   transpose: FluentFn;
 }
 
