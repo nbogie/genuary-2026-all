@@ -40,9 +40,6 @@ new p5(sketch);
 function sketch(p: p5) {
   p.setup = setup;
   p.draw = draw;
-  p.mousePressed = mousePressed;
-  p.keyPressed = keyPressed;
-  p.windowResized = windowResized;
 
   function setup() {
     p.createCanvas(p.windowWidth, p.windowHeight);
@@ -100,11 +97,18 @@ function sketch(p: p5) {
       radius: 4000,
     };
   }
-  function windowResized() {
-    p.resizeCanvas(p.windowWidth, p.windowHeight);
-  }
 
-  function keyPressed() {
+  p.windowResized = function windowResized() {
+    p.resizeCanvas(p.windowWidth, p.windowHeight);
+  };
+
+  p.deviceShaken = function deviceShaken() {
+    if (p.touches.length === 1) {
+      strudel.hush();
+    }
+  };
+
+  p.keyPressed = function keyPressed() {
     if (p.key === " ") {
       //simplest example
       s("bd hh sd hh [bd bd] hh sd hh").play();
@@ -126,7 +130,7 @@ function sketch(p: p5) {
       console.log("evaluating strudel code #" + num + ": " + pattn.title);
       pattn.fn();
     }
-  }
+  };
 
   function mouseScreenPos() {
     return p.createVector(p.mouseX, p.mouseY);
@@ -135,11 +139,20 @@ function sketch(p: p5) {
     return screenPosToWorldPos(mouseScreenPos());
   }
 
-  function mousePressed() {
+  p.mousePressed = function mousePressed() {
     const pos = mouseWorldPos();
     gWorld.playerShip.targetPos = pos.copy();
-  }
+  };
 
+  p.doubleClicked = function doubleClicked() {
+    if (p.random() < 0.1) {
+      strudel.hush();
+      return;
+    }
+    const [num, pattn] = p.random(myPatterns.map((pt, ix) => [ix, pt] as const));
+    console.log("evaluating strudel code #" + num + ": " + pattn.title);
+    pattn.fn();
+  };
   /**
    *writes to the given graphics
    */
