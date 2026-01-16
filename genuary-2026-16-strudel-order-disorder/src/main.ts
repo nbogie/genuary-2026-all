@@ -10,6 +10,7 @@ import {
 import { type MyInputs, setupMyInputs } from "./inputs.ts";
 import { createPatterns } from "./patterns.ts";
 import { createPlayerShip, drawPlayerShip, type Ship, updatePlayerShip } from "./ship.ts";
+import { tvNoiseFragShaderSrc } from "./tvNoiseFragShaderSrc.ts";
 // p5.disableFriendlyErrors = true;
 
 export function getWorld(): World {
@@ -33,6 +34,8 @@ let gWorld: World;
 //keeping the strudel patterns separate for now.
 let myPatterns: ReturnType<typeof createPatterns>;
 
+let tvNoiseShader: p5.Shader;
+
 new p5(sketch);
 function sketch(p: p5) {
   p.setup = setup;
@@ -49,10 +52,12 @@ function sketch(p: p5) {
         samples("github:tidalcycles/dirt-samples"), samples("github:yaxu/clean-breaks");
       },
     });
+
     myPatterns = createPatterns();
 
     drawStarfield(gWorld.graphics.starfield, p);
 
+    tvNoiseShader = p.createFilterShader(tvNoiseFragShaderSrc());
     p.frameRate(30);
   }
 
@@ -70,6 +75,14 @@ function sketch(p: p5) {
 
     updateEntity(gWorld.entityChaos, p);
     drawChaosEntity(gWorld.entityChaos, p);
+
+    tvNoiseShader.setUniform("time", p.millis());
+    tvNoiseShader.setUniform(
+      "distortionAmount",
+      p.map(gWorld.playerShip.pos.dist(gWorld.entityChaos.pos), 0, 300, 0.02, 0, true)
+    );
+
+    p.filter(tvNoiseShader);
   }
 
   function createWorld(): World {
