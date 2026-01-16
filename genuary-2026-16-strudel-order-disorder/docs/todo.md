@@ -25,6 +25,10 @@
 - pedals and higher extensions (gently maj7, add9 for order, but anything goes for chaos)
 - murbly voices? disguise the nasa astronaut chit-chat audio? (try w/out audio files)
 
+- avoid the possibility of being in a mood around one entity, and the other entity approaches and DOESN'T give its usual audio interactions (because they're not featured in the current pattern).
+  every pattern that plays when both entities are potentially present must cater for both entities in their possible combinations.
+  every pattern that plays when one entity is potentially present must cater for that entity near and far.
+
 - give different map/space areas different colours / fetaures
 - it MUST take time to reach certain zones/objects, so the user can appreciate gradual changes over time, not just everything together within the first 5 seconds of playing.
 - Make creatures that come and go fairly quickly, with associated musical side-effects
