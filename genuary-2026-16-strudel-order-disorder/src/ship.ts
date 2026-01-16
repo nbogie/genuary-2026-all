@@ -1,19 +1,13 @@
 import p5 from "p5";
-
-/**
- * @typedef {Object} Ship
- * @property {p5.Vector} pos
- * @property {p5.Vector} vel
- * @property {p5.Vector} targetPos
- */
-
 import { drawTarget } from "./target.ts";
 
-/**
- * @param {p5} p
- * @returns {Ship}
- */
-function createPlayerShip(p) {
+interface Ship {
+  pos: p5.Vector;
+  vel: p5.Vector;
+  targetPos: p5.Vector;
+}
+
+export function createPlayerShip(p: p5): Ship {
   return {
     pos: p.createVector(p.width / 2, p.height * 0.9),
     vel: p.createVector(0, -2),
@@ -24,7 +18,7 @@ function createPlayerShip(p) {
 }
 
 /**@param {Ship} ship */
-function drawPlayerShip(ship, p) {
+export function drawPlayerShip(ship: Ship, p: p5) {
   p.push();
   p.translate(ship.pos);
   p.fill("white");
@@ -43,7 +37,7 @@ function drawPlayerShip(ship, p) {
   drawTarget(ship.targetPos, "tomato", p);
 }
 
-function updatePlayerShip(ship: Ship, p: p5) {
+export function updatePlayerShip(ship: Ship, _p: p5) {
   // ship.pos.add(ship.vel);
 
   //for now, prioritise exploring the area during dev
