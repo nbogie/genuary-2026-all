@@ -1,7 +1,7 @@
 import p5 from "p5";
 import { drawTarget } from "./target.ts";
 
-interface Ship {
+export interface Ship {
   pos: p5.Vector;
   vel: p5.Vector;
   targetPos: p5.Vector;

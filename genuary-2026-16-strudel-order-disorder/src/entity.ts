@@ -1,8 +1,8 @@
 import p5 from "p5";
 import { drawTarget } from "./target.ts";
 
-type EntityType = "order" | "chaos";
-type Entity = {
+export type EntityType = "order" | "chaos";
+export type Entity = {
   typ: EntityType;
   pos: p5.Vector;
   vel: p5.Vector;
