@@ -1,10 +1,33 @@
 //online at https://openprocessing.org/sketch/2849855
+//Neill's genuary-2026-15. prompt is "Create an invisible object where only the shadows can be seen."
+//I Started a couple of days late.
+//requires p5.brush and p5 v1.x
 
+//TODO: multi-stage - off boat, up hill past tree, find entrance to cave, into cave,
+//TODO: layered - so we can still see our path but can illuminate other foreground details we can walk past
+//        e.g. we want to get off a ship onto a road but walk past ("through") a lighthouse/harbour tower without being completely in the dark.  beam 1 should continue on the road,  beam 2 gets obscured by layer 2 stuff.
+//TODO: consider number of intersections, sometimes taking all second intersection points along with any first-only intersections, to make a lessened-strength beam.
+//TODO: ?add offset some intersections along their wall's normal, for less perfect flat surfaces?
+//TODO: paint the abstract "player" in p5.brush, too?
+
+//TODO: consider the dark itself being gloom-painted
+//TODO:
 //notes:
 //brush fill and bleed settings seem to ignore push and pop (with p5 1.11.11, at least).
 
-let palette = ["#7b4800", "#fcd300", "#ff2702"]; //"#002185", "#003c32","#6b9404"
-let config = { maxRayLength: 800 };
+let palette = {
+    lightInFog: "#fcd300",
+    background: "#1e1e1e",
+    colours: ["#7b4800", "#fcd300", "#ff2702"],
+}; //"#002185", "#003c32","#6b9404"
+let config = {
+    maxRayLength: 800,
+    showDebugWalls: false,
+    showDebugBrushOutline: false,
+    showDebugContactPoints: false,
+    showDebugMovTarget: false,
+    batBaseSize: 50,
+};
 /**
  * @type {Player}
  */
@@ -13,55 +36,79 @@ let player;
  * @type {LineSeg[]}
  */
 let gWalls;
+let moveTarget;
 
 function setup() {
     createCanvas(1400, 700, WEBGL);
 
     pixelDensity(1);
     player = createPlayer();
-    gWalls = createWalls();
-
+    regenerate();
     // noLoop();
 }
 
+function regenerate() {
+    gWalls = createWalls();
+}
+
 function draw() {
-    background(100);
+    background(palette.background);
 
     // drawFillCWPolygonBlob();
 
     drawPlayer(player);
 
+    if (moveTarget && config.showDebugMovTarget) {
+        drawMoveTarget();
+    }
     // drawScribble()
 
     // drawAPicture()
     const rayResults = castRaysFromPlayer();
     // drawRayResults(rayResults);
     const onlyHits = rayResults.filter((rr) => rr.intersectionOrNull);
-    const pts = onlyHits.map((rr) => rr.intersectionOrNull);
-    pts.push(player.pos.copy());
+    const contactPoints = onlyHits.map((rr) => rr.intersectionOrNull);
+    contactPoints.push(player.pos.copy());
+
+    // drawRayResults(onlyHits);
+    config.showDebugContactPoints && drawDebugContactPoints(contactPoints);
+
+    drawFillCWPoints(contactPoints);
+    config.showDebugWalls && drawDebugWalls();
+
+    updatePlayer();
+}
+function drawDebugContactPoints(contactPoints) {
+    push();
     strokeWeight(10);
     stroke("lime");
 
-    pts.forEach((pt) => {
+    contactPoints.forEach((pt) => {
         point(pt);
     });
-
-    // drawRayResults(onlyHits);
-
-    drawFillCWPoints(pts);
+    pop();
+}
+function drawDebugWalls() {
     push();
     stroke("magenta");
     strokeWeight(5);
     drawLineSegs(gWalls);
     pop();
-    updatePlayer();
 }
-function mousePos() {
+function mouseWorldPos() {
     return createVector(mouseX - width / 2, mouseY - height / 2);
 }
 function updatePlayer() {
-    player.facing.rotate(TWO_PI / 360);
-    player.pos.lerp(mousePos(), 0.01);
+    if (config.lookMode === "spin") {
+        player.facing.rotate(TWO_PI / 360);
+        player.pos.lerp(mouseWorldPos(), 0.01);
+    } else {
+        const playerToMouse = p5.Vector.sub(mouseWorldPos(), player.pos);
+        player.facing.slerp(playerToMouse, 0.1);
+        if (moveTarget) {
+            player.pos.lerp(moveTarget, 0.01);
+        }
+    }
 }
 /**
  *
@@ -123,7 +170,7 @@ function drawPlayer(pl) {
     rectMode(CENTER);
     fill("tomato");
     // rotate(pl.facing.heading());
-    rotate(2);
+    rotate(player.facing.heading());
     square(0, 0, 60);
 
     pop();
@@ -179,8 +226,10 @@ function castRaysFromPlayer() {
 }
 
 function mousePressed() {
-    background("#fffceb");
-    redraw();
+    moveTarget = mouseWorldPos();
+}
+function doubleClicked() {
+    regenerate();
 }
 
 /**
@@ -189,8 +238,9 @@ function mousePressed() {
  */
 function drawFillCWPoints(pts) {
     push();
-    brush.fill(random(palette), random(60, 100));
-    brush.bleed(random(0.1, 0.1));
+    config.showDebugBrushOutline || brush.noStroke();
+    brush.fill(palette.lightInFog, random(60, 100));
+    brush.bleed(random(0.1, 0.2));
     brush.fillTexture(0.55, 0.8);
     brush.beginShape();
     for (let pt of pts) {
@@ -349,8 +399,95 @@ function collect(numItems, fn) {
 function createRandomWall(ix) {
     const randomVertex = () =>
         createVector(random(-0.6, 0.6) * width, random(-0.6, 0.6) * height);
+    const a = randomVertex();
+    const maxLen = 0.7 * min(width, height);
+    const minLen = 0.3 * maxLen;
+    const toB = p5.Vector.fromAngle(random(TWO_PI), random(minLen, maxLen));
+    const b = p5.Vector.add(a, toB);
+
     return {
-        a: randomVertex(),
-        b: randomVertex(),
+        a,
+        b,
     };
+}
+
+function keyPressed() {
+    if (key === "c") {
+        config.showDebugContactPoints = !config.showDebugContactPoints;
+    }
+    if (key === "w") {
+        config.showDebugWalls = !config.showDebugWalls;
+    }
+}
+
+/**
+ * @typedef {Object} Bat
+ * @property {p5.Vector} pos
+ * @property {p5.Vector} vel
+ * @property {number} phase
+ * @property {number} size
+ *
+ */
+/**
+ *
+ * @param {number} _ix
+ * @param {p5.Vector} roughPos
+ * @param {number} spawnRadius
+ * @param {p5.Vector} roughVel
+ * @returns {Bat}
+ */
+function createBat(_ix, roughPos, spawnRadius, roughVel) {
+    return {
+        pos: roughPos
+            .copy()
+            .add(p5.Vector.random2D().mult(random(0, spawnRadius))),
+        vel: roughVel.copy().rotate(randomGaussian(0, PI / 8)),
+        phase: random(TWO_PI),
+        size: randomGaussian(1, 0.1),
+    };
+}
+
+/**
+ *
+ * @param {Bat} bat
+ */
+function drawBatDebug(bat) {
+    push();
+    fill("magenta");
+    circle(bat.pos.x, bat.pos.y, bat.size);
+    pop();
+}
+/**
+ *
+ * @param {Bat} bat
+ * @returns {LineSeg[]}
+ */
+
+function lineSegsForBat(bat) {
+    const ctr = bat.pos;
+    const angle = (sin(bat.phase + millis() / 1000) * PI) / 6;
+    const wingLen = bat.size * config.batBaseSize;
+    const [ctrAngle1, ctrAngle2] = [0.1, -0.1].map(
+        (frac) => PI / 2 + PI * frac,
+    );
+    const ptLeft = p5.Vector.fromAngle(ctrAngle1 + angle, wingLen);
+    const ptRight = p5.Vector.fromAngle(ctrAngle2 - angle, wingLen);
+    return [
+        { a: ctr, b: ptLeft },
+        { a: ctr, b: ptRight },
+    ];
+}
+
+function drawMoveTarget() {
+    if (!moveTarget) {
+        return;
+    }
+    push();
+    translate(moveTarget);
+    noFill();
+    stroke("white");
+    strokeWeight(2);
+    circle(0, 0, 40);
+
+    pop();
 }
