@@ -1,31 +1,126 @@
-//A p5.js global-mode sketch
+//online at https://openprocessing.org/sketch/2849855
 
-/** An array of colours (hex code strings) */
-const palette = ["#5e412f", "#fcebb6", "#78c0a8", "#f07818", "#f0a830"];
+//notes:
+//brush fill and bleed settings seem to ignore push and pop (with p5 1.11.11, at least).
+
+let palette = ["#7b4800", "#fcd300", "#ff2702"]; //"#002185", "#003c32","#6b9404"
 
 function setup() {
-    createCanvas(windowWidth, windowHeight);
-    background(20);
-    fill(255);
-}
-
-function draw() {
-    background(20);
-    circle(width / 2, height / 2, 50);
-    const myPos = randomPositionAroundMouse(100);
-    circle(myPos.x, myPos.y, 20);
-    text("global-mode (normal) sketch", 50, height - 50);
+    createCanvas(1400, 700, WEBGL);
+    pixelDensity(1);
+    angleMode(DEGREES);
+    // drawScribble()
+    drawFillAsteroid();
+    // drawAPicture()
 }
 
 function mousePressed() {
-    fill(random(palette));
+    background("#fffceb");
+
+    drawFillAsteroid();
 }
-/** Create and return a position (Vector) within a radius around the mouse
- * @param {number} range - max allowed distance from mouse
- * @returns {p5.Vector} */
-function randomPositionAroundMouse(range) {
-    //This function (and its jsdoc) is mostly here to check type-checking
-    // of p5.Vector is available both as a type and as a runtime value.
-    const offset = p5.Vector.random2D().mult(random(0, range));
-    return offset.add(mouseX, mouseY);
+
+function drawFillAsteroid() {
+    push();
+
+    brush.fill(random(palette), random(60, 100));
+    brush.bleed(random(0.1, 0.4));
+    brush.fillTexture(0.55, 0.8);
+    brush.beginShape();
+    const angleStep = TWO_PI / 12;
+    const baseRadius = 200;
+    for (let angle = 0; angle < TWO_PI; angle += angleStep) {
+        const v = p5.Vector.fromAngle(angle, random(1, 2) * baseRadius);
+        brush.vertex(v.x, v.y);
+    }
+    brush.endShape(CLOSE);
+
+    pop();
+}
+
+function drawScribble() {
+    const rw = () => random(-width, width);
+    const rh = () => random(-height, height);
+    push();
+    brush.beginShape();
+    for (let i = 0; i < 20; i++) {
+        brush.vertex(rw(), rh());
+        brush.vertex(rw(), rh());
+        brush.vertex(rw(), rh());
+        brush.vertex(rw(), rh());
+        brush.vertex(rw(), rh());
+    }
+    brush.endShape();
+
+    brush.fill(random(palette), random(60, 100));
+    brush.bleed(random(0.1, 0.4));
+    brush.fillTexture(0.55, 0.8);
+
+    // We draw the rectangular grid here
+    // brush.rect(rw(), rh(), 200, 100)
+
+    pop();
+}
+
+function drawAPicture() {
+    push();
+    translate(-width / 2, -height / 2);
+
+    // We create a grid here
+    let num_cols = 12;
+    let num_rows = 6;
+    let border = 300;
+    let col_size = (width - border) / num_cols;
+    let row_size = (height - border) / num_rows;
+
+    // We define the brushes for the hatches, and the brushes for the strokes
+    let hatch_brushes = ["marker", "marker2"];
+    let stroke_brushes = ["2H", "HB", "charcoal"];
+
+    // Test Different Flowfields here: "zigzag", "seabed", "curved", "truncated"
+    brush.field("truncated");
+    // You can also disable field completely with brush.noField()
+
+    // We create the grid here
+    for (let i = 0; i < num_rows; i++) {
+        for (let j = 0; j < num_cols; j++) {
+            // We fill 10% of the cells
+            if (random() < 0.1) {
+                // Set Fill
+                brush.fill(random(palette), random(60, 100));
+                brush.bleed(random(0.1, 0.4));
+                brush.fillTexture(0.55, 0.8);
+            }
+
+            // We stroke + hatch the remaining
+            else {
+                // Set Stroke
+                brush.set(random(stroke_brushes), random(palette));
+
+                // Set Hatch
+                // You set color and brush with .setHatch(brush_name, color)
+                brush.setHatch(random(hatch_brushes), random(palette));
+                // You set hatch params with .hatch(distance_between_lines, angle, options: see reference)
+                brush.hatch(random(10, 60), random(0, 180), {
+                    rand: 0,
+                    continuous: false,
+                    gradient: false,
+                });
+            }
+
+            // We draw the rectangular grid here
+            brush.rect(
+                border / 2 + col_size * j,
+                border / 2 + row_size * i,
+                col_size,
+                row_size,
+            );
+
+            // Reset states for next cell
+            brush.noStroke();
+            brush.noFill();
+            brush.noHatch();
+        }
+    }
+    pop();
 }
