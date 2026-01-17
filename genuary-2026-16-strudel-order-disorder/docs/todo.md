@@ -2,7 +2,8 @@
 
 ### - staging:
 
-- first we travel alone, ship sounds, silence of space, pedals,
+- first we travel alone, ship sounds, silence of space, pedals.
+  - travel left-right makes sense on desktop (longer look-ahead due to aspect ratio, greater distancing / interaction possible from/with spotted anomalies)
 - then in silence we meet order (single tone burble or perfectly rhythmic),
 - then we need space where we can move away from and back to order to observe changes (angelic order polyrhythmic satellite tones)
 - THEN we meet disorder. alien trickles from afar, screen-breakup,
