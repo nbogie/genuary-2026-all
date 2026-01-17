@@ -1,0 +1,9 @@
+{
+  "scripts": {
+      "type-check": "tsc --noEmit --project jsconfig.json"
+  },
+  "dependencies": {
+    "@types/p5": "^1.7.7",
+    "typescript": "^5.9.3"
+  }
+}
