@@ -34,6 +34,7 @@ let palette = {
  * @property {boolean} showDebugBrushOutline,
  * @property {boolean} showDebugContactPoints,
  * @property {boolean} showDebugMovTarget,
+ * @property {boolean} batsAreAThing
  * @property {number} batBaseSize
  * @property {"spin" | "mouse"} lookMode
  */
@@ -48,6 +49,7 @@ let config = {
     showDebugContactPoints: false,
     showDebugMovTarget: false,
     batBaseSize: 40,
+    batsAreAThing: false,
     lookMode: "mouse",
 };
 /**
@@ -71,7 +73,7 @@ function setup() {
     pixelDensity(1);
     player = createPlayer();
     regenerate();
-    // noLoop();
+    // frameRate(5);
     setInterval(maybeAddRandomCreatures, 500);
 }
 
@@ -116,7 +118,8 @@ function maybeAddRandomCreatures() {
     if (random() < 0.2) {
         repeat(4, () => {
             const v = p5.Vector.random2D().mult(30);
-            bats.push(createBat(0, mouseWorldPos(), 100, v));
+            if (config.batsAreAThing)
+                bats.push(createBat(0, mouseWorldPos(), 100, v));
         });
     }
 }
@@ -288,6 +291,7 @@ function castRaysFromPlayer() {
 function mousePressed() {
     moveTarget = mouseWorldPos();
 }
+
 function doubleClicked() {
     regenerate();
 }
@@ -492,8 +496,20 @@ function createRandomWall(ix) {
 }
 
 function keyPressed() {
+    if (key === "r") {
+        regenerate();
+    }
     if (key === "c") {
         config.showDebugContactPoints = !config.showDebugContactPoints;
+    }
+    if (key === "w") {
+        config.showDebugWalls = !config.showDebugWalls;
+    }
+    if (key === "B") {
+        config.showDebugBats = !config.showDebugBats;
+    }
+    if (key === "b") {
+        config.batsAreAThing = !config.batsAreAThing;
     }
     if (key === "p") {
         if (isLooping()) {
@@ -501,12 +517,6 @@ function keyPressed() {
         } else {
             loop();
         }
-    }
-    if (key === "w") {
-        config.showDebugWalls = !config.showDebugWalls;
-    }
-    if (key === "b") {
-        config.showDebugBats = !config.showDebugBats;
     }
 }
 
