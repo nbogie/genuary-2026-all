@@ -29,6 +29,7 @@ let palette = {
 /**
  * @typedef {Object} Config
  * @property {number} maxRayLength
+ * @property {number} moveSpeed
  * @property {boolean} showDebugWalls,
  * @property {boolean} showDebugBats,
  * @property {boolean} showDebugBrushOutline,
@@ -43,6 +44,7 @@ let palette = {
  */
 let config = {
     maxRayLength: 800,
+    moveSpeed: 0.1,
     showDebugBats: false,
     showDebugWalls: false,
     showDebugBrushOutline: false,
@@ -152,7 +154,13 @@ function updatePlayer() {
         const playerToMouse = p5.Vector.sub(mouseWorldPos(), player.pos);
         player.facing.slerp(playerToMouse, 0.1);
         if (moveTarget) {
-            player.pos.lerp(moveTarget, 0.01);
+            const towardsTarget = p5.Vector.sub(moveTarget, player.pos);
+            if (towardsTarget.mag() < 30) {
+                moveTarget = undefined;
+            } else {
+                towardsTarget.setMag(config.moveSpeed * deltaTime);
+                player.pos.add(towardsTarget);
+            }
         }
     }
 }
