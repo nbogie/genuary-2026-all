@@ -46,8 +46,9 @@ function draw() {
         point(pt);
     });
 
-    drawRayResults(onlyHits);
+    // drawRayResults(onlyHits);
 
+    drawFillCWPoints(pts);
     push();
     stroke("magenta");
     strokeWeight(5);
@@ -190,6 +191,22 @@ function drawFillCWPolygonBlob() {
     }
     brush.endShape(CLOSE);
 
+    pop();
+}
+/**
+ *
+ * @param {p5.Vector[]} pts
+ */
+function drawFillCWPoints(pts) {
+    push();
+    brush.fill(random(palette), random(60, 100));
+    brush.bleed(random(0.1, 0.1));
+    brush.fillTexture(0.55, 0.8);
+    brush.beginShape();
+    for (let pt of pts) {
+        brush.vertex(pt.x, pt.y);
+    }
+    brush.endShape(CLOSE);
     pop();
 }
 
@@ -375,7 +392,9 @@ function createWalls() {
             },
         ],
     );
-    return walls;
+
+    const moar = collect(8, createRandomWall);
+    return [...walls, ...moar];
 }
 
 /**
@@ -402,4 +421,33 @@ function minBy(array, iteratee) {
         }
     }
     return minElement;
+}
+
+/**
+ * Builds and returns an array collected from the repeated calling of the given function.
+ * @template T
+ *
+ * @param {number} numItems number of items to collect
+ * @param {(ix:number) =>T} fn function to call repeatedly in order to construct each element of the array.  It will be passed a counter (zero-based) indicating the number of the current iteration.
+ * @returns {T[]} array of constructed items
+ */
+function collect(numItems, fn) {
+    const results = [];
+    for (let i = 0; i < numItems; i++) {
+        results.push(fn(i));
+    }
+    return results;
+}
+/**
+ *
+ * @param {number} ix
+ * @returns LineSeg
+ */
+function createRandomWall(ix) {
+    const randomVertex = () =>
+        createVector(random(-0.6, 0.6) * width, random(-0.6, 0.6) * height);
+    return {
+        a: randomVertex(),
+        b: randomVertex(),
+    };
 }
