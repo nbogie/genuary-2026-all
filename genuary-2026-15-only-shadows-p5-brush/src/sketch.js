@@ -11,7 +11,9 @@
 //TODO: paint the abstract "player" in p5.brush, too?
 //TODO: draw an impressionist scared face for the player.  just a cheekbone and brow?  (could be illuminated witht the same mechanism, just a higher-detail raycast)
 //TODO: consider the dark itself being gloom-painted
+//TODO: final scene is blair witch stand-against-the-wall with the dropped lamp partially illuminating and cutting out?
 //TODO:
+
 //notes:
 //brush fill and bleed settings seem to ignore push and pop (with p5 1.11.11, at least).
 
