@@ -4,16 +4,24 @@
 //brush fill and bleed settings seem to ignore push and pop (with p5 1.11.11, at least).
 
 let palette = ["#7b4800", "#fcd300", "#ff2702"]; //"#002185", "#003c32","#6b9404"
+let config = { maxRayLength: 800 };
 /**
  * @type {Player}
  */
 let player;
+/**
+ * @type {LineSeg[]}
+ */
+let gWalls;
 
 function setup() {
     createCanvas(1400, 700, WEBGL);
 
     pixelDensity(1);
     player = createPlayer();
+    gWalls = createWalls();
+    console.log({ gWalls });
+
     noLoop();
 }
 
@@ -27,7 +35,24 @@ function draw() {
 
     // drawAPicture()
     const rayResults = castRaysFromPlayer();
-    drawRayResults(rayResults);
+    // drawRayResults(rayResults);
+    const onlyHits = rayResults.filter((rr) => rr.intersectionOrNull);
+    const pts = onlyHits.map((rr) => rr.intersectionOrNull);
+    pts.push(player.pos.copy());
+    strokeWeight(10);
+    stroke("lime");
+
+    pts.forEach((pt) => {
+        point(pt);
+    });
+
+    drawRayResults(onlyHits);
+
+    push();
+    stroke("magenta");
+    strokeWeight(5);
+    drawLineSegs(gWalls);
+    pop();
 }
 /**
  *
@@ -36,6 +61,7 @@ function draw() {
 function drawRayResults(rayResults) {
     for (let result of rayResults) {
         push();
+
         const intersectionOrNull = result.intersectionOrNull;
         if (intersectionOrNull) {
             strokeWeight(2);
@@ -115,17 +141,28 @@ function castRaysFromPlayer() {
     const results = [];
 
     for (let angle = startAngle; angle <= endAngle; angle += angleStep) {
-        const rayVec = p5.Vector.fromAngle(angle, 4000);
+        const rayVec = p5.Vector.fromAngle(angle, config.maxRayLength);
+        /**
+         * @type {LineSeg}
+         */
+        const rayLineSeg = { a: pl.pos, b: pl.pos.copy().add(rayVec) };
+        /** @type {(p5.Vector | null)[]} */
+        const allIntersections = gWalls
+            .map((wall) => intersect(wall, rayLineSeg) || null)
+            .filter((res) => res);
 
-        /** @type {p5.Vector | null} */
-        const intersectionOrNull = null;
+        const nearestISect =
+            allIntersections.length === 0
+                ? null
+                : minBy(allIntersections, (isect) => isect.dist(pl.pos));
+
         /**
          * @type {RayResult}
          */
         const result = {
             ray: rayVec,
             origin: pl.pos.copy(),
-            intersectionOrNull,
+            intersectionOrNull: nearestISect,
         };
         results.push(result);
     }
@@ -288,4 +325,81 @@ function intersect(seg1, seg2) {
     let y = y1 + ua * (y2 - y1);
 
     return createVector(x, y);
+}
+
+/**@param{LineSeg[]}  lineSegs*/
+function drawLineSegs(lineSegs) {
+    lineSegs.forEach((lineSeg) => drawLineSeg(lineSeg));
+}
+/**@param{LineSeg}  lineSeg*/
+function drawLineSeg(lineSeg) {
+    line(lineSeg.a.x, lineSeg.a.y, lineSeg.b.x, lineSeg.b.y);
+}
+
+/**@returns{LineSeg[]} */
+function createWalls() {
+    /**@type{LineSeg[]} */
+    const walls = [];
+    walls.push(
+        ...[
+            {
+                a: createVector(width / 2, height / 2),
+                b: createVector(0, 0),
+            },
+
+            {
+                a: createVector(-width / 2, -height / 2),
+                b: createVector(width / 2, -height / 2),
+            },
+            {
+                a: createVector(width / 2, -height / 2),
+                b: createVector(width / 2, height / 2),
+            },
+            {
+                a: createVector(width / 2, height / 2),
+                b: createVector(-width / 2, height / 2),
+            },
+
+            {
+                a: createVector(-width / 2, height / 2),
+                b: createVector(-width / 2, -height / 2),
+            },
+
+            {
+                a: createVector(width / 2, height / 2),
+                b: createVector(0, 0),
+            },
+            {
+                a: createVector(0, (1 * height) / 2),
+                b: createVector(0.5 * width, 0),
+            },
+        ],
+    );
+    return walls;
+}
+
+/**
+ * Finds the element in an array that results in the minimum value
+ * when passed through the iteratee function.
+ * @template T
+ * @param {T[]} array The array to iterate over.
+ * @param {(t:T)=>number } iteratee The function to execute on each element to get the value to compare.
+ * @returns {T} The element that produced the minimum value, or undefined if the array is empty.
+ */
+function minBy(array, iteratee) {
+    if (!array || array.length === 0) {
+        return undefined;
+    }
+    let minElement = array[0];
+    let minValue = iteratee(array[0]);
+    for (let i = 1; i < array.length; i++) {
+        const currentElement = array[i];
+        const currentIteratedValue = iteratee(currentElement);
+        // If the current iterated value is less than the current minimum value
+        if (currentIteratedValue < minValue) {
+            minValue = currentIteratedValue;
+            minElement = currentElement;
+        }
+    }
+    return minElement;
 }
