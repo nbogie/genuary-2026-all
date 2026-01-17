@@ -60,6 +60,7 @@ let config = {
     batsAreAThing: false,
     lookMode: "mouse",
 };
+
 /**
  * @type {Bat[]}
  */
@@ -75,9 +76,17 @@ let player;
 let gWalls;
 let moveTarget;
 
+let strobeWarningAcceptances = 0;
+let myFont;
+
+function preload() {
+    myFont = loadFont("Barriecito-Regular.ttf");
+}
+
 function setup() {
     createCanvas(windowWidth, windowHeight, WEBGL);
 
+    textFont(myFont);
     pixelDensity(1);
     player = createPlayer();
     regenerate();
@@ -93,6 +102,10 @@ function regenerate() {
 function draw() {
     background(palette.background);
 
+    if (strobeWarningAcceptances < 2) {
+        showStrobeWarning();
+        return;
+    }
     // drawFillCWPolygonBlob();
 
     drawPlayer(player);
@@ -303,10 +316,19 @@ function castRaysFromPlayer() {
 }
 
 function mousePressed() {
+    if (strobeWarningAcceptances < 2) {
+        strobeWarningAcceptances++;
+        return;
+    }
     moveTarget = mouseWorldPos();
 }
 
 function doubleClicked() {
+    if (strobeWarningAcceptances < 2) {
+        strobeWarningAcceptances++;
+        return;
+    }
+
     regenerate();
 }
 
@@ -522,6 +544,13 @@ function createRandomWall(ix) {
 }
 
 function keyPressed() {
+    if (strobeWarningAcceptances < 2) {
+        if (key === " ") {
+            strobeWarningAcceptances++;
+        }
+        return;
+    }
+
     if (key === "r") {
         regenerate();
     }
@@ -646,4 +675,25 @@ function repeat(numRepeats, fn) {
     for (let i = 0; i < numRepeats; i++) {
         fn(i);
     }
+}
+
+function showStrobeWarning() {
+    push();
+    fill(255);
+    textSize(50);
+    textAlign(CENTER, CENTER);
+    const clicksRemaining = 2 - strobeWarningAcceptances;
+    text(
+        [
+            "WARNING: ",
+            "Strobing lights",
+            "",
+            "click to continue",
+            clicksRemaining,
+        ].join("\n"),
+        0,
+        0,
+    );
+
+    pop();
 }
