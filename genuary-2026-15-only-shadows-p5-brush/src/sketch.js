@@ -4,7 +4,7 @@
 //It's really just a tech demo but i find it interesting and evocative, already.
 //
 //Credits:
-//  Alejandro Campos for p5.brush library: https://p5-brush.cargo.site/
+//  Alejandro Campos for the amazing p5.brush library: https://p5-brush.cargo.site/
 //  Amit Patel and Daniel Shiffman for resources on ray-casting for 2d visibility.
 //  (iirc, that's how I originally learned ray-casting):
 //    https://www.redblobgames.com/articles/visibility/
@@ -15,6 +15,7 @@
 //https://cdn.jsdelivr.net/npm/p5.brush
 
 //TODO: _maybe_ consider phones?  scale down wall-length, move-speed, beam-len, etc.
+//TODO: design 2-3 actual levels to guarantee an interesting experience.
 //TODO: monochrome, or much more desaturated, at least.  reserve color for impact.
 //TODO: use a proc-gen'd tree from day 1?
 //TODO: multi-stage - off boat, up hill past tree, find entrance to cave, into cave, bat-encounter, past slow-rotating grinder-cog,
