@@ -5,7 +5,8 @@
 //
 //Credits:
 //  Alejandro Campos for p5.brush library: https://p5-brush.cargo.site/
-//  Amit Patel and Daniel Shiffman for resources on ray-casting for 2d visibility:
+//  Amit Patel and Daniel Shiffman for resources on ray-casting for 2d visibility.
+//  (iirc, that's how I originally learned ray-casting):
 //    https://www.redblobgames.com/articles/visibility/
 //    https://www.youtube.com/watch?v=TOEi6T2mtHo
 //  Paul Bourke line-segment intersection math https://paulbourke.net/geometry/pointlineplane/
