@@ -730,7 +730,8 @@ window.windowResized = function windowResized() {
 };
 
 function getDims() {
-    return { w: min(1440, windowWidth), h: min(778, windowHeight) };
+    // return { w: min(1440, windowWidth), h: min(778, windowHeight) };
+    return { w: min(1800, windowWidth), h: min(922, windowHeight) };
 }
 
 function isProbablyMobile() {
