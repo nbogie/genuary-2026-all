@@ -393,14 +393,9 @@ function drawLineSeg(lineSeg) {
 /**@returns{LineSeg[]} */
 function createWalls() {
     /**@type{LineSeg[]} */
-    const walls = [];
-    walls.push(
+    const boundaryWalls = [];
+    boundaryWalls.push(
         ...[
-            {
-                a: createVector(width / 2, height / 2),
-                b: createVector(0, 0),
-            },
-
             {
                 a: createVector(-width / 2, -height / 2),
                 b: createVector(width / 2, -height / 2),
@@ -418,20 +413,37 @@ function createWalls() {
                 a: createVector(-width / 2, height / 2),
                 b: createVector(-width / 2, -height / 2),
             },
-
-            {
-                a: createVector(width / 2, height / 2),
-                b: createVector(0, 0),
-            },
-            {
-                a: createVector(0, (1 * height) / 2),
-                b: createVector(0.5 * width, 0),
-            },
         ],
     );
+    const hw = width / 2;
+    const hh = height / 2;
 
-    const moar = collect(8, createRandomWall);
-    return [...walls, ...moar];
+    //a few walls guaranteed to come out of the main walls, so we never get a full empty room
+    /**
+     * @type {LineSeg[]}
+     */
+    const possibleLongWalls = [
+        {
+            a: createVector(hw, hh),
+            b: createVector(0, 0),
+        },
+        {
+            a: createVector(0, (1 * height) / 2),
+            b: createVector(0.5 * width, 0),
+        },
+        {
+            a: createVector(-0.25 * hw, 0.25 * hh),
+            b: createVector(-1 * hw, 0.8 * hh),
+        },
+        {
+            a: createVector(0.7 * hw, -1 * hh),
+            b: createVector(0.7 * hw, -0.2 * hh),
+        },
+    ];
+    const selectedLongWalls = shuffle(possibleLongWalls).slice(0, 2);
+
+    const moar = collect(10, createRandomWall);
+    return [...boundaryWalls, ...selectedLongWalls, ...moar];
 }
 
 /**
