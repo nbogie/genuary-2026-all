@@ -9,7 +9,7 @@
 //TODO: consider number of intersections, sometimes taking all second intersection points along with any first-only intersections, to make a lessened-strength beam.
 //TODO: ?add offset some intersections along their wall's normal, for less perfect flat surfaces?
 //TODO: paint the abstract "player" in p5.brush, too?
-
+//TODO: draw an impressionist scared face for the player.  just a cheekbone and brow?  (could be illuminated witht the same mechanism, just a higher-detail raycast)
 //TODO: consider the dark itself being gloom-painted
 //TODO:
 //notes:
@@ -39,7 +39,7 @@ let gWalls;
 let moveTarget;
 
 function setup() {
-    createCanvas(1400, 700, WEBGL);
+    createCanvas(windowWidth, windowHeight, WEBGL);
 
     pixelDensity(1);
     player = createPlayer();
