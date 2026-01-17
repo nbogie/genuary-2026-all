@@ -20,12 +20,44 @@ function setup() {
 function draw() {
     background(100);
 
-    drawFillCWPolygonBlob();
+    // drawFillCWPolygonBlob();
 
     drawPlayer(player);
     // drawScribble()
 
     // drawAPicture()
+    const rayResults = castRaysFromPlayer();
+    drawRayResults(rayResults);
+}
+/**
+ *
+ * @param {RayResult[]} rayResults
+ */
+function drawRayResults(rayResults) {
+    for (let result of rayResults) {
+        push();
+        const intersectionOrNull = result.intersectionOrNull;
+        if (intersectionOrNull) {
+            strokeWeight(2);
+            stroke("yellow");
+            line(
+                result.origin.x,
+                result.origin.y,
+                intersectionOrNull.x,
+                intersectionOrNull.y,
+            );
+        } else {
+            strokeWeight(2);
+            stroke("gray");
+            line(
+                result.origin.x,
+                result.origin.y,
+                result.origin.x + result.ray.x,
+                result.origin.y + result.ray.y,
+            );
+        }
+        pop();
+    }
 }
 /**
  * @typedef {Object} LineSeg
@@ -86,7 +118,7 @@ function castRaysFromPlayer() {
         const rayVec = p5.Vector.fromAngle(angle, 4000);
 
         /** @type {p5.Vector | null} */
-        const intersectionOrNull = p5.Vector.random2D().mult(100);
+        const intersectionOrNull = null;
         /**
          * @type {RayResult}
          */
@@ -209,4 +241,51 @@ function drawAPicture() {
         }
     }
     pop();
+}
+
+/**
+ *Determine the intersection point of two line segments
+ * Return FALSE if the lines don't intersect
+ * from http://paulbourke.net/geometry/pointlineplane/javascript.txt
+ * line intercept math by Paul Bourke http://paulbourke.net/geometry/pointlineplane/
+ *  @param {LineSeg} seg1
+ * @param {LineSeg} seg2
+ * @returns {p5.Vector | false}
+ */
+function intersect(seg1, seg2) {
+    let x1 = seg1.a.x;
+    let y1 = seg1.a.y;
+    let x2 = seg1.b.x;
+    let y2 = seg1.b.y;
+
+    let x3 = seg2.a.x;
+    let y3 = seg2.a.y;
+    let x4 = seg2.b.x;
+    let y4 = seg2.b.y;
+
+    // Check if none of the lines are of length 0
+    if ((x1 === x2 && y1 === y2) || (x3 === x4 && y3 === y4)) {
+        return false;
+    }
+
+    const denominator = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
+
+    // Lines are parallel
+    if (denominator === 0) {
+        return false;
+    }
+
+    let ua = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / denominator;
+    let ub = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / denominator;
+
+    // is the intersection along the segments
+    if (ua < 0 || ua > 1 || ub < 0 || ub > 1) {
+        return false;
+    }
+
+    // Return a object with the x and y coordinates of the intersection
+    let x = x1 + ua * (x2 - x1);
+    let y = y1 + ua * (y2 - y1);
+
+    return createVector(x, y);
 }
