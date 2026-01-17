@@ -90,7 +90,8 @@ function preload() {
 }
 
 function setup() {
-    createCanvas(windowWidth, windowHeight, WEBGL);
+    const { w, h } = getDims();
+    createCanvas(w, h, WEBGL);
     textFont(myFont);
     pixelDensity(1);
     player = createPlayer();
@@ -253,9 +254,12 @@ function drawRayResults(rayResults) {
  * @property {p5.Vector} facing
  */
 function createPlayer() {
+    const startPos = createVector(
+        ...(isProbablyMobile() ? [0, 0] : [-300, -200]),
+    );
     /** @type {Player} */
     const pl = {
-        pos: createVector(-200, -200),
+        pos: startPos,
         facing: p5.Vector.fromAngle(PI / 4),
     };
     return pl;
@@ -717,4 +721,18 @@ function showStrobeWarning() {
 function fixBodyStyling() {
     //not sure why openprocessing is showing scrollbars.
     document.body.style.overflow = "hidden";
+}
+
+window.windowResized = function windowResized() {
+    const { w, h } = getDims();
+    resizeCanvas(w, h);
+    regenerate();
+};
+
+function getDims() {
+    return { w: min(1440, windowWidth), h: min(778, windowHeight) };
+}
+
+function isProbablyMobile() {
+    return windowWidth < 600;
 }
