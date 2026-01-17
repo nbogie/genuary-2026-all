@@ -717,12 +717,13 @@ function showStrobeWarning() {
 function fixBodyStyling() {
     //not sure why openprocessing is showing scrollbars.
     document.body.style.overflow = "hidden";
-    //and centre on both axes while we're at it
+
+    // //and centre on both axes while we're at it
     document.body.style.display = "flex";
     document.body.style.flexDirection = "column";
     document.body.style.alignItems = "center";
-    document.body.style.height = "100vh";
-    document.body.style.justifyContent = "center";
+    // document.body.style.height = "100vh";
+    // document.body.style.justifyContent = "center";
 }
 
 window.windowResized = function windowResized() {
