@@ -120,16 +120,12 @@ function draw() {
         showStrobeWarning();
         return;
     }
-    // drawFillCWPolygonBlob();
-
     drawPlayer(player);
 
     if (moveTarget && config.showDebugMovTarget) {
         drawMoveTarget();
     }
-    // drawScribble()
 
-    // drawAPicture()
     const rayResults = castRaysFromPlayer();
     // drawRayResults(rayResults);
     const onlyHits = rayResults.filter((rr) => rr.intersectionOrNull);
@@ -194,7 +190,9 @@ function updatePlayer() {
             if (towardsTarget.mag() < 30) {
                 moveTarget = undefined;
             } else {
-                towardsTarget.setMag(config.moveSpeed * deltaTime);
+                const stepSize =
+                    config.moveSpeed * getScreenScaling() * deltaTime;
+                towardsTarget.setMag(stepSize);
                 player.pos.add(towardsTarget);
             }
         }
@@ -273,8 +271,8 @@ function drawPlayer(pl) {
     translate(pl.pos);
     rectMode(CENTER);
     fill("tomato");
-    // rotate(pl.facing.heading());
     rotate(player.facing.heading());
+    scale(getScreenScaling());
     square(0, 0, 60);
 
     pop();
@@ -378,7 +376,6 @@ function drawBatWithBrush(bat) {
     const pts = [ls1.a, ls1.b, ls2.b];
     push();
     brush.noStroke();
-    // brush.stroke();
     brush.fill(palette.background, random(60, 100));
     brush.bleed(random(0.1, 0.1));
     brush.fillTexture(0.55, 0.8);
@@ -519,7 +516,6 @@ function minBy(array, iteratee) {
     for (let i = 1; i < array.length; i++) {
         const currentElement = array[i];
         const currentIteratedValue = iteratee(currentElement);
-        // If the current iterated value is less than the current minimum value
         if (currentIteratedValue < minValue) {
             minValue = currentIteratedValue;
             minElement = currentElement;
@@ -721,6 +717,12 @@ function showStrobeWarning() {
 function fixBodyStyling() {
     //not sure why openprocessing is showing scrollbars.
     document.body.style.overflow = "hidden";
+    //and centre on both axes while we're at it
+    document.body.style.display = "flex";
+    document.body.style.flexDirection = "column";
+    document.body.style.alignItems = "center";
+    document.body.style.height = "100vh";
+    document.body.style.justifyContent = "center";
 }
 
 window.windowResized = function windowResized() {
@@ -736,4 +738,8 @@ function getDims() {
 
 function isProbablyMobile() {
     return windowWidth < 600;
+}
+
+function getScreenScaling() {
+    return min(width, height) / 800;
 }
