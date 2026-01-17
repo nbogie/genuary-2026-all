@@ -96,8 +96,15 @@ function setup() {
     regenerate();
     // frameRate(5);
     setInterval(maybeAddRandomCreatures, 500);
+    setInterval(regenerateIfPlaying, 15000);
 }
 
+function regenerateIfPlaying() {
+    if (strobeWarningAcceptances < 2) {
+        return;
+    }
+    regenerate();
+}
 function regenerate() {
     gWalls = createWalls();
     bats = [];
@@ -140,6 +147,9 @@ function draw() {
 }
 
 function maybeAddRandomCreatures() {
+    if (strobeWarningAcceptances < 2) {
+        return;
+    }
     if (random() < 0.2) {
         repeat(4, () => {
             const v = p5.Vector.random2D().mult(30);
