@@ -1,22 +1,25 @@
 //online at https://openprocessing.org/sketch/2849855
 //source at https://github.com/nbogie/genuary-2026-all/tree/main/genuary-2026-15-only-shadows-p5-brush
 //Neill's genuary-2026-15. Prompt is "Create an invisible object where only the shadows can be seen."
+//It's really just a tech demo but i find it interesting and evocative, already.
 //
 //Credits:
-//  Alejandro Campos for p5.brush library.  https://p5-brush.cargo.site/
+//  Alejandro Campos for p5.brush library: https://p5-brush.cargo.site/
+//  Amit Patel and Daniel Shiffman for resources on ray-casting for 2d visibility:
+//    https://www.redblobgames.com/articles/visibility/
+//    https://www.youtube.com/watch?v=TOEi6T2mtHo
 //  Paul Bourke line-segment intersection math https://paulbourke.net/geometry/pointlineplane/
-//
+
 //Requirements p5.brush (1.1.4) and p5 v1.x (1.11.11)
 //https://cdn.jsdelivr.net/npm/p5.brush
 
 //TODO: monochrome, or much more desaturated, at least.  reserve color for impact.
 //TODO: use a proc-gen'd tree from day 1?
 //TODO: multi-stage - off boat, up hill past tree, find entrance to cave, into cave, bat-encounter, past slow-rotating grinder-cog,
-//       dragonmouth sneaks up behind us, sharp teeth.
-
-//TODO: layered - so we can still see our path but can illuminate other foreground details we can walk past
+//       dragonmouth sneaks up behind us, we turn to see huge pointy teeth.
+//TODO: layered passes of light - so we can still see our path but can illuminate other foreground details we can walk past
 //        e.g. we want to get off a ship onto a road but walk past ("through") a lighthouse/harbour tower without being completely in the dark.  beam 1 should continue on the road,  beam 2 gets obscured by layer 2 stuff.
-//TODO: consider number of intersections, sometimes taking all second intersection points along with any first-only intersections, to make a lessened-strength beam.
+//TODO: consider the number of intersections, sometimes taking all second intersection points along with any first-only intersections, to make a lessened-strength beam.
 //TODO: ?add offset some intersections along their wall's normal, for less perfect flat surfaces?
 //TODO: paint the abstract "player" in p5.brush, too?
 //TODO: draw an impressionist scared face for the player.  just a cheekbone and brow?  (could be illuminated witht the same mechanism, just a higher-detail raycast)
@@ -24,7 +27,7 @@
 //TODO: final scene could be blair witch stand-against-the-wall, with the dropped lamp partially illuminating and cutting out?
 
 //notes:
-//* p5.brush not working with p5 v2, i think.
+//* p5.brush not currently working with p5 v2, i think.
 //* brush fill and bleed settings seem to ignore push and pop? (with p5 1.11.11, at least).
 
 let palette = {
