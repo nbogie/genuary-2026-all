@@ -4,23 +4,109 @@
 //brush fill and bleed settings seem to ignore push and pop (with p5 1.11.11, at least).
 
 let palette = ["#7b4800", "#fcd300", "#ff2702"]; //"#002185", "#003c32","#6b9404"
+/**
+ * @type {Player}
+ */
+let player;
 
 function setup() {
     createCanvas(1400, 700, WEBGL);
+
     pixelDensity(1);
-    angleMode(DEGREES);
+    player = createPlayer();
+    noLoop();
+}
+
+function draw() {
+    background(100);
+
+    drawFillCWPolygonBlob();
+
+    drawPlayer(player);
     // drawScribble()
-    drawFillAsteroid();
+
     // drawAPicture()
+}
+/**
+ * @typedef {Object} LineSeg
+ * @property {p5.Vector} a
+ * @property {p5.Vector} b
+ */
+
+/**
+ * @typedef {Object} Player
+ * @property {p5.Vector} pos
+ * @property {p5.Vector} facing
+ */
+function createPlayer() {
+    /** @type {Player} */
+    const pl = {
+        pos: createVector(-200, -200),
+        facing: p5.Vector.fromAngle(PI / 4),
+    };
+    return pl;
+}
+/**
+ *
+ * @param {Player} pl
+ */
+function drawPlayer(pl) {
+    push();
+    translate(pl.pos);
+    rectMode(CENTER);
+    fill("tomato");
+    // rotate(pl.facing.heading());
+    rotate(2);
+    square(0, 0, 60);
+
+    pop();
+}
+
+/**
+ * @typedef {Object} RayResult
+ * @property {p5.Vector} ray
+ * @property {p5.Vector} origin
+ * @property {p5.Vector | null} intersectionOrNull
+ *
+ */
+
+/**
+ * @returns {RayResult[]}
+ */
+function castRaysFromPlayer() {
+    const pl = player;
+    const startAngle = pl.facing.heading() - PI / 4;
+    const endAngle = pl.facing.heading() + PI / 4;
+    const angleStep = TWO_PI / 256;
+
+    /** @type {RayResult[]} results */
+    const results = [];
+
+    for (let angle = startAngle; angle <= endAngle; angle += angleStep) {
+        const rayVec = p5.Vector.fromAngle(angle, 4000);
+
+        /** @type {p5.Vector | null} */
+        const intersectionOrNull = p5.Vector.random2D().mult(100);
+        /**
+         * @type {RayResult}
+         */
+        const result = {
+            ray: rayVec,
+            origin: pl.pos.copy(),
+            intersectionOrNull,
+        };
+        results.push(result);
+    }
+    return results;
 }
 
 function mousePressed() {
     background("#fffceb");
 
-    drawFillAsteroid();
+    drawFillCWPolygonBlob();
 }
 
-function drawFillAsteroid() {
+function drawFillCWPolygonBlob() {
     push();
 
     brush.fill(random(palette), random(60, 100));
