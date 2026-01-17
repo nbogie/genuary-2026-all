@@ -3,7 +3,11 @@
 //I Started a couple of days late.
 //requires p5.brush and p5 v1.x
 
-//TODO: multi-stage - off boat, up hill past tree, find entrance to cave, into cave,
+//TODO: monochrome, or much more desaturated, at least.  reserve color for impact.
+//TODO: use a proc-gen'd tree from day 1?
+//TODO: multi-stage - off boat, up hill past tree, find entrance to cave, into cave, bat-encounter, past slow-rotating grinder-cog,
+//       dragonmouth sneaks up behind us, sharp teeth.
+
 //TODO: layered - so we can still see our path but can illuminate other foreground details we can walk past
 //        e.g. we want to get off a ship onto a road but walk past ("through") a lighthouse/harbour tower without being completely in the dark.  beam 1 should continue on the road,  beam 2 gets obscured by layer 2 stuff.
 //TODO: consider number of intersections, sometimes taking all second intersection points along with any first-only intersections, to make a lessened-strength beam.
@@ -22,14 +26,35 @@ let palette = {
     background: "#1e1e1e",
     colours: ["#7b4800", "#fcd300", "#ff2702"],
 }; //"#002185", "#003c32","#6b9404"
+/**
+ * @typedef {Object} Config
+ * @property {number} maxRayLength
+ * @property {boolean} showDebugWalls,
+ * @property {boolean} showDebugBats,
+ * @property {boolean} showDebugBrushOutline,
+ * @property {boolean} showDebugContactPoints,
+ * @property {boolean} showDebugMovTarget,
+ * @property {number} batBaseSize
+ * @property {"spin" | "mouse"} lookMode
+ */
+/**
+ * @type {Config}
+ */
 let config = {
     maxRayLength: 800,
+    showDebugBats: false,
     showDebugWalls: false,
     showDebugBrushOutline: false,
     showDebugContactPoints: false,
     showDebugMovTarget: false,
-    batBaseSize: 50,
+    batBaseSize: 40,
+    lookMode: "mouse",
 };
+/**
+ * @type {Bat[]}
+ */
+let bats;
+
 /**
  * @type {Player}
  */
@@ -47,10 +72,12 @@ function setup() {
     player = createPlayer();
     regenerate();
     // noLoop();
+    setInterval(maybeAddRandomCreatures, 500);
 }
 
 function regenerate() {
     gWalls = createWalls();
+    bats = [];
 }
 
 function draw() {
@@ -75,11 +102,25 @@ function draw() {
     // drawRayResults(onlyHits);
     config.showDebugContactPoints && drawDebugContactPoints(contactPoints);
 
-    drawFillCWPoints(contactPoints);
+    drawFillCWPointsForLightBeam(contactPoints);
     config.showDebugWalls && drawDebugWalls();
 
+    config.showDebugBats && bats.forEach(drawBatDebug);
+    bats.forEach(drawBatWithBrush);
     updatePlayer();
+    bats.forEach(updateBat);
+    bats = bats.filter((b) => !b.isDead);
 }
+
+function maybeAddRandomCreatures() {
+    if (random() < 0.2) {
+        repeat(4, () => {
+            const v = p5.Vector.random2D().mult(30);
+            bats.push(createBat(0, mouseWorldPos(), 100, v));
+        });
+    }
+}
+
 function drawDebugContactPoints(contactPoints) {
     push();
     strokeWeight(10);
@@ -112,6 +153,17 @@ function updatePlayer() {
         }
     }
 }
+/**
+ *
+ * @param {Bat} b
+ */
+function updateBat(b) {
+    b.pos.add(b.vel);
+    if (b.pos.dist(player.pos) > 600 || millis() - b.bornMillis > 1000) {
+        b.isDead = true;
+    }
+}
+
 /**
  *
  * @param {RayResult[]} rayResults
@@ -186,6 +238,12 @@ function drawPlayer(pl) {
  *
  */
 
+function allLineSegsForFrame() {
+    // const batLineSegs = bats.flatMap(lineSegsForBat);
+    // return [...gWalls, ...batLineSegs];
+    return gWalls;
+}
+
 /**
  * @returns {RayResult[]}
  */
@@ -205,7 +263,7 @@ function castRaysFromPlayer() {
          */
         const rayLineSeg = { a: pl.pos, b: pl.pos.copy().add(rayVec) };
         /** @type {(p5.Vector | null)[]} */
-        const allIntersections = gWalls
+        const allIntersections = allLineSegsForFrame()
             .map((wall) => intersect(wall, rayLineSeg) || null)
             .filter((res) => res);
 
@@ -238,11 +296,31 @@ function doubleClicked() {
  *
  * @param {p5.Vector[]} pts
  */
-function drawFillCWPoints(pts) {
+function drawFillCWPointsForLightBeam(pts) {
     push();
     config.showDebugBrushOutline || brush.noStroke();
     brush.fill(palette.lightInFog, random(60, 100));
     brush.bleed(random(0.1, 0.2));
+    brush.fillTexture(0.55, 0.8);
+    brush.beginShape();
+    for (let pt of pts) {
+        brush.vertex(pt.x, pt.y);
+    }
+    brush.endShape(CLOSE);
+    pop();
+}
+
+/**
+ * @param {Bat} bat
+ */
+function drawBatWithBrush(bat) {
+    const [ls1, ls2] = lineSegsForBat(bat);
+    const pts = [ls1.a, ls1.b, ls2.b];
+    push();
+    brush.noStroke();
+    // brush.stroke();
+    brush.fill(palette.background, random(60, 100));
+    brush.bleed(random(0.1, 0.1));
     brush.fillTexture(0.55, 0.8);
     brush.beginShape();
     for (let pt of pts) {
@@ -417,8 +495,18 @@ function keyPressed() {
     if (key === "c") {
         config.showDebugContactPoints = !config.showDebugContactPoints;
     }
+    if (key === "p") {
+        if (isLooping()) {
+            noLoop();
+        } else {
+            loop();
+        }
+    }
     if (key === "w") {
         config.showDebugWalls = !config.showDebugWalls;
+    }
+    if (key === "b") {
+        config.showDebugBats = !config.showDebugBats;
     }
 }
 
@@ -428,6 +516,8 @@ function keyPressed() {
  * @property {p5.Vector} vel
  * @property {number} phase
  * @property {number} size
+ * @property {boolean} isDead
+ * @property {number} bornMillis
  *
  */
 /**
@@ -446,6 +536,8 @@ function createBat(_ix, roughPos, spawnRadius, roughVel) {
         vel: roughVel.copy().rotate(randomGaussian(0, PI / 8)),
         phase: random(TWO_PI),
         size: randomGaussian(1, 0.1),
+        isDead: false,
+        bornMillis: millis(),
     };
 }
 
@@ -455,8 +547,21 @@ function createBat(_ix, roughPos, spawnRadius, roughVel) {
  */
 function drawBatDebug(bat) {
     push();
-    fill("magenta");
-    circle(bat.pos.x, bat.pos.y, bat.size);
+    noFill();
+    stroke("magenta");
+    circle(bat.pos.x, bat.pos.y, bat.size * config.batBaseSize);
+    pop();
+}
+
+/**
+ *
+ * @param {Bat} bat
+ */
+function drawPolyForBat(bat) {
+    push();
+    noFill();
+    stroke("magenta");
+    circle(bat.pos.x, bat.pos.y, bat.size * config.batBaseSize);
     pop();
 }
 /**
@@ -467,15 +572,15 @@ function drawBatDebug(bat) {
 
 function lineSegsForBat(bat) {
     const ctr = bat.pos;
-    const angle = (sin(bat.phase + millis() / 1000) * PI) / 6;
+    const angle = (sin(bat.phase + millis() / 100) * PI) / 6;
     const wingLen = bat.size * config.batBaseSize;
     const [ctrAngle1, ctrAngle2] = [0.1, -0.1].map(
         (frac) => PI / 2 + PI * frac,
     );
-    const ptLeft = p5.Vector.fromAngle(ctrAngle1 + angle, wingLen);
-    const ptRight = p5.Vector.fromAngle(ctrAngle2 - angle, wingLen);
+    const ptLeft = p5.Vector.fromAngle(ctrAngle1 + angle, wingLen).add(ctr);
+    const ptRight = p5.Vector.fromAngle(ctrAngle2 - angle, wingLen).add(ctr);
     return [
-        { a: ctr, b: ptLeft },
+        { a: ptLeft, b: ctr },
         { a: ctr, b: ptRight },
     ];
 }
@@ -492,4 +597,17 @@ function drawMoveTarget() {
     circle(0, 0, 40);
 
     pop();
+}
+
+/**
+ * Call the given function repeatedly, the given number of times.
+ * @param {number} numRepeats number of times to call the given function
+ * @param {(ix:number) => void} fn function to call repeatedly.  Will be passed the zero-based count of the current iteration
+ * @see {@link collect} - if you want to collect the returned values from the function instead.
+ *
+ */
+function repeat(numRepeats, fn) {
+    for (let i = 0; i < numRepeats; i++) {
+        fn(i);
+    }
 }
