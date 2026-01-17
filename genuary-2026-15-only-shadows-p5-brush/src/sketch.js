@@ -85,10 +85,10 @@ function preload() {
 
 function setup() {
     createCanvas(windowWidth, windowHeight, WEBGL);
-
     textFont(myFont);
     pixelDensity(1);
     player = createPlayer();
+    fixBodyStyling();
     regenerate();
     // frameRate(5);
     setInterval(maybeAddRandomCreatures, 500);
@@ -696,4 +696,9 @@ function showStrobeWarning() {
     );
 
     pop();
+}
+
+function fixBodyStyling() {
+    //not sure why openprocessing is showing scrollbars.
+    document.body.style.overflow = "hidden";
 }
