@@ -1,7 +1,13 @@
 //online at https://openprocessing.org/sketch/2849855
-//Neill's genuary-2026-15. prompt is "Create an invisible object where only the shadows can be seen."
-//I Started a couple of days late.
-//requires p5.brush and p5 v1.x
+//source at https://github.com/nbogie/genuary-2026-all/tree/main/genuary-2026-15-only-shadows-p5-brush
+//Neill's genuary-2026-15. Prompt is "Create an invisible object where only the shadows can be seen."
+//
+//Credits:
+//  Alejandro Campos for p5.brush library.  https://p5-brush.cargo.site/
+//  Paul Bourke line-segment intersection math https://paulbourke.net/geometry/pointlineplane/
+//
+//Requirements p5.brush (1.1.4) and p5 v1.x (1.11.11)
+//https://cdn.jsdelivr.net/npm/p5.brush
 
 //TODO: monochrome, or much more desaturated, at least.  reserve color for impact.
 //TODO: use a proc-gen'd tree from day 1?
@@ -15,17 +21,17 @@
 //TODO: paint the abstract "player" in p5.brush, too?
 //TODO: draw an impressionist scared face for the player.  just a cheekbone and brow?  (could be illuminated witht the same mechanism, just a higher-detail raycast)
 //TODO: consider the dark itself being gloom-painted
-//TODO: final scene is blair witch stand-against-the-wall with the dropped lamp partially illuminating and cutting out?
-//TODO:
+//TODO: final scene could be blair witch stand-against-the-wall, with the dropped lamp partially illuminating and cutting out?
 
 //notes:
-//brush fill and bleed settings seem to ignore push and pop (with p5 1.11.11, at least).
+//* p5.brush not working with p5 v2, i think.
+//* brush fill and bleed settings seem to ignore push and pop? (with p5 1.11.11, at least).
 
 let palette = {
     lightInFog: "#fcd300",
     background: "#1e1e1e",
     colours: ["#7b4800", "#fcd300", "#ff2702"],
-}; //"#002185", "#003c32","#6b9404"
+};
 /**
  * @typedef {Object} Config
  * @property {number} maxRayLength
