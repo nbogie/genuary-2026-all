@@ -14,7 +14,6 @@
 //Requirements p5.brush (1.1.4) and p5 v1.x (1.11.11)
 //https://cdn.jsdelivr.net/npm/p5.brush
 
-//TODO: _maybe_ consider phones?  scale down wall-length, move-speed, beam-len, etc.
 //TODO: design 2-3 actual levels to guarantee an interesting experience.
 //TODO: monochrome, or much more desaturated, at least.  reserve color for impact.
 //TODO: use a proc-gen'd tree from day 1?
@@ -100,6 +99,7 @@ function setup() {
     // frameRate(5);
     setInterval(maybeAddRandomCreatures, 500);
     setInterval(regenerateIfPlaying, 15000);
+    setBodyBackgroundAsDarkerThan(palette.background);
 }
 
 function regenerateIfPlaying() {
@@ -743,4 +743,9 @@ function isProbablyMobile() {
 
 function getScreenScaling() {
     return min(width, height) / 800;
+}
+
+function setBodyBackgroundAsDarkerThan(baseColour) {
+    const lightnessFrac = 0.92;
+    document.body.style.backgroundColor = `oklch(from ${baseColour} calc(l * ${lightnessFrac}) c h)`;
 }
