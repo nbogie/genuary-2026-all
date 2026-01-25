@@ -1,6 +1,7 @@
 /*
 | Author          | Neill Bogie
 | Title           | WCCChallenge 2026 Week 4 + Genuary day 25: "Organic Geometry"
+| Prompt          | "Forms that look or act organic but are constructed entirely from geometric shapes."
 | 📅 Started      | 2026-01-25
 | 📅 Completed    | 2026-01-25
 | 🕒 Taken        | ~2.5hrs                       
@@ -9,9 +10,9 @@
 | 🙏 Credits      | 1. I learned this in 2019 from Daniel Shiffman's Inverse Kinematics challenge: 
 |                 |    https://www.youtube.com/watch?v=hbgDqyy8bIw
 |                 |    although I might have butchered the algorithm, here.
-|                 | 2. Project Somedays for this neat header format!
-| 💾 Previously   | I originally implemented the same idea in 2019 - https://github.com/nbogie/p5js-ik-tentacles 
-|                 | I didn't look at the code or the alg.
+|                 | 2. Project Somedays for this neat header format! https://openprocessing.org/user/410675
+| 💾 Previously   | I implemented the same idea in 2019 - https://github.com/nbogie/p5js-ik-tentacles 
+|                 | (I worked this new one out from scratch, from a very hazy memory only)
 | 🤖 AI usage     | none
 
 Made for Sableraph's weekly creative coding challenges, reviewed weekly on https://www.twitch.tv/sableraph
