@@ -30,7 +30,13 @@ function createTentacles(): Tentacle[] {
     const endPos = createVector(100 + len, y);
     const startRadius = 130;
     const endRadius = random(30, 10);
-    const tentacle = buildTentacle(startPos, endPos, startRadius, endRadius);
+    const tentacle = buildTentacle({
+      startPos,
+      endPos,
+      startRadius,
+      endRadius,
+      baseHue: random(90, 120),
+    });
     tentacles.push(tentacle);
   }
   return tentacles;

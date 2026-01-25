@@ -14,12 +14,15 @@ export interface TentacleSegment {
   colour: p5.Color;
 }
 
-export function buildTentacle(
-  startPos: p5.Vector,
-  endPos: p5.Vector,
-  startRadius: number,
-  endRadius: number
-): Tentacle {
+export function buildTentacle(spec: {
+  startPos: p5.Vector;
+  endPos: p5.Vector;
+  startRadius: number;
+  endRadius: number;
+  baseHue: number;
+}): Tentacle {
+  const { startPos, endPos, startRadius, endRadius, baseHue } = spec;
+
   const numSegments = 80;
   const segs: TentacleSegment[] = [];
   let prevPos = startPos.copy();
@@ -34,7 +37,7 @@ export function buildTentacle(
     const aRadius = lerp(startRadius, endRadius, i / numSegments);
     len = aRadius * 0.2;
 
-    const colour = color(randomGaussian(100, 5), 70, randomGaussian(80, 5));
+    const colour = color(randomGaussian(baseHue, 5), random(70, 80), randomGaussian(80, 5));
     const seg: TentacleSegment = { a, b, isAnchored: i === 0, aRadius, colour };
     segs.push(seg);
     prevPos = b.copy();
@@ -70,11 +73,6 @@ export function drawTentacle(tentacle: Tentacle) {
     fill(seg.colour);
     circle(0, 0, seg.aRadius * 0.9);
     pop();
-    // push();
-    // strokeWeight(5);
-    // stroke("pink");
-    // line(seg.a.x, seg.a.y, seg.b.x, seg.b.y);
-    // pop();
   }
   pop();
   pop();
@@ -88,7 +86,6 @@ export function updateTentacle(tentacle: Tentacle) {
   for (const seg of segsReversed) {
     const oldLen = seg.a.dist(seg.b);
     const targetPos = prev ? prev.a : mousePos();
-    // seg.b.lerp(targetPos, 0.99);
     seg.b = targetPos.copy();
     const newAPos = p5.Vector.sub(seg.a, seg.b).setMag(oldLen).add(seg.b);
     seg.a = newAPos;
