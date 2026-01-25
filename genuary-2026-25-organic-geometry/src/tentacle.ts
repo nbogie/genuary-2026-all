@@ -1,8 +1,10 @@
 import p5 from "p5";
-import { mousePos } from "./utils/utils.ts";
 
 export interface Tentacle {
+  target: p5.Vector;
+  destTarget: p5.Vector;
   segments: TentacleSegment[];
+  pixelLength: number;
 }
 
 export interface TentacleSegment {
@@ -44,7 +46,13 @@ export function createTentacle(spec: {
     prevPos = b.copy();
   }
   pop();
-  return { segments: segs };
+  const target = createTentacleTarget(segs);
+  return {
+    segments: segs,
+    target,
+    destTarget: target.copy(),
+    pixelLength: segs[0]!.a.dist(segs.at(-1)!.b),
+  };
 }
 
 export function drawTentacle(tentacle: Tentacle) {
@@ -84,9 +92,10 @@ export function updateTentacle(tentacle: Tentacle) {
   const segsReversed = [...tentacle.segments].reverse();
   let prev: TentacleSegment | undefined = undefined;
   const posBefore = tentacle.segments[0].a.copy();
+  const tipTarget: p5.Vector = tentacle.target; //mousePos();
   for (const seg of segsReversed) {
     const oldLen = seg.a.dist(seg.b);
-    const targetPos = prev ? prev.a : mousePos();
+    const targetPos = prev ? prev.a : tipTarget;
     seg.b = targetPos.copy();
     const newAPos = p5.Vector.sub(seg.a, seg.b).setMag(oldLen).add(seg.b);
     seg.a = newAPos;
@@ -97,4 +106,28 @@ export function updateTentacle(tentacle: Tentacle) {
     seg.a.sub(stretchedVec);
     seg.b.sub(stretchedVec);
   }
+  updateTentacleTarget(tentacle);
+}
+
+function createTentacleTarget(segments: TentacleSegment[]): p5.Vector {
+  const one = segments.at(0)!;
+  const two = segments.at(-1)!;
+  const midpoint = p5.Vector.lerp(one.a, two.b, 0.5);
+  const len = two.a.dist(one.b);
+  return midpoint.add(p5.Vector.random2D().mult(random(0.1, len / 2)));
+}
+
+export function updateTentacleTargetTowards(tentacle: Tentacle, pos: p5.Vector) {
+  //constrain dest to be within range R of tentacle base pos
+  const toDest = p5.Vector.sub(pos, tentacle.segments[0]!.a);
+  toDest.limit(tentacle.pixelLength * 0.9);
+  tentacle.destTarget.lerp(toDest.add(tentacle.segments[0]!.a), 0.1);
+}
+
+function updateTentacleTarget(tentacle: Tentacle) {
+  if (random() < 0.1) {
+    const dest = p5.Vector.random2D().mult(random(30, 100)).add(tentacle.target);
+    updateTentacleTargetTowards(tentacle, dest);
+  }
+  tentacle.target.lerp(tentacle.destTarget, 0.1);
 }
