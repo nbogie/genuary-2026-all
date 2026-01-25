@@ -2,6 +2,8 @@
 | Author          | Neill Bogie
 | Title           | WCCChallenge 2026 Week 4 + Genuary day 25: "Organic Geometry"
 | Prompt          | "Forms that look or act organic but are constructed entirely from geometric shapes."
+| TypeScript Code | https://github.com/nbogie/genuary-2026-all/tree/main/genuary-2026-25-organic-geometry
+|                 | The JS here is transpiled from the TS above.
 | 📅 Started      | 2026-01-25
 | 📅 Completed    | 2026-01-25
 | 🕒 Taken        | ~3hrs                       
@@ -20,7 +22,3 @@ Made for Sableraph's weekly creative coding challenges, reviewed weekly on https
 See other submissions here: https://openprocessing.org/curation/78544
 Join The Birb's Nest friendly Discord community! https://discord.gg/g5J6Ajx9Am
 */
-
-//this source code is transpiled from typescript, so it may be hard to read.
-//The original typescript source is at:
-//https://github.com/nbogie/genuary-2026-all/tree/main/genuary-2026-25-organic-geometry
