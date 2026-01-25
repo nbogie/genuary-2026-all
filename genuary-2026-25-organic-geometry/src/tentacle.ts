@@ -146,3 +146,7 @@ function updateTentacleTarget(tentacle: Tentacle) {
   }
   tentacle.target.lerp(tentacle.destTarget, 0.1);
 }
+
+export function attractTentaclesTowards(tentacles: Tentacle[], pos: p5.Vector) {
+  tentacles.forEach((t) => updateTentacleTargetTowardsNoisily(t, pos));
+}

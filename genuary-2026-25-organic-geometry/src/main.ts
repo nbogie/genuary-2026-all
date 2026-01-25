@@ -1,11 +1,10 @@
 import "p5/global";
-//@ts-ignore
 import p5 from "p5";
 import {
+  attractTentaclesTowards,
   createTentacle,
   drawTentacle,
   updateTentacle,
-  updateTentacleTargetTowardsNoisily,
   type Tentacle,
 } from "./tentacle.ts";
 import { mousePos } from "./utils/utils.ts";
@@ -55,5 +54,9 @@ function createTentacles(): Tentacle[] {
 }
 
 window.mouseMoved = function mouseMoved() {
-  gTentacles.forEach((t) => updateTentacleTargetTowardsNoisily(t, mousePos()));
+  attractTentaclesTowards(gTentacles, mousePos());
+};
+
+window.mouseDragged = function mouseDragged() {
+  attractTentaclesTowards(gTentacles, mousePos());
 };
