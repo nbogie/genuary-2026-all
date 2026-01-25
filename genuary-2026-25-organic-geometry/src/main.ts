@@ -1,7 +1,7 @@
 import "p5/global";
 //@ts-ignore
 import p5 from "p5";
-import { buildTentacle, drawTentacle, updateTentacle, type Tentacle } from "./tentacle.ts";
+import { createTentacle, drawTentacle, updateTentacle, type Tentacle } from "./tentacle.ts";
 
 p5.disableFriendlyErrors = true;
 
@@ -30,7 +30,7 @@ function createTentacles(): Tentacle[] {
     const endPos = createVector(100 + len, y);
     const startRadius = 130;
     const endRadius = random(30, 10);
-    const tentacle = buildTentacle({
+    const tentacle = createTentacle({
       startPos,
       endPos,
       startRadius,

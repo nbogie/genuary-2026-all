@@ -14,7 +14,7 @@ export interface TentacleSegment {
   colour: p5.Color;
 }
 
-export function buildTentacle(spec: {
+export function createTentacle(spec: {
   startPos: p5.Vector;
   endPos: p5.Vector;
   startRadius: number;
