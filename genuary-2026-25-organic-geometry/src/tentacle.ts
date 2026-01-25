@@ -20,8 +20,9 @@ export function createTentacle(spec: {
   startRadius: number;
   endRadius: number;
   baseHue: number;
+  hueDeviation: number;
 }): Tentacle {
-  const { startPos, endPos, startRadius, endRadius, baseHue } = spec;
+  const { startPos, endPos, startRadius, endRadius, baseHue, hueDeviation } = spec;
 
   const numSegments = 80;
   const segs: TentacleSegment[] = [];
@@ -37,7 +38,7 @@ export function createTentacle(spec: {
     const aRadius = lerp(startRadius, endRadius, i / numSegments);
     len = aRadius * 0.2;
 
-    const colour = color(randomGaussian(baseHue, 5), random(70, 80), randomGaussian(80, 5));
+    const colour = color(randomGaussian(baseHue, hueDeviation), random(70, 75), random(70, 75));
     const seg: TentacleSegment = { a, b, isAnchored: i === 0, aRadius, colour };
     segs.push(seg);
     prevPos = b.copy();
