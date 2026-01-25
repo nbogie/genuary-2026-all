@@ -11,6 +11,7 @@ export interface TentacleSegment {
   aRadius: number;
   isAnchored: boolean;
   target?: p5.Vector;
+  colour: p5.Color;
 }
 
 export function buildTentacle(
@@ -19,20 +20,33 @@ export function buildTentacle(
   startRadius: number,
   endRadius: number
 ): Tentacle {
-  const numSegments = 20;
+  const numSegments = 80;
   const segs: TentacleSegment[] = [];
+  let prevPos = startPos.copy();
+  let towardsEnd = endPos.copy().sub(startPos);
+  let len = towardsEnd.mag() / numSegments;
+  push();
+  colorMode(HSB);
   for (let i = 0; i < numSegments; i++) {
-    const a = startPos.copy().lerp(endPos, i / numSegments);
-    const b = startPos.copy().lerp(endPos, (i + 1) / numSegments);
+    const a = prevPos.copy();
+    const b = prevPos.copy().add(towardsEnd.copy().setMag(len)); //startPos.copy().lerp(endPos, (i + 1) / numSegments);
+
     const aRadius = lerp(startRadius, endRadius, i / numSegments);
-    const seg: TentacleSegment = { a, b, isAnchored: i === 0, aRadius };
+    len = aRadius * 0.2;
+
+    const colour = color(randomGaussian(100, 5), 70, randomGaussian(80, 5));
+    const seg: TentacleSegment = { a, b, isAnchored: i === 0, aRadius, colour };
     segs.push(seg);
+    prevPos = b.copy();
   }
+  pop();
   return { segments: segs };
 }
 
 export function drawTentacle(tentacle: Tentacle) {
-  fill("darkgreen");
+  push();
+  fill("#121e0e");
+  noStroke();
   for (let seg of tentacle.segments) {
     push();
     translate(seg.a);
@@ -43,16 +57,18 @@ export function drawTentacle(tentacle: Tentacle) {
     circle(0, 0, seg.aRadius);
     pop();
   }
-  fill("lime");
+  push();
   noStroke();
   for (let seg of tentacle.segments) {
     push();
     translate(seg.a);
-    circle(0, 0, seg.aRadius * 0.7);
+    fill(seg.colour);
+    circle(0, 0, seg.aRadius * 0.8);
     pop();
     push();
     translate(seg.b);
-    circle(0, 0, seg.aRadius * 0.7);
+    fill(seg.colour);
+    circle(0, 0, seg.aRadius * 0.9);
     pop();
     // push();
     // strokeWeight(5);
@@ -60,6 +76,8 @@ export function drawTentacle(tentacle: Tentacle) {
     // line(seg.a.x, seg.a.y, seg.b.x, seg.b.y);
     // pop();
   }
+  pop();
+  pop();
 }
 
 /** mutates tentacle in place */

@@ -23,13 +23,13 @@ window.draw = function draw() {
 function createTentacles(): Tentacle[] {
   const tentacles: Tentacle[] = [];
   const numTentacles = 5;
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < numTentacles; i++) {
     const y = (height * (i + 1)) / (numTentacles + 1);
-    const len = random(0.4, 0.5) * width;
+    const len = 0.5 * width;
     const startPos = createVector(-50, y);
     const endPos = createVector(100 + len, y);
-    const startRadius = random(100, 200);
-    const endRadius = random(50, 10);
+    const startRadius = 130;
+    const endRadius = random(30, 10);
     const tentacle = buildTentacle(startPos, endPos, startRadius, endRadius);
     tentacles.push(tentacle);
   }
