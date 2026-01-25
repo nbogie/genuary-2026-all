@@ -4,7 +4,7 @@
 | Prompt          | "Forms that look or act organic but are constructed entirely from geometric shapes."
 | 📅 Started      | 2026-01-25
 | 📅 Completed    | 2026-01-25
-| 🕒 Taken        | ~2.5hrs                       
+| 🕒 Taken        | ~3hrs                       
 | 🤯 Concept      | Tentacles composed only of circles that reach towards the moving mouse, with noise
 | 🔎 Focus        | From-memory algorithm practice.  p5v2 + TypeScript practice.
 | 🙏 Credits      | 1. I learned this in 2019 from Daniel Shiffman's Inverse Kinematics challenge: 

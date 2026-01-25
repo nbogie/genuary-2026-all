@@ -24,11 +24,12 @@ export function createTentacle(spec: {
   endRadius: number;
   baseHue: number;
   hueDeviation: number;
+  numSegments: number;
   index: number;
 }): Tentacle {
-  const { index, startPos, endPos, startRadius, endRadius, baseHue, hueDeviation } = spec;
+  const { index, startPos, endPos, startRadius, endRadius, baseHue, hueDeviation, numSegments } =
+    spec;
 
-  const numSegments = 80;
   const segs: TentacleSegment[] = [];
   let prevPos = startPos.copy();
   let towardsEnd = endPos.copy().sub(startPos);

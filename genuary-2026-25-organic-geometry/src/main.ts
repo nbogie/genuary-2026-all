@@ -12,10 +12,12 @@ import { mousePos } from "./utils/utils.ts";
 p5.disableFriendlyErrors = true;
 
 let gTentacles: Tentacle[];
+let gConfig: ReturnType<typeof createConfig>;
 
 window.setup = function setup() {
   createCanvas(windowWidth, windowHeight);
   pixelDensity(1);
+  gConfig = createConfig();
   gTentacles = createTentacles();
 };
 
@@ -27,9 +29,18 @@ window.draw = function draw() {
     updateTentacle(tentacle);
   }
 };
+
+function createConfig() {
+  return { numSegments: looksLikeMobile() ? 50 : 80, numTentacles: looksLikeMobile() ? 6 : 8 };
+}
+
+function looksLikeMobile() {
+  return width < 600;
+}
+
 function createTentacles(): Tentacle[] {
   const tentacles: Tentacle[] = [];
-  const numTentacles = 8;
+  const numTentacles = gConfig.numTentacles;
   for (let index = 0; index < numTentacles / 2; index++) {
     for (let direction of [1, -1]) {
       const y = (height * (index + 1)) / (numTentacles + 1);
@@ -38,6 +49,7 @@ function createTentacles(): Tentacle[] {
       const endPos = createVector(direction > 0 ? 100 + len : width - 100 - len, y);
       const startRadius = min(width, height) * 0.12;
       const endRadius = startRadius * random(0.1, 0.3);
+      const numSegments = gConfig.numSegments;
       const tentacle = createTentacle({
         index,
         startPos,
@@ -46,6 +58,7 @@ function createTentacles(): Tentacle[] {
         endRadius,
         baseHue: direction > 0 ? randomGaussian(105, 5) : randomGaussian(270, 5),
         hueDeviation: direction > 0 ? 8 : 3,
+        numSegments,
       });
       tentacles.push(tentacle);
     }
