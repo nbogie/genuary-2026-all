@@ -5,8 +5,9 @@
 | 📅 Started      | 2026-01-25
 | 📅 Completed    | 2026-01-25
 | 🕒 Taken        | ~3hrs                       
-| 🤯 Concept      | Tentacles composed only of circles that reach towards the moving mouse, with noise
-| 🔎 Focus        | From-memory algorithm practice.  p5v2 + TypeScript practice.
+| 🤯 Concept      | IK Tentacles composed only of circles that reach towards the moving mouse, with noise.
+| 🔎 Focus        | From-memory practice of the (i think) FABRIK algorithm.  p5v2 + TypeScript practice.
+| 🎬 Start point  | p5v2 type-script global-mode starter: https://github.com/nbogie/p5-v2-ts-global-mode-starter
 | 🙏 Credits      | 1. I learned this in 2019 from Daniel Shiffman's Inverse Kinematics challenge: 
 |                 |    https://www.youtube.com/watch?v=hbgDqyy8bIw
 |                 |    although I might have butchered the algorithm, here.
