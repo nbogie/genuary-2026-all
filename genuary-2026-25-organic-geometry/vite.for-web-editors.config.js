@@ -1,0 +1,58 @@
+//@ts-check
+
+// Note: This file is ignored by the basic npm run build command.
+// It is only intended for building into a single file, for deployment to
+// the p5 web editor, openprocessing, or similar.
+
+//reading:
+//configuring vite: https://vite.dev/config/
+//build options: https://vite.dev/config/build-options
+//building for production: https://vite.dev/guide/build
+import { defineConfig } from "vite";
+import { resolve } from "path"; // Need this to resolve the file path
+export default defineConfig((_opts) => {
+  /** @type {import('vite').UserConfig} */
+  const config = {
+    //vite normally assumes the app is hosted out of /,
+    //which messes with local testing from dist, for example.
+    //We'll have it instead generate relative paths.
+    base: "./",
+
+    build: {
+      // Force CSS into a separate file
+      cssCodeSplit: true,
+      //more readable code for upload on openprocessing etc
+      minify: false,
+      //Turn off the inclusion of the module preload polyfill at the top of the code.
+      //Removal of this polyfill could result in potentially slower module loading times
+      // for multi-file setups.
+      // But it's much nicer for the user not to see this.
+      //See https://vite.dev/config/build-options#build-modulepreload
+      modulePreload: { polyfill: false },
+
+      //https://rollupjs.org/configuration-options/
+      rollupOptions: {
+        // input: {
+        //     app: resolve(__dirname, "index.for-web-editors.html"),
+        // },
+
+        //externalize deps that shouldn't be bundled - e.g. p5
+        external: ["p5", "p5/global"],
+        preserveEntrySignatures: "strict",
+        output: {
+          format: "umd",
+          globals: {
+            p5: "p5",
+          },
+
+          //if you don't want a consolidated single file output, enable preserveModules
+          // preserveModules: true,
+
+          // chunkFileNames: `[name].js`, //simplified names
+          // entryFileNames: `assets/[name].js`,
+        },
+      },
+    },
+  };
+  return config;
+});
