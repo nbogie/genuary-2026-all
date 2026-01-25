@@ -16,6 +16,7 @@ let gTentacles: Tentacle[];
 
 window.setup = function setup() {
   createCanvas(windowWidth, windowHeight);
+  pixelDensity(1);
   gTentacles = createTentacles();
 };
 
@@ -36,8 +37,8 @@ function createTentacles(): Tentacle[] {
       const len = 0.5 * width;
       const startPos = createVector(direction > 0 ? -50 : width + 50, y);
       const endPos = createVector(direction > 0 ? 100 + len : width - 100 - len, y);
-      const startRadius = 130;
-      const endRadius = random(30, 10);
+      const startRadius = min(width, height) * 0.12;
+      const endRadius = startRadius * random(0.1, 0.3);
       const tentacle = createTentacle({
         index,
         startPos,
