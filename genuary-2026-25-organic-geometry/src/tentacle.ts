@@ -5,6 +5,7 @@ export interface Tentacle {
   destTarget: p5.Vector;
   segments: TentacleSegment[];
   pixelLength: number;
+  index: number;
 }
 
 export interface TentacleSegment {
@@ -23,8 +24,9 @@ export function createTentacle(spec: {
   endRadius: number;
   baseHue: number;
   hueDeviation: number;
+  index: number;
 }): Tentacle {
-  const { startPos, endPos, startRadius, endRadius, baseHue, hueDeviation } = spec;
+  const { index, startPos, endPos, startRadius, endRadius, baseHue, hueDeviation } = spec;
 
   const numSegments = 80;
   const segs: TentacleSegment[] = [];
@@ -35,12 +37,12 @@ export function createTentacle(spec: {
   colorMode(HSB);
   for (let i = 0; i < numSegments; i++) {
     const a = prevPos.copy();
-    const b = prevPos.copy().add(towardsEnd.copy().setMag(len)); //startPos.copy().lerp(endPos, (i + 1) / numSegments);
+    const b = prevPos.copy().add(towardsEnd.copy().setMag(len));
 
     const aRadius = lerp(startRadius, endRadius, i / numSegments);
     len = aRadius * 0.2;
 
-    const colour = color(randomGaussian(baseHue, hueDeviation), random(70, 75), random(70, 75));
+    const colour = color(randomGaussian(baseHue, hueDeviation), random(60, 65), random(55, 65));
     const seg: TentacleSegment = { a, b, isAnchored: i === 0, aRadius, colour };
     segs.push(seg);
     prevPos = b.copy();
@@ -48,6 +50,7 @@ export function createTentacle(spec: {
   pop();
   const target = createTentacleTarget(segs);
   return {
+    index,
     segments: segs,
     target,
     destTarget: target.copy(),
@@ -116,17 +119,29 @@ function createTentacleTarget(segments: TentacleSegment[]): p5.Vector {
   const len = two.a.dist(one.b);
   return midpoint.add(p5.Vector.random2D().mult(random(0.1, len / 2)));
 }
-
+export function updateTentacleTargetTowardsNoisily(tentacle: Tentacle, basicPos: p5.Vector) {
+  const timeScale = 0.005;
+  const maxNoiseRange = 100;
+  const x =
+    maxNoiseRange *
+    map(noise(1000 + tentacle.index * 777, millis() * timeScale), 0.15, 0.85, -1, 1, true);
+  const y =
+    maxNoiseRange *
+    map(noise(3000 + tentacle.index * 577, millis() * timeScale), 0.15, 0.85, -1, 1, true);
+  const pos = basicPos.add(createVector(x, y));
+  return updateTentacleTargetTowards(tentacle, pos);
+}
 export function updateTentacleTargetTowards(tentacle: Tentacle, pos: p5.Vector) {
   //constrain dest to be within range R of tentacle base pos
   const toDest = p5.Vector.sub(pos, tentacle.segments[0]!.a);
   toDest.limit(tentacle.pixelLength * 0.9);
-  tentacle.destTarget.lerp(toDest.add(tentacle.segments[0]!.a), 0.1);
+  tentacle.destTarget.lerp(toDest.add(tentacle.segments[0]!.a), 0.5);
 }
 
 function updateTentacleTarget(tentacle: Tentacle) {
   if (random() < 0.1) {
-    const dest = p5.Vector.random2D().mult(random(30, 100)).add(tentacle.target);
+    const destStepSize = random(50, 170) * 2;
+    const dest = p5.Vector.random2D().mult(destStepSize).add(tentacle.target);
     updateTentacleTargetTowards(tentacle, dest);
   }
   tentacle.target.lerp(tentacle.destTarget, 0.1);

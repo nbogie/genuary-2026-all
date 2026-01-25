@@ -5,7 +5,7 @@ import {
   createTentacle,
   drawTentacle,
   updateTentacle,
-  updateTentacleTargetTowards,
+  updateTentacleTargetTowardsNoisily,
   type Tentacle,
 } from "./tentacle.ts";
 import { mousePos } from "./utils/utils.ts";
@@ -30,15 +30,16 @@ window.draw = function draw() {
 function createTentacles(): Tentacle[] {
   const tentacles: Tentacle[] = [];
   const numTentacles = 8;
-  for (let i = 0; i < numTentacles / 2; i++) {
+  for (let index = 0; index < numTentacles / 2; index++) {
     for (let direction of [1, -1]) {
-      const y = (height * (i + 1)) / (numTentacles + 1);
+      const y = (height * (index + 1)) / (numTentacles + 1);
       const len = 0.5 * width;
       const startPos = createVector(direction > 0 ? -50 : width + 50, y);
       const endPos = createVector(direction > 0 ? 100 + len : width - 100 - len, y);
       const startRadius = 130;
       const endRadius = random(30, 10);
       const tentacle = createTentacle({
+        index,
         startPos,
         endPos,
         startRadius,
@@ -53,5 +54,5 @@ function createTentacles(): Tentacle[] {
 }
 
 window.mouseMoved = function mouseMoved() {
-  gTentacles.forEach((t) => updateTentacleTargetTowards(t, mousePos()));
+  gTentacles.forEach((t) => updateTentacleTargetTowardsNoisily(t, mousePos()));
 };
